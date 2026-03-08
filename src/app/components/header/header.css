@@ -1,0 +1,500 @@
+.hero {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 80px);
+    min-height: 600px;
+    max-height: 1080px;
+    background: #faf6f1;
+    /* Теплый светлый фон */
+    overflow: hidden;
+    isolation: isolate;
+    margin-top: 80px;
+}
+
+/* Контейнер карусели */
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Слайд */
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+/* Контентная часть */
+.slide-content {
+    padding: 0 15% 0 20%;
+    z-index: 5;
+    max-width: 800px;
+    position: relative;
+}
+
+.slide-content>* {
+    animation: slideUp 0.8s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+.slide-subtitle {
+    animation-delay: 0.1s;
+    display: inline-block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #bc8c4c;
+    /* Золотисто-бронзовый */
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.slide-subtitle::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 60px;
+    height: 2px;
+    background: #bc8c4c;
+    transition: width 0.3s ease;
+}
+
+.hero-slide.active .slide-subtitle::before {
+    width: 40px;
+}
+
+.slide-title {
+    animation-delay: 0.2s;
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #2d2a24;
+    /* Темно-коричневый */
+    margin-bottom: 1.5rem;
+    text-rendering: optimizeLegibility;
+}
+
+.slide-description {
+    animation-delay: 0.3s;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 300;
+    line-height: 1.7;
+    color: #5c5a56;
+    margin-bottom: 2rem;
+    max-width: 450px;
+}
+
+.slide-price {
+    animation-delay: 0.4s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 500;
+    color: #2d2a24;
+    margin-bottom: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.slide-price::before {
+    content: '—';
+    color: #bc8c4c;
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+.slide-buttons {
+    animation-delay: 0.5s;
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+/* Кнопки */
+.btn {
+    padding: 1.1rem 2.8rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: #2d2a24;
+    color: #ffffff;
+    border: 1px solid #2d2a24;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary:hover {
+    background: #1f1d18;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #2d2a24;
+    border: 1px solid #bc8c4c;
+}
+
+.btn-secondary:hover {
+    background: #bc8c4c;
+    color: #ffffff;
+    border-color: #bc8c4c;
+    transform: translateY(-2px);
+}
+
+/* Изображение */
+.slide-image {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.slide-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.05);
+    transition: transform 1.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+    filter: brightness(0.95) contrast(1.05);
+}
+
+.hero-slide.active .slide-image img {
+    transform: scale(1);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            #faf6f1 0%,
+            rgba(250, 246, 241, 0.5) 30%,
+            transparent 60%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Анимации */
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стрелки навигации */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 64px;
+    height: 64px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: #2d2a24;
+    opacity: 0.6;
+}
+
+.carousel-arrow:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow.prev {
+    left: 2rem;
+}
+
+.carousel-arrow.next {
+    right: 2rem;
+}
+
+.carousel-arrow svg {
+    width: 32px;
+    height: 32px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Индикаторы (точки) */
+.carousel-dots {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 20;
+}
+
+.dot {
+    width: 40px;
+    height: 2px;
+    padding: 0;
+    border: none;
+    background: rgba(45, 42, 36, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.dot::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #2d2a24;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.dot.active::after {
+    transform: scaleX(1);
+}
+
+.dot.active {
+    background: transparent;
+    width: 60px;
+}
+
+/* ===== МЕДИА ЗАПРОСЫ ===== */
+/* Планшеты */
+@media (max-width: 1024px) {
+    .hero {
+        max-height: 900px;
+    }
+
+    .slide-content {
+        padding: 0 10% 0 15%;
+    }
+
+    .slide-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .carousel-arrow {
+        width: 48px;
+        height: 48px;
+    }
+
+    .carousel-arrow svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Мобильные */
+@media (max-width: 768px) {
+    .hero {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .hero-slide {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1.2fr;
+    }
+
+    .slide-content {
+        padding: 3rem 2rem;
+        text-align: center;
+        grid-row: 2;
+        background: #ffffff;
+    }
+
+    .slide-subtitle::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .slide-description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .slide-buttons {
+        justify-content: center;
+    }
+
+    .slide-price {
+        justify-content: center;
+    }
+
+    .slide-price::before {
+        content: '';
+    }
+
+    .slide-image {
+        grid-row: 1;
+        height: 50vh;
+        min-height: 400px;
+    }
+
+    .image-overlay {
+        background: linear-gradient(0deg,
+                #ffffff 0%,
+                rgba(255, 255, 255, 0.8) 30%,
+                transparent 70%);
+    }
+
+    .carousel-arrow {
+        top: auto;
+        bottom: 50vh;
+        transform: translateY(50%);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 44px;
+        height: 44px;
+    }
+
+    .carousel-arrow.prev {
+        left: 1rem;
+    }
+
+    .carousel-arrow.next {
+        right: 1rem;
+    }
+
+    .carousel-arrow:hover {
+        transform: translateY(50%) scale(1.05);
+    }
+
+    .carousel-dots {
+        bottom: 1.5rem;
+    }
+
+    .dot {
+        width: 30px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .dot::after {
+        background: #ffffff;
+    }
+
+    .dot.active {
+        width: 50px;
+    }
+}
+
+/* Маленькие телефоны */
+@media (max-width: 480px) {
+    .slide-content {
+        padding: 2rem 1.5rem;
+    }
+
+    .slide-title {
+        font-size: 2.2rem;
+    }
+
+    .slide-description {
+        font-size: 0.95rem;
+    }
+
+    .slide-image {
+        min-height: 350px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+
+    .slide-buttons {
+        gap: 0.8rem;
+    }
+
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+        bottom: 45vh;
+    }
+}
+
+/* Landscape ориентация */
+@media (max-width: 850px) and (max-height: 500px) {
+    .hero {
+        min-height: 100vh;
+    }
+
+    .hero-slide {
+        grid-template-rows: 1fr;
+    }
+
+    .slide-content {
+        padding: 2rem;
+    }
+
+    .slide-image {
+        height: 100vh;
+    }
+}
