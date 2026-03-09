@@ -4,6 +4,25 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { products, categories } from '../utils/data';
 import './catalog.css';
+import {
+    FiFilter,
+    FiX,
+    FiChevronDown,
+    FiShoppingCart,
+    FiEye,
+    FiStar,
+    FiArrowUp,
+    FiRefreshCw
+} from 'react-icons/fi';
+import {
+    GiStrawberry,
+    GiChocolateBar,
+    GiHeartWings,
+    GiCrown,
+    GiWeight
+} from 'react-icons/gi';
+import { FaFire } from 'react-icons/fa';
+import { IoMdPricetag } from 'react-icons/io';
 
 export default function CatalogPage() {
     const [activeCategory, setActiveCategory] = useState('all');
@@ -11,6 +30,7 @@ export default function CatalogPage() {
     const [priceRange, setPriceRange] = useState([0, 2000000]);
     const [showFilters, setShowFilters] = useState(false);
     const [addedToCart, setAddedToCart] = useState({});
+    const [quickView, setQuickView] = useState(null);
 
     // Фильтрация товаров
     const filteredProducts = products.filter(product => {
@@ -30,8 +50,8 @@ export default function CatalogPage() {
     });
 
     const addToCart = (product, e) => {
-        e.preventDefault(); // Предотвращаем переход по ссылке
-        e.stopPropagation(); // Останавливаем всплытие события
+        e.preventDefault();
+        e.stopPropagation();
 
         try {
             const savedCart = localStorage.getItem('chocoberry-cart');
@@ -72,6 +92,12 @@ export default function CatalogPage() {
         return new Intl.NumberFormat('uz-UZ').format(price) + ' сум';
     };
 
+    const resetFilters = () => {
+        setActiveCategory('all');
+        setPriceRange([0, 2000000]);
+        setSortBy('popular');
+    };
+
     return (
         <div className="catalog-page">
             {/* Hero секция каталога */}
@@ -93,18 +119,22 @@ export default function CatalogPage() {
                         className="catalog-filter-toggle"
                         onClick={() => setShowFilters(!showFilters)}
                     >
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M3 6H21M6 12H18M10 18H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                        Фильтры и сортировка
+                        <FiFilter className="filter-icon" />
+                        <span>Фильтры и сортировка</span>
+                        <FiChevronDown className={`chevron-icon ${showFilters ? 'rotated' : ''}`} />
                     </button>
 
                     <div className="catalog-layout">
                         {/* Боковая панель фильтров */}
                         <aside className={`catalog-filters ${showFilters ? 'active' : ''}`}>
                             <div className="filters-header">
-                                <h3>Фильтры</h3>
-                                <button className="filters-close" onClick={() => setShowFilters(false)}>×</button>
+                                <h3>
+                                    <FiFilter className="header-icon" />
+                                    Фильтры
+                                </h3>
+                                <button className="filters-close" onClick={() => setShowFilters(false)}>
+                                    <FiX />
+                                </button>
                             </div>
 
                             {/* Категории */}
@@ -117,7 +147,10 @@ export default function CatalogPage() {
                                             className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
                                             onClick={() => setActiveCategory(cat.id)}
                                         >
-                                            {cat.name}
+                                            {cat.id === 'classic' && <GiStrawberry className="category-icon" />}
+                                            {cat.id === 'premium' && <GiCrown className="category-icon" />}
+                                            {cat.id === 'romantic' && <GiHeartWings className="category-icon" />}
+                                            <span>{cat.name}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -125,7 +158,10 @@ export default function CatalogPage() {
 
                             {/* Ценовой диапазон */}
                             <div className="filter-section">
-                                <h4>Цена</h4>
+                                <h4>
+                                    <IoMdPricetag className="section-icon" />
+                                    Цена
+                                </h4>
                                 <div className="price-range">
                                     <div className="price-inputs">
                                         <input
@@ -136,7 +172,7 @@ export default function CatalogPage() {
                                             min="0"
                                             max="2000000"
                                         />
-                                        <span>-</span>
+                                        <span className="price-separator">—</span>
                                         <input
                                             type="number"
                                             value={priceRange[1]}
@@ -163,20 +199,15 @@ export default function CatalogPage() {
                                 </select>
                             </div>
 
-                            {/* Количество товаров */}
+                            {/* Статистика */}
                             <div className="filter-stats">
-                                Найдено: {sortedProducts.length} товаров
+                                <FiStar className="stats-icon" />
+                                <span>Найдено: {sortedProducts.length} товаров</span>
                             </div>
 
                             {/* Кнопка сброса */}
-                            <button
-                                className="reset-filters"
-                                onClick={() => {
-                                    setActiveCategory('all');
-                                    setPriceRange([0, 2000000]);
-                                    setSortBy('popular');
-                                }}
-                            >
+                            <button className="reset-filters" onClick={resetFilters}>
+                                <FiRefreshCw className="reset-icon" />
                                 Сбросить фильтры
                             </button>
                         </aside>
@@ -188,14 +219,8 @@ export default function CatalogPage() {
                                     <img src="/images/no-results.png" alt="Нет товаров" />
                                     <h3>Товары не найдены</h3>
                                     <p>Попробуйте изменить параметры фильтрации</p>
-                                    <button
-                                        className="btn btn-primary"
-                                        onClick={() => {
-                                            setActiveCategory('all');
-                                            setPriceRange([0, 2000000]);
-                                            setSortBy('popular');
-                                        }}
-                                    >
+                                    <button className="btn btn-primary" onClick={resetFilters}>
+                                        <FiRefreshCw className="btn-icon" />
                                         Сбросить фильтры
                                     </button>
                                 </div>
@@ -213,7 +238,10 @@ export default function CatalogPage() {
                                                     <div className="product-stock-badge">Нет в наличии</div>
                                                 )}
                                                 {product.popular && product.inStock && (
-                                                    <div className="product-badge">Хит продаж</div>
+                                                    <div className="product-badge">
+                                                        <FaFire className="badge-icon" />
+                                                        <span>Хит продаж</span>
+                                                    </div>
                                                 )}
 
                                                 <div className="product-image">
@@ -224,15 +252,29 @@ export default function CatalogPage() {
                                                             e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
                                                         }}
                                                     />
-                                                    <button className="product-quick-view">👁️</button>
+                                                    <button
+                                                        className="product-quick-view"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setQuickView(product);
+                                                        }}
+                                                    >
+                                                        <FiEye />
+                                                    </button>
                                                 </div>
 
                                                 <div className="product-info">
                                                     <h3 className="product-name">{product.name}</h3>
 
                                                     <div className="product-meta">
-                                                        <span className="product-weight">{product.weight}</span>
-                                                        <span className="product-strawberries">🍓 {product.strawberries}</span>
+                                                        <span className="product-weight">
+                                                            <GiWeight className="meta-icon" />
+                                                            {product.weight}
+                                                        </span>
+                                                        <span className="product-strawberries">
+                                                            <GiStrawberry className="meta-icon" />
+                                                            {product.strawberries}
+                                                        </span>
                                                     </div>
 
                                                     <p className="product-description">{product.description}</p>
@@ -244,7 +286,8 @@ export default function CatalogPage() {
                                                             onClick={(e) => addToCart(product, e)}
                                                             disabled={!product.inStock}
                                                         >
-                                                            {addedToCart[product.id] ? '✓' : 'В корзину'}
+                                                            <FiShoppingCart className="cart-icon" />
+                                                            <span>{addedToCart[product.id] ? 'Добавлено' : 'В корзину'}</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -257,6 +300,41 @@ export default function CatalogPage() {
                     </div>
                 </div>
             </section>
+
+            {/* Quick View Modal */}
+            {quickView && (
+                <div className="quick-view-modal" onClick={() => setQuickView(null)}>
+                    <div className="quick-view-content" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setQuickView(null)}>
+                            <FiX />
+                        </button>
+                        <div className="quick-view-grid">
+                            <div className="quick-view-image">
+                                <img src={quickView.image} alt={quickView.name} />
+                            </div>
+                            <div className="quick-view-info">
+                                <h2>{quickView.name}</h2>
+                                <p className="quick-view-description">{quickView.description}</p>
+                                <div className="quick-view-details">
+                                    <span><GiWeight /> {quickView.weight}</span>
+                                    <span><GiStrawberry /> {quickView.strawberries}</span>
+                                </div>
+                                <div className="quick-view-price">{formatPrice(quickView.price)}</div>
+                                <button
+                                    className="btn btn-primary quick-view-add"
+                                    onClick={(e) => {
+                                        addToCart(quickView, e);
+                                        setQuickView(null);
+                                    }}
+                                >
+                                    <FiShoppingCart />
+                                    Добавить в корзину
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

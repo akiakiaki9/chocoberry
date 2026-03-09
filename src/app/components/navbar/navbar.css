@@ -1,3 +1,5 @@
+/* Импорт иконок не нужен в CSS, они уже подключены через react-icons */
+
 .navbar {
     position: fixed;
     top: 0;
@@ -183,41 +185,35 @@
     }
 }
 
-/* Бургер меню */
+/* Бургер меню с иконками */
 .burger-menu {
     display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 24px;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
     z-index: 1001;
-}
-
-.burger-line {
-    width: 100%;
-    height: 3px;
-    background: var(--black);
+    color: var(--black);
     transition: all 0.3s ease;
-    border-radius: 3px;
 }
 
-.burger-menu.active .burger-line:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
-    background: var(--red);
+.burger-icon,
+.close-icon {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
 }
 
-.burger-menu.active .burger-line:nth-child(2) {
-    opacity: 0;
-    transform: translateX(-20px);
+.burger-menu.active {
+    color: var(--red);
 }
 
-.burger-menu.active .burger-line:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-    background: var(--red);
+.burger-menu:hover {
+    transform: scale(1.1);
 }
 
 /* Мобильное меню */
@@ -239,11 +235,42 @@
     right: 0;
 }
 
+/* Кнопка закрытия в мобильном меню */
+.mobile-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-gray);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--black);
+    transition: all 0.3s ease;
+    z-index: 1003;
+}
+
+.mobile-close-btn:hover {
+    background: var(--red);
+    color: var(--white);
+    transform: rotate(90deg);
+}
+
+.mobile-close-icon {
+    width: 24px;
+    height: 24px;
+}
+
 .mobile-menu-container {
-    padding: calc(var(--header-height) + 30px) 30px 30px;
+    padding: calc(var(--header-height) + 20px) 30px 30px;
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .mobile-menu-list {
@@ -383,6 +410,22 @@
     padding: 4px 12px;
     border-radius: 20px;
     margin-left: auto;
+}
+
+/* Обновленные стили для иконок */
+.phone-icon,
+.cart-icon,
+.mobile-phone-icon,
+.mobile-cart-icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.mobile-phone-icon,
+.mobile-cart-icon {
+    width: 24px;
+    height: 24px;
 }
 
 /* Оверлей */

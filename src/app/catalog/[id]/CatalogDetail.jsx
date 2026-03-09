@@ -5,6 +5,36 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { products, getProductById } from '@/app/utils/data';
 import './catalogdetail.css';
+import {
+    FiHeart,
+    FiShoppingCart,
+    FiChevronLeft,
+    FiChevronRight,
+    FiStar,
+    FiTruck,
+    FiGift,
+    FiCreditCard,
+    FiPackage,
+    FiClock,
+    FiMapPin
+} from 'react-icons/fi';
+import {
+    GiStrawberry,
+    GiChocolateBar,
+    GiWeight,
+    GiCrown,
+    GiHeartWings,
+    GiFamilyHouse
+} from 'react-icons/gi';
+import {
+    IoMdHeart,
+    IoMdHeartEmpty,
+    IoMdStar,
+    IoMdStarHalf,
+    IoMdPricetag
+} from 'react-icons/io';
+import { FaFire } from 'react-icons/fa';
+import { HiOutlineLocationMarker, HiOutlineClock } from 'react-icons/hi';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -13,6 +43,7 @@ export default function ProductDetailPage() {
     const [activeImage, setActiveImage] = useState(0);
     const [addedToCart, setAddedToCart] = useState(false);
     const [selectedTab, setSelectedTab] = useState('description');
+    const [isFavorite, setIsFavorite] = useState(false);
 
     // Загрузка товара
     useEffect(() => {
@@ -63,6 +94,16 @@ export default function ProductDetailPage() {
         }
     };
 
+    const getCategoryIcon = (category) => {
+        switch (category) {
+            case 'classic': return <GiStrawberry />;
+            case 'premium': return <GiCrown />;
+            case 'romantic': return <GiHeartWings />;
+            case 'family': return <GiFamilyHouse />;
+            default: return <GiChocolateBar />;
+        }
+    };
+
     if (!product) {
         return (
             <div className="product-loading">
@@ -77,9 +118,9 @@ export default function ProductDetailPage() {
             <div className="breadcrumbs">
                 <div className="container">
                     <Link href="/">Главная</Link>
-                    <span className="separator">/</span>
+                    <FiChevronRight className="separator-icon" />
                     <Link href="/catalog">Каталог</Link>
-                    <span className="separator">/</span>
+                    <FiChevronRight className="separator-icon" />
                     <span className="current">{product.name}</span>
                 </div>
             </div>
@@ -98,10 +139,16 @@ export default function ProductDetailPage() {
                                     }}
                                 />
                                 {product.popular && (
-                                    <span className="gallery-badge">Хит продаж</span>
+                                    <span className="gallery-badge">
+                                        <FaFire className="badge-icon" />
+                                        Хит продаж
+                                    </span>
                                 )}
                                 {!product.inStock && (
-                                    <span className="gallery-badge out">Нет в наличии</span>
+                                    <span className="gallery-badge out">
+                                        <FiPackage className="badge-icon" />
+                                        Нет в наличии
+                                    </span>
                                 )}
                             </div>
 
@@ -123,10 +170,19 @@ export default function ProductDetailPage() {
 
                         {/* Правая колонка - информация */}
                         <div className="product-info">
+                            <div className="product-category">
+                                {getCategoryIcon(product.category)}
+                                <span>{product.category}</span>
+                            </div>
+
                             <h1 className="product-title">{product.name}</h1>
 
                             <div className="product-rating">
-                                <span className="stars">★★★★★</span>
+                                <div className="stars">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <IoMdStar key={star} className="star-icon filled" />
+                                    ))}
+                                </div>
                                 <span className="reviews-count">12 отзывов</span>
                             </div>
 
@@ -139,18 +195,17 @@ export default function ProductDetailPage() {
 
                             <div className="product-attributes">
                                 <div className="attribute">
+                                    <GiWeight className="attribute-icon" />
                                     <span className="attribute-label">Вес:</span>
                                     <span className="attribute-value">{product.weight}</span>
                                 </div>
                                 <div className="attribute">
+                                    <GiStrawberry className="attribute-icon" />
                                     <span className="attribute-label">Количество ягод:</span>
-                                    <span className="attribute-value">🍓 {product.strawberries}</span>
+                                    <span className="attribute-value">{product.strawberries} шт</span>
                                 </div>
                                 <div className="attribute">
-                                    <span className="attribute-label">Категория:</span>
-                                    <span className="attribute-value">{product.category}</span>
-                                </div>
-                                <div className="attribute">
+                                    <FiPackage className="attribute-icon" />
                                     <span className="attribute-label">Наличие:</span>
                                     <span className={`attribute-value ${product.inStock ? 'in-stock' : 'out-stock'}`}>
                                         {product.inStock ? 'В наличии' : 'Нет в наличии'}
@@ -183,26 +238,30 @@ export default function ProductDetailPage() {
                                     onClick={addToCart}
                                     disabled={!product.inStock}
                                 >
-                                    {addedToCart ? '✓ Добавлено' : 'В корзину'}
+                                    <FiShoppingCart className="btn-icon" />
+                                    <span>{addedToCart ? 'Добавлено' : 'В корзину'}</span>
                                 </button>
 
-                                <button className="favorite-btn">
-                                    ♡
+                                <button
+                                    className={`favorite-btn ${isFavorite ? 'active' : ''}`}
+                                    onClick={() => setIsFavorite(!isFavorite)}
+                                >
+                                    {isFavorite ? <IoMdHeart /> : <IoMdHeartEmpty />}
                                 </button>
                             </div>
 
                             {/* Преимущества */}
                             <div className="product-benefits">
                                 <div className="benefit">
-                                    <span className="benefit-icon">🚚</span>
+                                    <FiTruck className="benefit-icon" />
                                     <span>Бесплатная доставка от 500 000 сум</span>
                                 </div>
                                 <div className="benefit">
-                                    <span className="benefit-icon">🎁</span>
+                                    <FiGift className="benefit-icon" />
                                     <span>Подарочная упаковка</span>
                                 </div>
                                 <div className="benefit">
-                                    <span className="benefit-icon">💳</span>
+                                    <FiCreditCard className="benefit-icon" />
                                     <span>Оплата картой или наличными</span>
                                 </div>
                             </div>
@@ -257,12 +316,14 @@ export default function ProductDetailPage() {
                             {selectedTab === 'characteristics' && (
                                 <div className="tab-pane">
                                     <ul className="characteristics-list">
-                                        <li><span>Состав:</span> Клубника свежая, шоколад бельгийский (какао-масло, какао тертое, сахар), декор (золото пищевое, фисташка, кокосовая стружка)</li>
+                                        <li>
+                                            <span>Состав:</span>
+                                            Клубника свежая, шоколад бельгийский (какао-масло, какао тертое, сахар), декор
+                                        </li>
                                         <li><span>Срок годности:</span> 3 дня при хранении в холодильнике</li>
                                         <li><span>Условия хранения:</span> от +2°C до +6°C</li>
                                         <li><span>Вес бокса:</span> {product.weight}</li>
                                         <li><span>Количество ягод:</span> {product.strawberries} шт</li>
-                                        <li><span>Размер коробки:</span> 25x15x8 см</li>
                                     </ul>
                                 </div>
                             )}
@@ -273,10 +334,16 @@ export default function ProductDetailPage() {
                                         <div className="reviews-summary">
                                             <div className="average-rating">
                                                 <span className="big-rating">4.9</span>
-                                                <span className="rating-stars">★★★★★</span>
+                                                <div className="rating-stars">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <IoMdStar key={star} className="star-icon filled" />
+                                                    ))}
+                                                </div>
                                                 <span className="total-reviews">12 отзывов</span>
                                             </div>
-                                            <button className="write-review-btn">Написать отзыв</button>
+                                            <button className="write-review-btn">
+                                                Написать отзыв
+                                            </button>
                                         </div>
 
                                         <div className="reviews-list">
@@ -286,7 +353,11 @@ export default function ProductDetailPage() {
                                                         <strong>Мария</strong>
                                                         <span className="review-date">2 дня назад</span>
                                                     </div>
-                                                    <div className="review-rating">★★★★★</div>
+                                                    <div className="review-rating">
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <IoMdStar key={star} className="star-icon filled" />
+                                                        ))}
+                                                    </div>
                                                     <p className="review-text">
                                                         Очень вкусно! Клубника свежая, шоколад тает во рту.
                                                         Упаковка шикарная, подарила подруге - она в восторге!
@@ -303,17 +374,38 @@ export default function ProductDetailPage() {
                                     <div className="delivery-info">
                                         <h3>Доставка</h3>
                                         <ul>
-                                            <li>🚚 Бесплатная доставка по Бухаре при заказе от 500 000 сум</li>
-                                            <li>💰 Доставка до 500 000 сум - 20 000 сум</li>
-                                            <li>⏰ Доставка осуществляется с 10:00 до 22:00</li>
-                                            <li>📦 Возможен самовывоз из нашего бутика</li>
+                                            <li>
+                                                <FiTruck className="delivery-icon" />
+                                                Бесплатная доставка по Бухаре при заказе от 500 000 сум
+                                            </li>
+                                            <li>
+                                                <FiCreditCard className="delivery-icon" />
+                                                Доставка до 500 000 сум - 20 000 сум
+                                            </li>
+                                            <li>
+                                                <HiOutlineClock className="delivery-icon" />
+                                                Доставка осуществляется с 10:00 до 22:00
+                                            </li>
+                                            <li>
+                                                <HiOutlineLocationMarker className="delivery-icon" />
+                                                Возможен самовывоз из нашего бутика
+                                            </li>
                                         </ul>
 
                                         <h3>Оплата</h3>
                                         <ul>
-                                            <li>💳 Оплата картой на сайте</li>
-                                            <li>💵 Наличными при получении</li>
-                                            <li>📱 Переводом на карту</li>
+                                            <li>
+                                                <FiCreditCard className="delivery-icon" />
+                                                Оплата картой на сайте
+                                            </li>
+                                            <li>
+                                                <FiPackage className="delivery-icon" />
+                                                Наличными при получении
+                                            </li>
+                                            <li>
+                                                <FiGift className="delivery-icon" />
+                                                Переводом на карту
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -347,7 +439,10 @@ export default function ProductDetailPage() {
                                         }}
                                     />
                                     {product.popular && (
-                                        <span className="related-badge">Хит</span>
+                                        <span className="related-badge">
+                                            <FaFire className="badge-icon" />
+                                            Хит
+                                        </span>
                                     )}
                                 </div>
                                 <div className="related-info">
@@ -361,4 +456,4 @@ export default function ProductDetailPage() {
             </section>
         </div>
     );
-}
+};

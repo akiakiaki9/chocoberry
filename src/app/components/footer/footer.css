@@ -1,11 +1,18 @@
+/* ===== ОСНОВНЫЕ СТИЛИ ===== */
 .footer {
-    background: linear-gradient(180deg, var(--red-dark) 0%, #8B0000 100%);
-    color: var(--white);
+    background: linear-gradient(180deg, #1a1a1a 0%, #2d2a24 100%);
+    color: #ffffff;
     position: relative;
-    border-top: 3px solid var(--gold);
+    border-top: 3px solid #bc8c4c;
 }
 
-/* Основная часть футера */
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== ОСНОВНАЯ ЧАСТЬ ФУТЕРА ===== */
 .footer-main {
     padding: 60px 0 40px;
 }
@@ -16,7 +23,7 @@
     gap: 40px;
 }
 
-/* Лого и описание */
+/* ===== ЛОГО И ОПИСАНИЕ ===== */
 .footer-logo {
     font-family: var(--font-heading);
     font-size: 2rem;
@@ -25,58 +32,86 @@
 }
 
 .footer-logo .logo-text {
-    color: var(--white);
+    color: #ffffff;
 }
 
 .footer-logo .logo-highlight {
-    color: var(--gold);
+    color: #bc8c4c;
 }
 
 .footer-description {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.8;
     margin-bottom: 25px;
     font-size: 0.95rem;
 }
 
-/* Социальные сети */
+/* ===== СОЦИАЛЬНЫЕ СЕТИ ===== */
 .footer-social {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .footer-social .social-link {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    color: var(--white);
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    color: #ffffff;
+    font-size: 1.2rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-social .social-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(188, 140, 76, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
 .footer-social .social-link:hover {
-    background: var(--gold);
-    color: var(--black);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-gold);
+    background: #bc8c4c;
+    color: #1a1a1a;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(188, 140, 76, 0.3);
+    border-color: transparent;
+}
+
+.footer-social .social-link:hover::before {
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .footer-social .social-link svg {
     width: 20px;
     height: 20px;
+    position: relative;
+    z-index: 2;
 }
 
-/* Заголовки колонок */
+/* ===== ЗАГОЛОВКИ КОЛОНОК ===== */
 .footer-title {
     font-size: 1.2rem;
     font-family: var(--font-heading);
     margin-bottom: 20px;
     position: relative;
     padding-bottom: 10px;
-    color: var(--gold);
+    color: #bc8c4c;
 }
 
 .footer-title::after {
@@ -86,10 +121,11 @@
     bottom: 0;
     width: 40px;
     height: 2px;
-    background: var(--gold);
+    background: #bc8c4c;
+    border-radius: 2px;
 }
 
-/* Ссылки */
+/* ===== ССЫЛКИ ===== */
 .footer-links {
     list-style: none;
     padding: 0;
@@ -101,11 +137,12 @@
 }
 
 .footer-links a {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: all 0.3s ease;
     position: relative;
     padding-left: 0;
+    display: inline-block;
 }
 
 .footer-links a::before {
@@ -114,12 +151,13 @@
     left: -15px;
     opacity: 0;
     transition: all 0.3s ease;
-    color: var(--gold);
+    color: #bc8c4c;
     font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .footer-links a:hover {
-    color: var(--gold);
+    color: #bc8c4c;
     padding-left: 15px;
 }
 
@@ -128,7 +166,7 @@
     left: 0;
 }
 
-/* Контактная информация */
+/* ===== КОНТАКТНАЯ ИНФОРМАЦИЯ ===== */
 .footer-contact {
     list-style: none;
     padding: 0;
@@ -138,32 +176,46 @@
 .footer-contact li {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 15px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.footer-contact li:hover {
+    transform: translateX(5px);
+    color: #ffffff;
 }
 
 .footer-contact .contact-icon {
-    font-size: 1.2rem;
-    min-width: 25px;
+    width: 18px;
+    height: 18px;
+    color: #bc8c4c;
+    margin-top: 3px;
+    transition: all 0.3s ease;
+}
+
+.footer-contact li:hover .contact-icon {
+    transform: scale(1.2);
+    color: #bc8c4c;
 }
 
 .footer-contact a {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .footer-contact a:hover {
-    color: var(--gold);
+    color: #bc8c4c;
 }
 
-/* Нижняя часть футера */
+/* ===== НИЖНЯЯ ЧАСТЬ ФУТЕРА ===== */
 .footer-bottom {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
     padding: 20px 0;
-    border-top: 1px solid rgba(255, 215, 0, 0.2);
+    border-top: 1px solid rgba(188, 140, 76, 0.15);
 }
 
 .footer-bottom-content {
@@ -176,62 +228,96 @@
 }
 
 .copyright {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .footer-bottom-links {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     flex-wrap: wrap;
 }
 
 .footer-bottom-links a {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     font-size: 0.9rem;
+    position: relative;
+}
+
+.footer-bottom-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #bc8c4c;
+    transition: width 0.3s ease;
 }
 
 .footer-bottom-links a:hover {
-    color: var(--gold);
+    color: #bc8c4c;
+}
+
+.footer-bottom-links a:hover::after {
+    width: 100%;
 }
 
 .developer {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .developer a {
-    color: var(--gold);
+    color: #bc8c4c;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .developer a:hover {
-    text-decoration: underline;
+    color: #bc8c4c;
+    text-decoration: none;
 }
 
-/* Кнопка наверх */
+.developer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #bc8c4c;
+    transition: width 0.3s ease;
+}
+
+.developer a:hover::after {
+    width: 100%;
+}
+
+/* ===== КНОПКА НАВЕРХ ===== */
 .back-to-top {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 50px;
-    height: 50px;
-    background: var(--gold);
+    width: 54px;
+    height: 54px;
+    background: #bc8c4c;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    color: var(--black);
-    box-shadow: var(--shadow-gold);
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    color: #1a1a1a;
+    box-shadow: 0 4px 20px rgba(188, 140, 76, 0.3);
     z-index: 99;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    border: 2px solid transparent;
 }
 
 .back-to-top.visible {
@@ -241,17 +327,51 @@
 }
 
 .back-to-top:hover {
-    background: var(--white);
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    background: #bc8c4c;
+    transform: translateY(-8px) scale(1.1);
+    box-shadow: 0 8px 30px rgba(188, 140, 76, 0.4);
+    border-color: #ffffff;
+}
+
+.back-to-top:active {
+    transform: translateY(-4px) scale(0.95);
 }
 
 .back-to-top svg {
     width: 24px;
     height: 24px;
+    transition: transform 0.3s ease;
 }
 
-/* Адаптивность */
+.back-to-top:hover svg {
+    transform: translateY(-3px);
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.footer-col {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+.footer-col:nth-child(1) { animation-delay: 0.1s; }
+.footer-col:nth-child(2) { animation-delay: 0.2s; }
+.footer-col:nth-child(3) { animation-delay: 0.3s; }
+.footer-col:nth-child(4) { animation-delay: 0.4s; }
+
+/* ===== МЕДИА ЗАПРОСЫ ===== */
+
+/* Планшеты */
 @media (max-width: 1024px) {
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -263,6 +383,7 @@
     }
 }
 
+/* Мобильные */
 @media (max-width: 768px) {
     .footer-main {
         padding: 40px 0;
@@ -277,26 +398,13 @@
         grid-column: auto;
     }
 
-    .footer-bottom-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .footer-bottom-links {
-        justify-content: center;
-    }
-
-    .back-to-top {
-        bottom: 20px;
-        right: 20px;
-        width: 45px;
-        height: 45px;
-    }
-}
-
-@media (max-width: 480px) {
     .footer-social {
         justify-content: center;
+    }
+
+    .footer-social .social-link {
+        width: 48px;
+        height: 48px;
     }
 
     .footer-title {
@@ -312,6 +420,10 @@
         text-align: center;
     }
 
+    .footer-links a {
+        padding-left: 0;
+    }
+
     .footer-links a:hover {
         padding-left: 0;
     }
@@ -322,10 +434,162 @@
 
     .footer-contact li {
         justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .footer-contact .contact-icon {
+        margin-right: 0;
+    }
+
+    .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
     }
 
     .footer-bottom-links {
+        justify-content: center;
         flex-direction: column;
         gap: 10px;
+    }
+
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Маленькие телефоны */
+@media (max-width: 480px) {
+    .footer-main {
+        padding: 30px 0;
+    }
+
+    .footer-logo {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .footer-description {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .footer-social {
+        gap: 10px;
+    }
+
+    .footer-social .social-link {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .footer-title {
+        font-size: 1.1rem;
+    }
+
+    .footer-links li {
+        margin-bottom: 10px;
+    }
+
+    .footer-contact li {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .copyright {
+        font-size: 0.85rem;
+    }
+
+    .footer-bottom-links a {
+        font-size: 0.85rem;
+    }
+
+    .developer {
+        font-size: 0.85rem;
+    }
+
+    .back-to-top {
+        width: 44px;
+        height: 44px;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .back-to-top svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Очень маленькие телефоны */
+@media (max-width: 360px) {
+    .footer-logo {
+        font-size: 1.5rem;
+    }
+
+    .footer-social .social-link {
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer-title {
+        font-size: 1rem;
+    }
+}
+
+/* Touch устройства */
+@media (hover: none) and (pointer: coarse) {
+    .footer-social .social-link:hover {
+        transform: none;
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+    }
+
+    .footer-links a:hover {
+        padding-left: 0;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-links a:hover::before {
+        opacity: 0;
+    }
+
+    .footer-contact li:hover {
+        transform: none;
+    }
+
+    .footer-contact li:hover .contact-icon {
+        transform: none;
+    }
+
+    .footer-bottom-links a:hover::after {
+        width: 0;
+    }
+
+    .back-to-top:active {
+        transform: scale(0.9);
+    }
+}
+
+/* Улучшения доступности */
+@media (prefers-reduced-motion: reduce) {
+    .footer-col,
+    .footer-social .social-link,
+    .footer-links a,
+    .footer-contact li,
+    .back-to-top,
+    .footer-bottom-links a::after,
+    .developer a::after {
+        animation: none;
+        transition: none;
+    }
+
+    .back-to-top:hover {
+        transform: none;
     }
 }
