@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import './gallery.css';
 import {
-    FiFilter,
     FiZoomIn,
     FiDownload,
     FiGrid,
@@ -20,8 +19,6 @@ import {
     GiFlowerPot
 } from 'react-icons/gi';
 import { IoMdPhotos } from 'react-icons/io';
-import { FaRegImages } from 'react-icons/fa';
-import { BiPhotoAlbum } from 'react-icons/bi';
 import Link from 'next/link';
 
 const GalleryGrid = () => {
@@ -39,7 +36,7 @@ const GalleryGrid = () => {
     const galleryItems = [
         {
             id: 1,
-            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/1.png",
             category: 'interior',
             title: 'Витрина с боксами',
             description: 'Золотая витрина с премиум боксами',
@@ -47,7 +44,7 @@ const GalleryGrid = () => {
         },
         {
             id: 2,
-            image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/2.png",
             category: 'boxes',
             title: 'Клубничное сердце',
             description: 'Бокс в форме сердца с клубникой',
@@ -55,7 +52,7 @@ const GalleryGrid = () => {
         },
         {
             id: 3,
-            image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/3.png",
             category: 'process',
             title: 'Ручная работа',
             description: 'Мастер за созданием бокса',
@@ -63,7 +60,7 @@ const GalleryGrid = () => {
         },
         {
             id: 4,
-            image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/4.png",
             category: 'interior',
             title: 'Зона ожидания',
             description: 'Уютная зона для посетителей',
@@ -71,7 +68,7 @@ const GalleryGrid = () => {
         },
         {
             id: 5,
-            image: "https://images.unsplash.com/photo-1606312619075-23f201a38042?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/5.png",
             category: 'boxes',
             title: 'Золотая коллекция',
             description: 'Премиум боксы с золотом',
@@ -79,35 +76,11 @@ const GalleryGrid = () => {
         },
         {
             id: 6,
-            image: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/1.png",
             category: 'process',
             title: 'Декорирование',
             description: 'Процесс украшения боксов',
             icon: <GiStrawberry />
-        },
-        {
-            id: 7,
-            image: "https://images.unsplash.com/photo-1556020685-ae41abfc9365?q=80&w=800&auto=format&fit=crop",
-            category: 'interior',
-            title: 'Освещение',
-            description: 'Особый свет в бутике',
-            icon: <FiCamera />
-        },
-        {
-            id: 8,
-            image: "https://images.unsplash.com/photo-1511381939415-e44015466834?q=80&w=800&auto=format&fit=crop",
-            category: 'boxes',
-            title: 'Свадебные боксы',
-            description: 'Боксы для молодоженов',
-            icon: <GiHeartWings />
-        },
-        {
-            id: 9,
-            image: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=800&auto=format&fit=crop",
-            category: 'interior',
-            title: 'Детали интерьера',
-            description: 'Винтажные элементы декора',
-            icon: <GiFlowerPot />
         },
     ];
 

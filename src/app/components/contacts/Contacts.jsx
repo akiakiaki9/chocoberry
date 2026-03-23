@@ -3,34 +3,33 @@
 import './contacts.css';
 import {
     FiMapPin,
-    FiPhone,
-    FiClock,
-    FiMail,
-    FiInstagram,
-    FiSend,
-    FiMessageSquare,
     FiHeart
 } from 'react-icons/fi';
 import {
-    IoLogoWhatsapp,
-    IoLogoPinterest,
-    IoLocationOutline,
     IoTimeOutline,
-    IoMailOutline,
-    IoCallOutline
 } from 'react-icons/io5';
-import { FaTelegram, FaInstagram, FaWhatsapp, FaPinterest } from 'react-icons/fa';
-import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineMail } from 'react-icons/hi';
+import { FaTelegram, FaInstagram } from 'react-icons/fa';
+import { HiOutlineLocationMarker, HiOutlinePhone } from 'react-icons/hi';
 import { useState } from 'react';
 
 const Contacts = () => {
     const [hoveredSocial, setHoveredSocial] = useState(null);
 
     const socialLinks = [
-        { id: 'insta', icon: <FaInstagram />, color: '#E4405F', name: 'Instagram' },
-        { id: 'tg', icon: <FaTelegram />, color: '#0088cc', name: 'Telegram' },
-        { id: 'wa', icon: <FaWhatsapp />, color: '#25D366', name: 'WhatsApp' },
-        { id: 'pin', icon: <FaPinterest />, color: '#BD081C', name: 'Pinterest' }
+        {
+            id: 'insta',
+            icon: <FaInstagram />,
+            color: '#E4405F',
+            name: 'Instagram',
+            url: 'https://www.instagram.com/chocoberry_fruits_bukhara_kafe?igsh=MTk1emh4dDk4ZHJ4eA%3D%3D'
+        },
+        {
+            id: 'tg',
+            icon: <FaTelegram />,
+            color: '#0088cc',
+            name: 'Telegram',
+            url: 'https://t.me/chocoberry_fruits_bukhara'
+        },
     ];
 
     return (
@@ -60,7 +59,7 @@ const Contacts = () => {
                                 </div>
                                 <div className="contact-content">
                                     <strong>Адрес:</strong>
-                                    <p>ул. Шохрух, 42<br />Центральный район</p>
+                                    <p>Ашхобот 2v<br />, Бухара</p>
                                 </div>
                             </div>
 
@@ -71,8 +70,7 @@ const Contacts = () => {
                                 <div className="contact-content">
                                     <strong>Телефон:</strong>
                                     <p>
-                                        <a href="tel:+998901234567" className="contact-link">+998 90 123 45 67</a><br />
-                                        <a href="tel:+998901234568" className="contact-link">+998 90 123 45 68</a>
+                                        <a href="tel:+998914433443" className="contact-link">91 443 34 43</a>
                                     </p>
                                 </div>
                             </div>
@@ -83,19 +81,7 @@ const Contacts = () => {
                                 </div>
                                 <div className="contact-content">
                                     <strong>Часы работы:</strong>
-                                    <p>Ежедневно: 10:00 - 22:00<br />Без выходных</p>
-                                </div>
-                            </div>
-
-                            <div className="contact-item">
-                                <div className="contact-icon-wrapper">
-                                    <HiOutlineMail className="contact-icon" />
-                                </div>
-                                <div className="contact-content">
-                                    <strong>Email:</strong>
-                                    <p>
-                                        <a href="mailto:info@chocoberry.uz" className="contact-link">info@chocoberry.uz</a>
-                                    </p>
+                                    <p>Ежедневно: 10:00 - 0:00<br />Без выходных</p>
                                 </div>
                             </div>
 
@@ -105,7 +91,9 @@ const Contacts = () => {
                                     {socialLinks.map(social => (
                                         <a
                                             key={social.id}
-                                            href="#"
+                                            href={social.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="social-link"
                                             aria-label={social.name}
                                             style={{
@@ -127,9 +115,9 @@ const Contacts = () => {
                     <div className="contacts-map">
                         <div className="map-container">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124456.78901234567!2d64.416666!3d39.766666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQ2JzAwLjAiTiA2NMKwMjUnMDAuMCJF!5e0!3m2!1sru!2s!4v1234567890"
+                                src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d6132.868239647303!2d64.446026!3d39.774812!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMznCsDQ2JzI5LjMiTiA2NMKwMjYnNDUuNyJF!5e0!3m2!1sru!2s!4v1774271769866!5m2!1sru!2s"
                                 width="100%"
-                                height="100%"
+                                height="300"
                                 style={{ border: 0 }}
                                 allowFullScreen=""
                                 loading="lazy"
@@ -141,7 +129,7 @@ const Contacts = () => {
                         <div className="map-gallery">
                             <div className="gallery-item">
                                 <img
-                                    src="https://images.unsplash.com/photo-1528696892704-5e1122855e49?q=80&w=800&auto=format&fit=crop"
+                                    src="/images/data/images/45.png"
                                     alt="Фасад бутика"
                                     loading="lazy"
                                 />
@@ -151,7 +139,7 @@ const Contacts = () => {
                             </div>
                             <div className="gallery-item">
                                 <img
-                                    src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop"
+                                    src="/images/data/images/42.png"
                                     alt="Внутри бутика"
                                     loading="lazy"
                                 />
@@ -161,7 +149,7 @@ const Contacts = () => {
                             </div>
                             <div className="gallery-item">
                                 <img
-                                    src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=800&auto=format&fit=crop"
+                                    src="/images/data/images/41.png"
                                     alt="Витрина"
                                     loading="lazy"
                                 />

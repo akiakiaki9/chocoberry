@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { products } from '@/app/utils/data';
+import { products } from '@/app/utils/data1';
 import './catalog.css';
 import {
     FiShoppingCart,
@@ -11,11 +11,9 @@ import {
     FiCheck
 } from 'react-icons/fi';
 import { GiStrawberry } from "react-icons/gi";
-import { GiChocolateBar } from "react-icons/gi";
 import { GiCrowNest } from "react-icons/gi";
 import { GiHeartWings } from "react-icons/gi";
 import { GiGiftOfKnowledge } from "react-icons/gi";
-import { IoMdStar } from 'react-icons/io';
 import { FaFire } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -31,52 +29,62 @@ const CatalogPreview = () => {
         { id: 'romantic', name: 'Романтика', icon: <GiHeartWings /> }
     ];
 
-    const filteredProducts = activeCategory === 'all'
-        ? products.slice(0, 4)
-        : products.filter(p => p.category === activeCategory).slice(0, 4);
+    // Берем первые 4 товара для превью
+    const previewProducts = products.slice(0, 4);
+
+    // Функция для парсинга цены (поддержка диапазонов)
+    const parsePrice = (priceStr) => {
+        if (typeof priceStr === 'number') return priceStr;
+        if (priceStr.includes('-')) {
+            return parseInt(priceStr.split('-')[0]);
+        }
+        return parseInt(priceStr);
+    };
+
+    // Форматирование цены для отображения
+    const formatPrice = (price) => {
+        if (price.includes('-')) {
+            const [min, max] = price.split('-').map(p => parseInt(p));
+            return `${new Intl.NumberFormat('uz-UZ').format(min)} - ${new Intl.NumberFormat('uz-UZ').format(max)} сум`;
+        }
+        return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
+    };
+
+    // Определяем популярные товары (первые 3)
+    const popularProductIds = [1, 2, 3];
+    const isProductPopular = (id) => popularProductIds.includes(id);
 
     // Функция добавления в корзину
     const addToCart = (product, e) => {
-        e.preventDefault(); // Предотвращаем переход по ссылке
-        e.stopPropagation(); // Останавливаем всплытие события
+        e.preventDefault();
+        e.stopPropagation();
 
         try {
-            // Получаем текущую корзину
             const savedCart = localStorage.getItem('chocoberry-cart');
             let cart = savedCart ? JSON.parse(savedCart) : [];
 
-            // Проверяем, есть ли товар уже в корзине
             const existingItem = cart.find(item => item.id === product.id);
 
             if (existingItem) {
-                // Увеличиваем количество
                 existingItem.quantity += 1;
             } else {
-                // Добавляем новый товар
                 cart.push({
                     id: product.id,
                     name: product.name,
-                    price: product.price,
+                    price: parsePrice(product.price),
+                    priceRaw: product.price,
                     image: product.image || '/images/placeholder.jpg',
                     quantity: 1
                 });
             }
 
-            // Сохраняем в localStorage
             localStorage.setItem('chocoberry-cart', JSON.stringify(cart));
 
-            // Обновляем счетчик в navbar - НЕМЕДЛЕННО
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            // Создаем и диспатчим событие
-            const event = new CustomEvent('cartUpdated', {
+            window.dispatchEvent(new CustomEvent('cartUpdated', {
                 detail: { count: totalItems }
-            });
-            window.dispatchEvent(event);
+            }));
 
-            console.log('Cart updated, total items:', totalItems); // Для отладки
-
-            // Показываем анимацию добавления
             setAddedToCart(prev => ({ ...prev, [product.id]: true }));
             setTimeout(() => {
                 setAddedToCart(prev => ({ ...prev, [product.id]: false }));
@@ -84,7 +92,6 @@ const CatalogPreview = () => {
 
         } catch (error) {
             console.error('Ошибка добавления в корзину:', error);
-            alert('Не удалось добавить товар в корзину');
         }
     };
 
@@ -99,7 +106,7 @@ const CatalogPreview = () => {
     const quickView = (product, e) => {
         e.preventDefault();
         e.stopPropagation();
-        alert(`${product.name}\n\n${product.description}\n\nЦена: ${product.price.toLocaleString()} сум`);
+        alert(`${product.name}\n\nЦена: ${formatPrice(product.price)}`);
     };
 
     return (
@@ -130,7 +137,7 @@ const CatalogPreview = () => {
 
                 {/* Сетка товаров */}
                 <div className="preview-grid">
-                    {filteredProducts.map((product, index) => (
+                    {previewProducts.map((product, index) => (
                         <Link
                             key={product.id}
                             href={`/catalog/${product.id}`}
@@ -138,17 +145,10 @@ const CatalogPreview = () => {
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
                             <div className="preview-card">
-                                {product.popular && (
+                                {isProductPopular(product.id) && (
                                     <div className="card-badge">
                                         <FaFire className="badge-icon" />
                                         <span>Хит продаж</span>
-                                    </div>
-                                )}
-
-                                {product.premium && (
-                                    <div className="card-badge premium">
-                                        <GiCrowNest className="badge-icon" />
-                                        <span>Премиум</span>
                                     </div>
                                 )}
 
@@ -162,7 +162,7 @@ const CatalogPreview = () => {
 
                                 <div className="card-image">
                                     <img
-                                        src={product.image || '/images/placeholder.jpg'}
+                                        src={product.image}
                                         alt={product.name}
                                         onError={(e) => {
                                             e.target.src = 'https://via.placeholder.com/300x200?text=Chocoberry';
@@ -183,41 +183,17 @@ const CatalogPreview = () => {
                                 <div className="card-content">
                                     <div className="card-header">
                                         <h3 className="card-title">{product.name}</h3>
-                                        {product.rating && (
-                                            <div className="card-rating">
-                                                <IoMdStar className="star-icon" />
-                                                <span>{product.rating}</span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="card-features">
-                                        <span className="feature">
-                                            <GiStrawberry className="feature-icon" />
-                                            {product.strawberries} ягод
-                                        </span>
-                                        <span className="feature">
-                                            <GiChocolateBar className="feature-icon" />
-                                            {product.weight}
-                                        </span>
                                     </div>
 
                                     <div className="card-footer">
                                         <div className="price-section">
-                                            {product.oldPrice && (
-                                                <span className="old-price">
-                                                    {product.oldPrice.toLocaleString()} сум
-                                                </span>
-                                            )}
                                             <span className="card-price">
-                                                {product.price.toLocaleString()} сум
+                                                {formatPrice(product.price)}
                                             </span>
                                         </div>
                                         <button
                                             className={`card-add ${addedToCart[product.id] ? 'added' : ''}`}
                                             onClick={(e) => addToCart(product, e)}
-                                            disabled={!product.inStock}
-                                            title={product.inStock ? 'Добавить в корзину' : 'Нет в наличии'}
                                         >
                                             {addedToCart[product.id] ? (
                                                 <FiCheck className="check-icon" />

@@ -3,93 +3,120 @@
 import { useState } from 'react';
 import './interior.css';
 import {
-    FiEye,
     FiChevronLeft,
     FiChevronRight,
     FiStar,
     FiHeart,
-    FiCamera
+    FiCamera,
+    FiShoppingCart
 } from 'react-icons/fi';
 import { GiCrowNest } from "react-icons/gi";
 import { GiChocolateBar } from "react-icons/gi";
 import { GiHeartWings } from "react-icons/gi";
 import { GiFamilyHouse } from "react-icons/gi";
 import { IoMdHeart, IoMdPricetag } from 'react-icons/io';
+import products from '@/app/utils/data1';
 
 const InteriorShowcase = () => {
     const [activeImage, setActiveImage] = useState(0);
     const [likedBoxes, setLikedBoxes] = useState({});
     const [isZoomed, setIsZoomed] = useState(false);
+    const [addedToCart, setAddedToCart] = useState({});
 
     const interiors = [
         {
             id: 1,
-            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/3.png",
             title: "Уютная атмосфера",
             description: "Наш бутик создан для вашего комфорта",
             icon: <FiHeart />
         },
         {
             id: 2,
-            image: "https://images.unsplash.com/photo-1556020685-ae41abfc9365?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/4.png",
             title: "Золотая витрина",
             description: "Каждый бокс - произведение искусства",
             icon: <GiCrowNest />
         },
         {
             id: 3,
-            image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=800&auto=format&fit=crop",
+            image: "/images/carousel/carousel/5.png",
             title: "Зона дегустации",
             description: "Попробуйте перед покупкой",
             icon: <GiChocolateBar />
         }
     ];
 
-    const boxes = [
-        {
-            id: 1,
-            image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=800&auto=format&fit=crop",
-            name: "Премиум бокс",
-            price: "650 000 сум",
-            icon: <GiCrowNest />,
-            badge: "Хит",
-            weight: "500г",
-            pieces: "16 шт"
-        },
-        {
-            id: 2,
-            image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop",
-            name: "Романтический",
-            price: "380 000 сум",
-            icon: <GiHeartWings />,
-            badge: "Love",
-            weight: "350г",
-            pieces: "9 шт"
-        },
-        {
-            id: 3,
-            image: "https://images.unsplash.com/photo-1511381939415-e44015466834?q=80&w=800&auto=format&fit=crop",
-            name: "Семейный",
-            price: "890 000 сум",
-            icon: <GiFamilyHouse />,
-            badge: "Family",
-            weight: "800г",
-            pieces: "24 шт"
-        },
-        {
-            id: 4,
-            image: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?q=80&w=800&auto=format&fit=crop",
-            name: "Императорский",
-            price: "1 500 000 сум",
-            icon: <GiHeartWings />,
-            badge: "VIP",
-            weight: "1000г",
-            pieces: "36 шт"
+    // Берем первые 4 товара и используем только нужные поля
+    const featuredBoxes = products.slice(0, 4).map((product, index) => ({
+        id: product.id,
+        image: product.image,
+        name: product.name,
+        price: product.price,
+        icon: [<GiCrowNest />, <GiHeartWings />, <GiFamilyHouse />, <GiChocolateBar />][index % 4],
+        badge: index === 0 ? "Хит" : index === 1 ? "Love" : index === 2 ? "Family" : "VIP"
+    }));
+
+    // Функция для парсинга цены (поддержка диапазонов)
+    const parsePrice = (priceStr) => {
+        if (typeof priceStr === 'number') return priceStr;
+        if (priceStr.includes('-')) {
+            return parseInt(priceStr.split('-')[0]);
         }
-    ];
+        return parseInt(priceStr);
+    };
+
+    // Форматирование цены
+    const formatPrice = (price) => {
+        if (price.includes('-')) {
+            const [min, max] = price.split('-').map(p => parseInt(p));
+            return `${new Intl.NumberFormat('uz-UZ').format(min)} - ${new Intl.NumberFormat('uz-UZ').format(max)} сум`;
+        }
+        return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
+    };
 
     const toggleLike = (boxId) => {
         setLikedBoxes(prev => ({ ...prev, [boxId]: !prev[boxId] }));
+    };
+
+    const addToCart = (product, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+            const savedCart = localStorage.getItem('chocoberry-cart');
+            let cart = savedCart ? JSON.parse(savedCart) : [];
+
+            const existingItem = cart.find(item => item.id === product.id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: parsePrice(product.price),
+                    priceRaw: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('chocoberry-cart', JSON.stringify(cart));
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            window.dispatchEvent(new CustomEvent('cartUpdated', {
+                detail: { count: totalItems }
+            }));
+
+            setAddedToCart(prev => ({ ...prev, [product.id]: true }));
+            setTimeout(() => {
+                setAddedToCart(prev => ({ ...prev, [product.id]: false }));
+            }, 1000);
+
+        } catch (error) {
+            console.error('Ошибка добавления в корзину:', error);
+        }
     };
 
     const nextImage = () => {
@@ -177,14 +204,21 @@ const InteriorShowcase = () => {
                         </div>
 
                         <div className="boxes-grid">
-                            {boxes.map(box => (
+                            {featuredBoxes.map(box => (
                                 <div key={box.id} className="box-card">
                                     {box.badge && (
                                         <div className="box-card-badge">{box.badge}</div>
                                     )}
 
                                     <div className="box-card-image">
-                                        <img src={box.image} alt={box.name} loading="lazy" />
+                                        <img
+                                            src={box.image}
+                                            alt={box.name}
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
+                                            }}
+                                        />
 
                                         <button
                                             className="box-card-like"
@@ -192,10 +226,6 @@ const InteriorShowcase = () => {
                                             aria-label="Добавить в избранное"
                                         >
                                             <FiHeart className={likedBoxes[box.id] ? 'liked' : ''} />
-                                        </button>
-
-                                        <button className="box-card-quick" aria-label="Быстрый просмотр">
-                                            <FiEye />
                                         </button>
 
                                         <div className="box-card-icons">
@@ -206,18 +236,18 @@ const InteriorShowcase = () => {
                                     <div className="box-card-info">
                                         <h4 className="box-card-name">{box.name}</h4>
 
-                                        <div className="box-card-details">
-                                            <span className="box-card-detail">⚖️ {box.weight}</span>
-                                            <span className="box-card-detail">🍓 {box.pieces}</span>
-                                        </div>
-
                                         <div className="box-card-footer">
                                             <div className="box-card-price-section">
                                                 <IoMdPricetag className="price-icon" />
-                                                <span className="box-card-price">{box.price}</span>
+                                                <span className="box-card-price">{formatPrice(box.price)}</span>
                                             </div>
-                                            <button className="box-card-cart" aria-label="Добавить в корзину">
-                                                <FiEye className="cart-icon" />
+                                            <button
+                                                className={`box-card-cart ${addedToCart[box.id] ? 'added' : ''}`}
+                                                onClick={(e) => addToCart(box, e)}
+                                                aria-label="Добавить в корзину"
+                                            >
+                                                <FiShoppingCart className="cart-icon" />
+                                                {addedToCart[box.id] && <span className="cart-check">✓</span>}
                                             </button>
                                         </div>
                                     </div>

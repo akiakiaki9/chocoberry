@@ -52,7 +52,7 @@ export default function GalleryPage() {
     // Интерьер
     {
       id: 1,
-      image: 'https://images.pexels.com/photos/5632398/pexels-photo-5632398.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/images/carousel/carousel/1.png',
       title: 'Витрина бутика',
       category: 'interior',
       size: 'large',
@@ -60,7 +60,7 @@ export default function GalleryPage() {
     },
     {
       id: 2,
-      image: 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/images/carousel/carousel/2.png',
       title: 'Зона дегустации',
       category: 'interior',
       size: 'small',
@@ -68,7 +68,7 @@ export default function GalleryPage() {
     },
     {
       id: 3,
-      image: 'https://images.pexels.com/photos/5632397/pexels-photo-5632397.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/images/carousel/carousel/3.png',
       title: 'Основной зал',
       category: 'interior',
       size: 'small',
@@ -76,114 +76,12 @@ export default function GalleryPage() {
     },
     {
       id: 4,
-      image: 'https://images.pexels.com/photos/5632403/pexels-photo-5632403.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/images/carousel/carousel/4.png',
       title: 'Золотая витрина',
       category: 'interior',
       size: 'wide',
       icon: <GiCrown />
     },
-
-    // Боксы
-    {
-      id: 5,
-      image: 'https://images.pexels.com/photos/1126353/pexels-photo-1126353.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Клубничное сердце',
-      category: 'boxes',
-      size: 'small',
-      icon: <GiHeartWings />
-    },
-    {
-      id: 6,
-      image: 'https://images.pexels.com/photos/1126354/pexels-photo-1126354.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Золотая коллекция',
-      category: 'boxes',
-      size: 'large',
-      icon: <GiCrown />
-    },
-    {
-      id: 7,
-      image: 'https://images.pexels.com/photos/1126355/pexels-photo-1126355.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Романтический',
-      category: 'boxes',
-      size: 'small',
-      icon: <IoMdHeart />
-    },
-    {
-      id: 8,
-      image: 'https://images.pexels.com/photos/1126356/pexels-photo-1126356.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Семейный бокс',
-      category: 'boxes',
-      size: 'small',
-      icon: <GiFamilyHouse />
-    },
-    {
-      id: 9,
-      image: 'https://images.pexels.com/photos/1126357/pexels-photo-1126357.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Мини бокс',
-      category: 'boxes',
-      size: 'wide',
-      icon: <FiPackage />
-    },
-
-    // Процесс
-    {
-      id: 10,
-      image: 'https://images.pexels.com/photos/4016527/pexels-photo-4016527.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Покрытие шоколадом',
-      category: 'process',
-      size: 'small',
-      icon: <GiChocolateBar />
-    },
-    {
-      id: 11,
-      image: 'https://images.pexels.com/photos/4016528/pexels-photo-4016528.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Декорирование',
-      category: 'process',
-      size: 'large',
-      icon: <GiStrawberry />
-    },
-    {
-      id: 12,
-      image: 'https://images.pexels.com/photos/4016529/pexels-photo-4016529.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Упаковка',
-      category: 'process',
-      size: 'small',
-      icon: <FiPackage />
-    },
-
-    // Мероприятия
-    {
-      id: 13,
-      image: 'https://images.pexels.com/photos/2253643/pexels-photo-2253643.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Мастер-класс',
-      category: 'events',
-      size: 'small',
-      icon: <FiUsers />
-    },
-    {
-      id: 14,
-      image: 'https://images.pexels.com/photos/2253644/pexels-photo-2253644.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Дегустация',
-      category: 'events',
-      size: 'wide',
-      icon: <GiPartyPopper />
-    },
-    {
-      id: 15,
-      image: 'https://images.pexels.com/photos/2253645/pexels-photo-2253645.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Свадьба',
-      category: 'events',
-      size: 'small',
-      icon: <GiHeartWings />
-    },
-    {
-      id: 16,
-      image: 'https://images.pexels.com/photos/2253646/pexels-photo-2253646.jpeg?auto=compress&cs=tinysrgb&w=600',
-      title: 'Корпоратив',
-      category: 'events',
-      size: 'large',
-      icon: <FiUsers />
-    }
   ];
 
   // Подсчет статистики при загрузке

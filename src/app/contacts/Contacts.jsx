@@ -1,84 +1,42 @@
 'use client';
 
-import { useState } from 'react';
 import './contacts.css';
 import {
     FiMapPin,
     FiPhone,
-    FiMail,
     FiClock,
-    FiInstagram,
-    FiSend,
-    FiMessageSquare,
     FiHeart,
     FiTruck,
     FiGift,
     FiCreditCard,
     FiCheckCircle,
     FiArrowRight,
-    FiFacebook,
-    FiTwitter
 } from 'react-icons/fi';
 import {
     FaTelegram,
-    FaWhatsapp,
-    FaTiktok,
     FaInstagram as FaInstagramBrand,
-    FaFacebookF
 } from 'react-icons/fa';
 import {
-    IoLocationOutline,
-    IoTimeOutline,
-    IoCallOutline,
-    IoMailOutline,
-    IoLogoWhatsapp,
-    IoLogoFacebook,
-    IoLogoInstagram
+    IoLocationOutline
 } from 'react-icons/io5';
-import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineMail } from 'react-icons/hi';
-import { BsTelegram, BsWhatsapp, BsTiktok } from 'react-icons/bs';
-import { MdOutlineAccessTime, MdOutlineEmail, MdOutlinePhone } from 'react-icons/md';
+import { HiOutlineLocationMarker, HiOutlinePhone } from 'react-icons/hi';
+import { MdOutlineAccessTime } from 'react-icons/md';
+import { useState } from 'react';
 
 export default function ContactsPage() {
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        message: ''
-    });
-    const [formSubmitted, setFormSubmitted] = useState(false);
     const [hoveredSocial, setHoveredSocial] = useState(null);
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Form submitted:', formData);
-        setFormSubmitted(true);
-        setTimeout(() => setFormSubmitted(false), 3000);
-        setFormData({ name: '', phone: '', message: '' });
-    };
-
     const shopInfo = {
-        address: 'ул. Шохрух, 42, Центральный район, Бухара',
+        address: 'Ашхобот 2v, Бухара',
         phones: [
-            { number: '+998 90 123 45 67', description: 'Бронирование и заказы', icon: <FiPhone /> },
-            { number: '+998 90 123 45 68', description: 'WhatsApp', icon: <FaWhatsapp /> }
+            { number: '+998 91 443 34 43', description: 'Бронирование и заказы', icon: <FiPhone /> },
         ],
-        email: 'info@chocoberry.uz',
         workHours: [
-            { days: 'Понедельник - Пятница', hours: '10:00 - 22:00' },
-            { days: 'Суббота - Воскресенье', hours: '11:00 - 23:00' }
+            { days: 'Ежедневно', hours: '10:00 - 00:00' },
         ],
         socials: [
-            { name: 'Instagram', icon: <FaInstagramBrand />, url: 'https://instagram.com/chocoberry', color: '#E4405F' },
-            { name: 'Telegram', icon: <FaTelegram />, url: 'https://t.me/chocoberry', color: '#0088CC' },
-            { name: 'Facebook', icon: <FaFacebookF />, url: 'https://facebook.com/chocoberry', color: '#1877F2' },
-            { name: 'TikTok', icon: <FaTiktok />, url: 'https://tiktok.com/@chocoberry', color: '#000000' }
+            { name: 'Instagram', icon: <FaInstagramBrand />, url: 'https://www.instagram.com/chocoberry_fruits_bukhara_kafe?igsh=MTk1emh4dDk4ZHJ4eA%3D%3D', color: '#E4405F' },
+            { name: 'Telegram', icon: <FaTelegram />, url: 'https://t.me/chocoberry_fruits_bukhara', color: '#0088CC' },
         ]
     };
 
@@ -91,7 +49,7 @@ export default function ContactsPage() {
 
     const faqs = [
         { q: 'Как долго готовится заказ?', a: 'Обычно 20-30 минут. В выходные может быть чуть дольше.' },
-        { q: 'Можно ли заказать с доставкой?', a: 'Да, доставляем по Бухаре с 10:00 до 22:00.' },
+        { q: 'Можно ли заказать с доставкой?', a: 'Да, доставляем по Бухаре с 10:00 до 0:00.' },
         { q: 'Как хранить боксы?', a: 'В холодильнике при +2…+6°C не более 3 дней.' },
         { q: 'Есть ли у вас подарочные сертификаты?', a: 'Да, можно приобрести в бутике или заказать онлайн.' }
     ];
@@ -170,20 +128,6 @@ export default function ContactsPage() {
                                 </div>
                             </div>
 
-                            {/* Email */}
-                            <div className="info-card">
-                                <div className="info-icon-wrapper">
-                                    <HiOutlineMail className="info-icon" />
-                                </div>
-                                <div className="info-content">
-                                    <h3>Email</h3>
-                                    <a href={`mailto:${shopInfo.email}`} className="email-link">
-                                        <FiMail className="email-icon" />
-                                        {shopInfo.email}
-                                    </a>
-                                </div>
-                            </div>
-
                             {/* Часы работы */}
                             <div className="info-card">
                                 <div className="info-icon-wrapper">
@@ -226,72 +170,8 @@ export default function ContactsPage() {
                             </div>
                         </div>
 
-                        {/* Правая колонка - форма и карта */}
+                        {/* Правая колонка - карта */}
                         <div className="contacts-right">
-                            {/* Форма обратной связи */}
-                            <div className="contact-form-card">
-                                <h2 className="form-title">
-                                    <FiSend className="form-title-icon" />
-                                    Напишите нам
-                                </h2>
-                                <p className="form-subtitle">
-                                    Оставьте заявку и мы перезвоним в течение 15 минут
-                                </p>
-
-                                <form onSubmit={handleSubmit} className="contact-form">
-                                    <div className="form-group">
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            placeholder="Ваше имя"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        <FiHeart className="input-icon" />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            placeholder="Номер телефона"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        <FiPhone className="input-icon" />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <textarea
-                                            name="message"
-                                            placeholder="Ваше сообщение (необязательно)"
-                                            value={formData.message}
-                                            onChange={handleChange}
-                                            rows="4"
-                                        ></textarea>
-                                        <FiMessageSquare className="textarea-icon" />
-                                    </div>
-
-                                    <button type="submit" className="submit-btn">
-                                        Отправить заявку
-                                        <FiSend className="submit-icon" />
-                                    </button>
-
-                                    {formSubmitted && (
-                                        <div className="form-success">
-                                            <FiCheckCircle className="success-icon" />
-                                            Спасибо! Мы свяжемся с вами скоро
-                                        </div>
-                                    )}
-
-                                    <p className="form-agreement">
-                                        Нажимая на кнопку, вы соглашаетесь с политикой конфиденциальности
-                                    </p>
-                                </form>
-                            </div>
-
                             {/* Карта */}
                             <div className="map-card">
                                 <h3 className="map-title">
@@ -300,9 +180,9 @@ export default function ContactsPage() {
                                 </h3>
                                 <div className="map-container">
                                     <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124456.78901234567!2d64.416666!3d39.766666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQ2JzAwLjAiTiA2NMKwMjUnMDAuMCJF!5e0!3m2!1sru!2s!4v1234567890"
+                                        src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d6132.868239647303!2d64.446026!3d39.774812!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMznCsDQ2JzI5LjMiTiA2NMKwMjYnNDUuNyJF!5e0!3m2!1sru!2s!4v1774271769866!5m2!1sru!2s"
                                         width="100%"
-                                        height="300"
+                                        height="400"
                                         style={{ border: 0 }}
                                         allowFullScreen=""
                                         loading="lazy"
@@ -313,22 +193,22 @@ export default function ContactsPage() {
                                 {/* Фото бутика */}
                                 <div className="map-gallery">
                                     <img
-                                        src="https://images.pexels.com/photos/5632398/pexels-photo-5632398.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        src="/images/data/images/45.png"
                                         alt="Фасад бутика"
                                         loading="lazy"
                                     />
                                     <img
-                                        src="https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        src="/images/data/images/42.png"
                                         alt="Внутри бутика"
                                         loading="lazy"
                                     />
                                     <img
-                                        src="https://images.pexels.com/photos/5632397/pexels-photo-5632397.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        src="/images/data/images/41.png"
                                         alt="Витрина"
                                         loading="lazy"
                                     />
                                     <img
-                                        src="https://images.pexels.com/photos/5632403/pexels-photo-5632403.jpeg?auto=compress&cs=tinysrgb&w=200"
+                                        src="/images/data/images/40.png"
                                         alt="Золотая витрина"
                                         loading="lazy"
                                     />

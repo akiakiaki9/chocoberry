@@ -877,3 +877,96 @@
         transform: none;
     }
 }
+
+/* Добавьте или обновите эти стили в interior.css */
+
+.box-card-cart {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #bc8c4c 0%, #ffd700 100%);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.box-card-cart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.box-card-cart:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
+.box-card-cart:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(188, 140, 76, 0.4);
+}
+
+.box-card-cart.added {
+    background: #4caf50;
+    animation: cartSuccess 0.5s ease;
+}
+
+.cart-icon {
+    width: 20px;
+    height: 20px;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+}
+
+.box-card-cart:hover .cart-icon {
+    transform: scale(1.1);
+}
+
+.box-card-cart.added .cart-icon {
+    color: #ffffff;
+}
+
+.cart-check {
+    position: absolute;
+    font-size: 1.2rem;
+    animation: checkMark 0.3s ease;
+}
+
+@keyframes cartSuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes checkMark {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

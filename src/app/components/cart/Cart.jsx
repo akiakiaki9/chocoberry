@@ -6,6 +6,7 @@ import './cart.css';
 const Cart = ({ isOpen, onClose }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showOrderModal, setShowOrderModal] = useState(false);
 
     // Загрузка корзины из localStorage
     const loadCart = () => {
@@ -32,7 +33,7 @@ const Cart = ({ isOpen, onClose }) => {
 
     useEffect(() => {
         if (isOpen) {
-            loadCart(); // Перезагружаем при открытии
+            loadCart();
         }
     }, [isOpen]);
 
@@ -41,7 +42,6 @@ const Cart = ({ isOpen, onClose }) => {
         localStorage.setItem('chocoberry-cart', JSON.stringify(newCart));
         setCartItems(newCart);
 
-        // Немедленно обновляем счетчик
         const totalItems = newCart.reduce((sum, item) => sum + item.quantity, 0);
         window.dispatchEvent(new CustomEvent('cartUpdated', {
             detail: { count: totalItems }
@@ -94,13 +94,30 @@ const Cart = ({ isOpen, onClose }) => {
         }
     };
 
+    const handleCheckout = () => {
+        setShowOrderModal(true);
+    };
+
+    const handleCallOrder = () => {
+        // Формируем текст заказа
+        const orderText = cartItems.map(item => {
+            return `${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}`;
+        }).join('\n');
+        
+        const totalText = `\n\nИтого: ${formatPrice(getTotalPrice())}`;
+        const message = encodeURIComponent(`Здравствуйте! Хочу оформить заказ:\n\n${orderText}${totalText}`);
+        
+        // Открываем WhatsApp
+        window.open(`https://wa.me/998914433443?text=${message}`, '_blank');
+        
+        // Очищаем корзину
+        saveCart([]);
+        setShowOrderModal(false);
+        onClose();
+    };
+
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('uz-UZ', {
-            style: 'currency',
-            currency: 'UZS',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(price);
+        return new Intl.NumberFormat('uz-UZ').format(price) + ' сум';
     };
 
     if (!isOpen) return null;
@@ -147,10 +164,12 @@ const Cart = ({ isOpen, onClose }) => {
                                     <div key={item.id} className="cart-item">
                                         <div className="item-image">
                                             <img
-                                                src={item.image || '/images/placeholder.jpg'}
+                                                src={item.image}
                                                 alt={item.name}
                                                 onError={(e) => {
-                                                    e.target.src = 'https://via.placeholder.com/100x100?text=🍓';
+                                                    console.log('Ошибка загрузки изображения:', item.image);
+                                                    e.target.src = '/images/placeholder.jpg';
+                                                    e.onerror = null;
                                                 }}
                                             />
                                         </div>
@@ -199,7 +218,7 @@ const Cart = ({ isOpen, onClose }) => {
                                 </div>
 
                                 <div className="cart-buttons">
-                                    <button className="checkout-btn">
+                                    <button className="checkout-btn" onClick={handleCheckout}>
                                         Оформить заказ
                                     </button>
                                     <button className="clear-cart-btn" onClick={clearCart}>
@@ -211,6 +230,71 @@ const Cart = ({ isOpen, onClose }) => {
                     )}
                 </div>
             </div>
+
+            {/* Модальное окно оформления заказа */}
+            {showOrderModal && (
+                <>
+                    <div className="order-modal-overlay" onClick={() => setShowOrderModal(false)} />
+                    <div className="order-modal">
+                        <button className="order-modal-close" onClick={() => setShowOrderModal(false)}>
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                        </button>
+
+                        <div className="order-modal-content">
+                            <div className="order-modal-icon">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                </svg>
+                            </div>
+
+                            <h3 className="order-modal-title">Ваш заказ</h3>
+                            
+                            <div className="order-modal-items">
+                                {cartItems.map((item) => (
+                                    <div key={item.id} className="order-modal-item">
+                                        <div className="order-item-image">
+                                            <img 
+                                                src={item.image} 
+                                                alt={item.name}
+                                                onError={(e) => {
+                                                    e.target.src = '/images/placeholder.jpg';
+                                                }}
+                                            />
+                                        </div>
+                                        <span className="order-item-name">{item.name}</span>
+                                        <span className="order-item-quantity">x{item.quantity}</span>
+                                        <span className="order-item-price">{formatPrice(item.price * item.quantity)}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="order-modal-total">
+                                <span>Итого:</span>
+                                <span className="order-total-price">{formatPrice(getTotalPrice())}</span>
+                            </div>
+
+                            <p className="order-modal-text">
+                                Нажмите кнопку "Позвонить", и наш менеджер свяжется с вами для подтверждения заказа
+                            </p>
+
+                            <div className="order-modal-buttons">
+                                <button className="order-call-btn" onClick={handleCallOrder}>
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                    Позвонить
+                                </button>
+                                <button className="order-cancel-btn" onClick={() => setShowOrderModal(false)}>
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
         </>
     );
 };

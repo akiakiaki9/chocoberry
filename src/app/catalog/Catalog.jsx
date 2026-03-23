@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { products, categories } from '../utils/data';
+import { products } from '../utils/data1';
 import './catalog.css';
 import {
     FiFilter,
@@ -25,26 +25,73 @@ import { FaFire } from 'react-icons/fa';
 import { IoMdPricetag } from 'react-icons/io';
 
 export default function CatalogPage() {
-    const [activeCategory, setActiveCategory] = useState('all');
     const [sortBy, setSortBy] = useState('popular');
     const [priceRange, setPriceRange] = useState([0, 2000000]);
     const [showFilters, setShowFilters] = useState(false);
     const [addedToCart, setAddedToCart] = useState({});
     const [quickView, setQuickView] = useState(null);
 
+    // Категории - можно создать на основе данных или оставить для фильтрации
+    const categories = [
+        { id: 'all', name: 'Все боксы', icon: GiStrawberry },
+        { id: 'classic', name: 'Классические', icon: GiStrawberry },
+        { id: 'premium', name: 'Премиум', icon: GiCrown },
+        { id: 'romantic', name: 'Романтические', icon: GiHeartWings }
+    ];
+
+    // Функция для парсинга цены (поддержка диапазонов типа "700000-500000")
+    const parsePrice = (priceStr) => {
+        if (typeof priceStr === 'number') return priceStr;
+        if (priceStr.includes('-')) {
+            const [min, max] = priceStr.split('-').map(p => parseInt(p));
+            return min; // или можно вернуть среднее значение
+        }
+        return parseInt(priceStr);
+    };
+
+    // Получение минимальной цены для фильтрации
+    const getMinPrice = (priceStr) => {
+        if (typeof priceStr === 'number') return priceStr;
+        if (priceStr.includes('-')) {
+            return parseInt(priceStr.split('-')[0]);
+        }
+        return parseInt(priceStr);
+    };
+
+    // Получение максимальной цены для фильтрации
+    const getMaxPrice = (priceStr) => {
+        if (typeof priceStr === 'number') return priceStr;
+        if (priceStr.includes('-')) {
+            return parseInt(priceStr.split('-')[1]);
+        }
+        return parseInt(priceStr);
+    };
+
     // Фильтрация товаров
     const filteredProducts = products.filter(product => {
-        if (activeCategory !== 'all' && product.category !== activeCategory) return false;
-        if (product.price < priceRange[0] || product.price > priceRange[1]) return false;
-        return true;
+        const productMinPrice = getMinPrice(product.price);
+        const productMaxPrice = getMaxPrice(product.price);
+        
+        // Проверяем, попадает ли товар в диапазон цен
+        // Если цена в виде диапазона, проверяем пересечение
+        if (product.price.includes('-')) {
+            return productMinPrice <= priceRange[1] && productMaxPrice >= priceRange[0];
+        } else {
+            return productMinPrice >= priceRange[0] && productMinPrice <= priceRange[1];
+        }
     });
 
     // Сортировка
     const sortedProducts = [...filteredProducts].sort((a, b) => {
+        const priceA = parsePrice(a.price);
+        const priceB = parsePrice(b.price);
+        
         switch (sortBy) {
-            case 'price-asc': return a.price - b.price;
-            case 'price-desc': return b.price - a.price;
-            case 'popular': return (b.popular ? 1 : 0) - (a.popular ? 1 : 0);
+            case 'price-asc': return priceA - priceB;
+            case 'price-desc': return priceB - priceA;
+            case 'popular': 
+                // Если нет поля popular, можно сортировать по id или цене
+                return a.id - b.id;
             default: return 0;
         }
     });
@@ -65,7 +112,8 @@ export default function CatalogPage() {
                 cart.push({
                     id: product.id,
                     name: product.name,
-                    price: product.price,
+                    price: parsePrice(product.price),
+                    priceRaw: product.price, // сохраняем оригинальную цену
                     image: product.image || '/images/placeholder.jpg',
                     quantity: 1
                 });
@@ -89,14 +137,21 @@ export default function CatalogPage() {
     };
 
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('uz-UZ').format(price) + ' сум';
+        if (price.includes('-')) {
+            const [min, max] = price.split('-').map(p => parseInt(p));
+            return `${new Intl.NumberFormat('uz-UZ').format(min)} - ${new Intl.NumberFormat('uz-UZ').format(max)} сум`;
+        }
+        return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
     };
 
     const resetFilters = () => {
-        setActiveCategory('all');
         setPriceRange([0, 2000000]);
         setSortBy('popular');
     };
+
+    // Определяем популярные товары (например, первые 5 или с определенными id)
+    const popularProductIds = [1, 2, 3, 4, 5]; // пример популярных товаров
+    const isProductPopular = (id) => popularProductIds.includes(id);
 
     return (
         <div className="catalog-page">
@@ -135,25 +190,6 @@ export default function CatalogPage() {
                                 <button className="filters-close" onClick={() => setShowFilters(false)}>
                                     <FiX />
                                 </button>
-                            </div>
-
-                            {/* Категории */}
-                            <div className="filter-section">
-                                <h4>Категории</h4>
-                                <div className="filter-categories">
-                                    {categories.map(cat => (
-                                        <button
-                                            key={cat.id}
-                                            className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                                            onClick={() => setActiveCategory(cat.id)}
-                                        >
-                                            {cat.id === 'classic' && <GiStrawberry className="category-icon" />}
-                                            {cat.id === 'premium' && <GiCrown className="category-icon" />}
-                                            {cat.id === 'romantic' && <GiHeartWings className="category-icon" />}
-                                            <span>{cat.name}</span>
-                                        </button>
-                                    ))}
-                                </div>
                             </div>
 
                             {/* Ценовой диапазон */}
@@ -234,10 +270,7 @@ export default function CatalogPage() {
                                             style={{ animationDelay: `${index * 0.05}s` }}
                                         >
                                             <div className="product-card">
-                                                {!product.inStock && (
-                                                    <div className="product-stock-badge">Нет в наличии</div>
-                                                )}
-                                                {product.popular && product.inStock && (
+                                                {isProductPopular(product.id) && (
                                                     <div className="product-badge">
                                                         <FaFire className="badge-icon" />
                                                         <span>Хит продаж</span>
@@ -266,25 +299,11 @@ export default function CatalogPage() {
                                                 <div className="product-info">
                                                     <h3 className="product-name">{product.name}</h3>
 
-                                                    <div className="product-meta">
-                                                        <span className="product-weight">
-                                                            <GiWeight className="meta-icon" />
-                                                            {product.weight}
-                                                        </span>
-                                                        <span className="product-strawberries">
-                                                            <GiStrawberry className="meta-icon" />
-                                                            {product.strawberries}
-                                                        </span>
-                                                    </div>
-
-                                                    <p className="product-description">{product.description}</p>
-
                                                     <div className="product-footer">
                                                         <span className="product-price">{formatPrice(product.price)}</span>
                                                         <button
                                                             className={`product-add ${addedToCart[product.id] ? 'added' : ''}`}
                                                             onClick={(e) => addToCart(product, e)}
-                                                            disabled={!product.inStock}
                                                         >
                                                             <FiShoppingCart className="cart-icon" />
                                                             <span>{addedToCart[product.id] ? 'Добавлено' : 'В корзину'}</span>
@@ -314,11 +333,6 @@ export default function CatalogPage() {
                             </div>
                             <div className="quick-view-info">
                                 <h2>{quickView.name}</h2>
-                                <p className="quick-view-description">{quickView.description}</p>
-                                <div className="quick-view-details">
-                                    <span><GiWeight /> {quickView.weight}</span>
-                                    <span><GiStrawberry /> {quickView.strawberries}</span>
-                                </div>
                                 <div className="quick-view-price">{formatPrice(quickView.price)}</div>
                                 <button
                                     className="btn btn-primary quick-view-add"

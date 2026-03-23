@@ -1,7 +1,7 @@
 /* ===== ОСНОВНЫЕ СТИЛИ ===== */
 .why-us {
     padding: 80px 0;
-    background: linear-gradient(135deg, var(--white) 0%, var(--bg-light) 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2a24 100%);
     position: relative;
     overflow: hidden;
 }
@@ -20,7 +20,7 @@
 }
 
 .container {
-    max-width: var(--container-width);
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
     position: relative;
@@ -39,7 +39,7 @@
     position: relative;
     display: inline-block;
     font-family: var(--font-heading);
-    color: #faf6f1 !important;
+    color: #ffffff;
 }
 
 .section-title::after {
@@ -50,19 +50,19 @@
     transform: translateX(-50%);
     width: 80px;
     height: 3px;
-    background: linear-gradient(90deg, var(--red), var(--gold));
+    background: linear-gradient(90deg, #ff4d4d, #bc8c4c);
     border-radius: 3px;
 }
 
 .gold-text {
-    color: var(--gold);
+    color: #bc8c4c;
     position: relative;
     display: inline-block;
 }
 
 .section-subtitle {
     font-size: clamp(1rem, 2vw, 1.2rem);
-    color: #666;
+    color: #b0b0b0;
     max-width: 600px;
     margin: 0 auto;
     line-height: 1.6;
@@ -78,16 +78,17 @@
 
 /* ===== КАРТОЧКА ===== */
 .why-card {
-    background: var(--white);
+    background: #2d2a24;
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     animation: cardAppear 0.6s ease forwards;
     opacity: 0;
     transform: translateY(30px);
     position: relative;
     cursor: pointer;
+    border: 1px solid rgba(188, 140, 76, 0.2);
 }
 
 @keyframes cardAppear {
@@ -99,80 +100,20 @@
 
 .why-card:hover {
     transform: translateY(-12px);
-    box-shadow: var(--shadow-lg);
-}
-
-/* ===== ИЗОБРАЖЕНИЕ ===== */
-.why-card-image {
-    position: relative;
-    height: 220px;
-    overflow: hidden;
-    background: #f5f5f5;
-}
-
-.why-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
-}
-
-.why-card:hover .why-card-image img {
-    transform: scale(1.15);
-}
-
-.why-card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, 
-        rgba(0, 0, 0, 0.6) 0%, 
-        rgba(0, 0, 0, 0.2) 50%,
-        transparent 100%);
-    display: flex;
-    align-items: flex-end;
-    padding: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.why-card:hover .why-card-overlay {
-    opacity: 1;
-}
-
-.why-card-stats {
-    transform: translateY(20px);
-    transition: transform 0.4s ease;
-}
-
-.why-card:hover .why-card-stats {
-    transform: translateY(0);
-}
-
-.stat-label {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px 16px;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--black);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    display: inline-block;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 20px 40px rgba(188, 140, 76, 0.2);
+    border-color: rgba(188, 140, 76, 0.5);
 }
 
 /* ===== КОНТЕНТ КАРТОЧКИ ===== */
 .why-card-content {
-    padding: 30px 20px 25px;
+    padding: 40px 25px 35px;
     text-align: center;
     position: relative;
 }
 
 .why-card-icon-wrapper {
     position: absolute;
-    top: -30px;
+    top: -35px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
@@ -181,60 +122,59 @@
 .why-card-icon {
     width: 70px;
     height: 70px;
-    background: var(--gold);
+    background: #bc8c4c;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-gold);
+    box-shadow: 0 8px 20px rgba(188, 140, 76, 0.3);
     transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     font-size: 2rem;
-    color: #2d2a24;
-    border: 3px solid var(--white);
+    border: 3px solid #2d2a24;
 }
 
 .why-card:hover .why-card-icon {
     transform: rotate(360deg) scale(1.1);
-    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+    box-shadow: 0 10px 25px rgba(188, 140, 76, 0.5);
 }
 
 .why-card-title {
-    font-size: 1.2rem;
-    margin-bottom: 12px;
-    color: var(--black);
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #ffffff;
     font-family: var(--font-heading);
     font-weight: 600;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 .why-card-description {
-    color: #666;
+    color: #b0b0b0;
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 20px;
 }
 
 .why-card-features {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
+    border-top: 1px solid rgba(188, 140, 76, 0.2);
+    padding-top: 20px;
     margin-top: auto;
 }
 
 .why-feature {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-size: 0.85rem;
-    color: var(--gold);
-    background: #faf6f1;
-    padding: 6px 15px;
+    color: #bc8c4c;
+    background: rgba(188, 140, 76, 0.1);
+    padding: 8px 18px;
     border-radius: 30px;
 }
 
 .feature-icon {
     width: 14px;
     height: 14px;
-    color: var(--gold);
+    color: #bc8c4c;
 }
 
 /* ===== МОБИЛЬНЫЕ ДОПОЛНИТЕЛЬНЫЕ ПРЕИМУЩЕСТВА ===== */
@@ -249,50 +189,23 @@
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
-    background: var(--white);
+    background: #2d2a24;
     border-radius: 50px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     font-size: 1rem;
-    color: var(--black);
+    color: #ffffff;
     width: fit-content;
     margin: 0 auto;
+    border: 1px solid rgba(188, 140, 76, 0.2);
 }
 
 .mobile-feature-icon {
     width: 20px;
     height: 20px;
-    color: var(--gold);
-}
-
-/* ===== АНИМАЦИИ ===== */
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.why-card:nth-child(odd) {
-    animation: cardAppear 0.6s ease forwards;
-}
-
-.why-card:nth-child(even) {
-    animation: cardAppear 0.6s ease forwards 0.1s;
+    color: #bc8c4c;
 }
 
 /* ===== МЕДИА ЗАПРОСЫ ===== */
-
-/* Десктоп (1024px и больше) */
-@media (min-width: 1025px) {
-    .why-us-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
 
 /* Планшеты (768px - 1024px) */
 @media (max-width: 1024px) {
@@ -310,14 +223,14 @@
         margin-bottom: 40px;
     }
 
-    .why-card-image {
-        height: 200px;
-    }
-
     .why-card-icon {
         width: 65px;
         height: 65px;
         font-size: 1.8rem;
+    }
+    
+    .why-card-content {
+        padding: 40px 20px 30px;
     }
 }
 
@@ -346,7 +259,7 @@
 
     .why-us-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
+        gap: 30px;
         margin-top: 30px;
         max-width: 450px;
         margin-left: auto;
@@ -359,16 +272,12 @@
         width: 100%;
     }
 
-    .why-card-image {
-        height: 180px;
-    }
-
     .why-card:hover {
         transform: translateY(-8px);
     }
 
     .why-card-content {
-        padding: 35px 20px 20px;
+        padding: 45px 20px 25px;
     }
 
     .why-card-icon {
@@ -379,17 +288,12 @@
 
     .why-card-title {
         font-size: 1.3rem;
-        margin-top: 30px;
+        margin-top: 25px;
     }
 
     .why-card-description {
         font-size: 1rem;
-        margin-bottom: 15px;
-    }
-
-    .stat-label {
-        font-size: 0.9rem;
-        padding: 10px 20px;
+        margin-bottom: 20px;
     }
 
     /* Показываем мобильные преимущества */
@@ -425,16 +329,11 @@
     }
 
     .why-us-grid {
-        gap: 20px;
-        padding: 0 5px;
-    }
-
-    .why-card-image {
-        height: 160px;
+        gap: 25px;
     }
 
     .why-card-content {
-        padding: 30px 15px 18px;
+        padding: 40px 15px 20px;
     }
 
     .why-card-icon {
@@ -445,17 +344,11 @@
 
     .why-card-title {
         font-size: 1.2rem;
-        margin-top: 25px;
+        margin-top: 20px;
     }
 
     .why-card-description {
         font-size: 0.9rem;
-        margin-bottom: 12px;
-    }
-
-    .stat-label {
-        font-size: 0.85rem;
-        padding: 8px 16px;
     }
 
     .mobile-feature {
@@ -507,10 +400,6 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .why-card-image {
-        height: 150px;
-    }
-
     .why-us-mobile-features {
         flex-direction: row;
         flex-wrap: wrap;
@@ -520,21 +409,6 @@
     .mobile-feature {
         width: auto;
         margin: 0;
-    }
-}
-
-/* Высокие экраны */
-@media (min-height: 1000px) and (min-width: 768px) {
-    .why-us {
-        padding: 100px 0;
-    }
-
-    .why-us-grid {
-        gap: 30px;
-    }
-
-    .why-card-image {
-        height: 240px;
     }
 }
 
@@ -548,14 +422,6 @@
         transform: none;
     }
 
-    .why-card:hover .why-card-image img {
-        transform: none;
-    }
-
-    .why-card:hover .why-card-overlay {
-        opacity: 0;
-    }
-
     .why-card-icon {
         animation: pulse 2s infinite;
     }
@@ -565,59 +431,28 @@
     }
 }
 
-/* Темная тема */
-@media (prefers-color-scheme: dark) {
-    .why-us {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2a24 100%);
+@keyframes pulse {
+    0% {
+        transform: scale(1);
     }
-
-    .section-title {
-        color: #fff;
+    50% {
+        transform: scale(1.05);
     }
-
-    .section-subtitle {
-        color: #999;
-    }
-
-    .why-card {
-        background: #2d2a24;
-    }
-
-    .why-card-title {
-        color: #fff;
-    }
-
-    .why-card-description {
-        color: #999;
-    }
-
-    .stat-label {
-        background: #2d2a24;
-        color: #fff;
-    }
-
-    .mobile-feature {
-        background: #2d2a24;
-        color: #fff;
+    100% {
+        transform: scale(1);
     }
 }
 
 /* Улучшения доступности */
 @media (prefers-reduced-motion: reduce) {
     .why-card,
-    .why-card-image img,
     .why-card-icon,
-    .why-card-overlay,
-    .why-card-stats {
+    .why-card-icon {
         animation: none;
         transition: none;
     }
 
     .why-card:hover {
-        transform: none;
-    }
-
-    .why-card:hover .why-card-image img {
         transform: none;
     }
 
