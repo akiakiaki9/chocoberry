@@ -108,7 +108,7 @@ const Cart = ({ isOpen, onClose }) => {
         const message = encodeURIComponent(`Здравствуйте! Хочу оформить заказ:\n\n${orderText}${totalText}`);
         
         // Открываем WhatsApp
-        window.open(`https://t.me/998914433443?text=${message}`, '_blank');
+        window.open(`https://t.me/ddaa_770?text=${message}`, '_blank');
         
         // Очищаем корзину
         saveCart([]);
