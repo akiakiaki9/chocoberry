@@ -512,7 +512,7 @@
     }
 }
 
-/* Мобильные (768px и меньше) */
+/* Мобильные (768px и меньше) - УБИРАЕМ BLUR */
 @media (max-width: 768px) {
     .catalog-preview {
         padding: 50px 0;
@@ -575,6 +575,12 @@
 
     .card-image {
         height: 220px;
+    }
+
+    /* Убираем blur на мобилке */
+    .card-overlay {
+        backdrop-filter: none;
+        background: rgba(0, 0, 0, 0.4);
     }
 
     .quick-view {
@@ -651,6 +657,12 @@
 
     .card-image {
         height: 200px;
+    }
+
+    /* Убираем blur на маленьких телефонах */
+    .card-overlay {
+        backdrop-filter: none;
+        background: rgba(0, 0, 0, 0.4);
     }
 
     .quick-view {
@@ -757,6 +769,7 @@
     .card-overlay {
         opacity: 1;
         background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+        backdrop-filter: none;
     }
 
     .quick-view {

@@ -14,14 +14,14 @@ const HeroCarousel = () => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth <= 768);
         };
-        
+
         checkMobile();
-        
+
         // Запускаем видео сразу после монтирования
         if (videoRef.current) {
             videoRef.current.play().catch(e => console.log('Auto-play failed:', e));
         }
-        
+
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
@@ -42,8 +42,8 @@ const HeroCarousel = () => {
                     poster="/images/video-poster.jpg"
                     preload="auto"
                 >
-                    <source 
-                        src={videoSrc} 
+                    <source
+                        src={videoSrc}
                         type="video/mp4"
                     />
                 </video>
@@ -54,24 +54,23 @@ const HeroCarousel = () => {
             <div className="hero-content">
                 <div className="container">
                     <div className="hero-text">
-                        <span className="hero-subtitle">Ручная работа</span>
+                        <span className="hero-subtitle">Добро пожаловать</span>
                         <h1 className="hero-title">
-                            Клубника <br />
-                            в шоколаде
+                            ChocoBerry <br />
+                            Бутик
                         </h1>
                         <p className="hero-description">
-                            Свежие ягоды в бельгийском шоколаде. <br />
-                            Идеальный подарок для любимых.
+                            Ваш уютный уголок в самом сердце Бухары. <br />
+                            Здесь вас ждут вкусные сюрпризы и теплая атмосфера.
                         </p>
-                        <div className="hero-price">от 190 000 сум</div>
                         <div className="hero-buttons">
                             <Link href='/catalog' className="btn btn-primary">
                                 <IoMdHeart className="btn-icon" />
-                                <span>Заказать</span>
+                                <span>Посмотреть боксы</span>
                             </Link>
-                            <Link href='/about' className="btn btn-secondary">
+                            <Link href='/contacts' className="btn btn-secondary">
                                 <IoMdInformationCircle className="btn-icon" />
-                                <span>Подробнее</span>
+                                <span>Как нас найти</span>
                             </Link>
                         </div>
                     </div>
