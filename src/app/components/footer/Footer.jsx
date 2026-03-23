@@ -4,17 +4,11 @@ import './footer.css';
 import {
     FaInstagram,
     FaTelegram,
-    FaFacebookF,
-    FaTiktok,
     FaMapMarkerAlt,
     FaPhoneAlt,
-    FaEnvelope,
     FaClock,
     FaArrowUp
 } from 'react-icons/fa';
-import { HiOutlineLocationMarker, HiOutlinePhone, HiOutlineMail } from 'react-icons/hi';
-import { IoLogoInstagram, IoLogoTiktok } from 'react-icons/io5';
-import { FiClock, FiArrowUp } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 
 const Footer = () => {
@@ -35,10 +29,8 @@ const Footer = () => {
     };
 
     const socialLinks = [
-        { id: 'insta', icon: <FaInstagram />, url: '#', color: '#E4405F' },
-        { id: 'tg', icon: <FaTelegram />, url: '#', color: '#0088cc' },
-        { id: 'fb', icon: <FaFacebookF />, url: '#', color: '#1877F2' },
-        { id: 'tiktok', icon: <FaTiktok />, url: '#', color: '#000000' }
+        { id: 'insta', icon: <FaInstagram />, url: 'https://www.instagram.com/chocoberry_fruits_bukhara_kafe?igsh=MTk1emh4dDk4ZHJ4eA%3D%3D', color: '#E4405F' },
+        { id: 'tg', icon: <FaTelegram />, url: 'https://t.me/chocoberry_fruits_bukhara', color: '#0088cc' }
     ];
 
     return (
@@ -74,23 +66,9 @@ const Footer = () => {
                         <div className="footer-col">
                             <h3 className="footer-title">Меню</h3>
                             <ul className="footer-links">
-                                <li><a href="#about">О нас</a></li>
                                 <li><a href="#catalog">Каталог</a></li>
                                 <li><a href="#gallery">Галерея</a></li>
-                                <li><a href="#reviews">Отзывы</a></li>
                                 <li><a href="#contacts">Контакты</a></li>
-                            </ul>
-                        </div>
-
-                        {/* Колонка 3: Категории */}
-                        <div className="footer-col">
-                            <h3 className="footer-title">Категории</h3>
-                            <ul className="footer-links">
-                                <li><a href="#">Классические боксы</a></li>
-                                <li><a href="#">Премиум боксы</a></li>
-                                <li><a href="#">Романтические</a></li>
-                                <li><a href="#">Семейные</a></li>
-                                <li><a href="#">Luxury коллекция</a></li>
                             </ul>
                         </div>
 
@@ -100,15 +78,11 @@ const Footer = () => {
                             <ul className="footer-contact">
                                 <li>
                                     <FaMapMarkerAlt className="contact-icon" />
-                                    <span>ул. Шохрух, 42, Бухара</span>
+                                    <span>Ашхобот 2v, Бухара</span>
                                 </li>
                                 <li>
                                     <FaPhoneAlt className="contact-icon" />
-                                    <a href="tel:+998901234567">+998 90 123 45 67</a>
-                                </li>
-                                <li>
-                                    <FaEnvelope className="contact-icon" />
-                                    <a href="mailto:info@chocoberry.uz">info@chocoberry.uz</a>
+                                    <a href="tel:+998914433443">+998 91 443 34 43</a>
                                 </li>
                                 <li>
                                     <FaClock className="contact-icon" />
@@ -127,11 +101,6 @@ const Footer = () => {
                         <p className="copyright">
                             © {currentYear} Chocoberry. Первый клубничный бутик в Бухаре
                         </p>
-                        <div className="footer-bottom-links">
-                            <a href="#">Политика конфиденциальности</a>
-                            <a href="#">Условия доставки</a>
-                            <a href="#">Договор оферты</a>
-                        </div>
                         <p className="developer">
                             Разработка сайта: <a href="https://akbarsoft.uz">Akbar Soft</a>
                         </p>

@@ -947,3 +947,40 @@
         transform: none;
     }
 }
+
+/* Добавьте в catalogdetail.css */
+
+/* Скрываем неиспользуемые элементы */
+.product-category,
+.product-rating,
+.product-attributes,
+.reviews-section,
+.characteristics-list {
+    display: none;
+}
+
+/* Обновляем отступы для компактности */
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-price-section {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.current-price {
+    font-size: 2rem;
+}
+
+/* Убираем лишние отступы */
+.product-actions {
+    margin-bottom: 20px;
+}
+
+.product-benefits {
+    margin-top: 10px;
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { products } from '../utils/data1';
 import './catalog.css';
@@ -11,15 +11,12 @@ import {
     FiShoppingCart,
     FiEye,
     FiStar,
-    FiArrowUp,
     FiRefreshCw
 } from 'react-icons/fi';
 import {
     GiStrawberry,
-    GiChocolateBar,
     GiHeartWings,
     GiCrown,
-    GiWeight
 } from 'react-icons/gi';
 import { FaFire } from 'react-icons/fa';
 import { IoMdPricetag } from 'react-icons/io';
@@ -27,9 +24,26 @@ import { IoMdPricetag } from 'react-icons/io';
 export default function CatalogPage() {
     const [sortBy, setSortBy] = useState('popular');
     const [priceRange, setPriceRange] = useState([0, 2000000]);
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(true); // Изменено на true для открытого состояния
     const [addedToCart, setAddedToCart] = useState({});
     const [quickView, setQuickView] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Определяем мобильное устройство
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+            // На мобилке фильтр открыт, на десктопе тоже открыт
+            if (window.innerWidth > 768) {
+                setShowFilters(true);
+            }
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Категории - можно создать на основе данных или оставить для фильтрации
     const categories = [
@@ -44,7 +58,7 @@ export default function CatalogPage() {
         if (typeof priceStr === 'number') return priceStr;
         if (priceStr.includes('-')) {
             const [min, max] = priceStr.split('-').map(p => parseInt(p));
-            return min; // или можно вернуть среднее значение
+            return min;
         }
         return parseInt(priceStr);
     };
@@ -71,9 +85,7 @@ export default function CatalogPage() {
     const filteredProducts = products.filter(product => {
         const productMinPrice = getMinPrice(product.price);
         const productMaxPrice = getMaxPrice(product.price);
-        
-        // Проверяем, попадает ли товар в диапазон цен
-        // Если цена в виде диапазона, проверяем пересечение
+
         if (product.price.includes('-')) {
             return productMinPrice <= priceRange[1] && productMaxPrice >= priceRange[0];
         } else {
@@ -85,12 +97,11 @@ export default function CatalogPage() {
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         const priceA = parsePrice(a.price);
         const priceB = parsePrice(b.price);
-        
+
         switch (sortBy) {
             case 'price-asc': return priceA - priceB;
             case 'price-desc': return priceB - priceA;
-            case 'popular': 
-                // Если нет поля popular, можно сортировать по id или цене
+            case 'popular':
                 return a.id - b.id;
             default: return 0;
         }
@@ -113,7 +124,7 @@ export default function CatalogPage() {
                     id: product.id,
                     name: product.name,
                     price: parsePrice(product.price),
-                    priceRaw: product.price, // сохраняем оригинальную цену
+                    priceRaw: product.price,
                     image: product.image || '/images/placeholder.jpg',
                     quantity: 1
                 });
@@ -149,8 +160,8 @@ export default function CatalogPage() {
         setSortBy('popular');
     };
 
-    // Определяем популярные товары (например, первые 5 или с определенными id)
-    const popularProductIds = [1, 2, 3, 4, 5]; // пример популярных товаров
+    // Определяем популярные товары
+    const popularProductIds = [1, 2, 3, 4, 5];
     const isProductPopular = (id) => popularProductIds.includes(id);
 
     return (
@@ -169,15 +180,17 @@ export default function CatalogPage() {
 
             <section className="catalog-content">
                 <div className="container">
-                    {/* Мобильная кнопка фильтра */}
-                    <button
-                        className="catalog-filter-toggle"
-                        onClick={() => setShowFilters(!showFilters)}
-                    >
-                        <FiFilter className="filter-icon" />
-                        <span>Фильтры и сортировка</span>
-                        <FiChevronDown className={`chevron-icon ${showFilters ? 'rotated' : ''}`} />
-                    </button>
+                    {/* Мобильная кнопка фильтра - на мобилке показывает кнопку для скрытия/показа */}
+                    {isMobile && (
+                        <button
+                            className="catalog-filter-toggle"
+                            onClick={() => setShowFilters(!showFilters)}
+                        >
+                            <FiFilter className="filter-icon" />
+                            <span>{showFilters ? 'Скрыть фильтры' : 'Показать фильтры'}</span>
+                            <FiChevronDown className={`chevron-icon ${showFilters ? 'rotated' : ''}`} />
+                        </button>
+                    )}
 
                     <div className="catalog-layout">
                         {/* Боковая панель фильтров */}
@@ -187,9 +200,11 @@ export default function CatalogPage() {
                                     <FiFilter className="header-icon" />
                                     Фильтры
                                 </h3>
-                                <button className="filters-close" onClick={() => setShowFilters(false)}>
-                                    <FiX />
-                                </button>
+                                {isMobile && (
+                                    <button className="filters-close" onClick={() => setShowFilters(false)}>
+                                        <FiX />
+                                    </button>
+                                )}
                             </div>
 
                             {/* Ценовой диапазон */}

@@ -113,9 +113,9 @@ const Navbar = () => {
                     </ul>
 
                     <div className="navbar-right">
-                        <a href="tel:+998901234567" className="navbar-phone">
+                        <a href="tel:+998914433443" className="navbar-phone">
                             <FiPhone className="phone-icon" />
-                            <span className="phone-number">+998 90 123 45 67</span>
+                            <span className="phone-number">+998 91 443 34 43</span>
                         </a>
 
                         <button className="navbar-cart" onClick={openCart}>
@@ -145,9 +145,6 @@ const Navbar = () => {
 
                     <ul className="mobile-menu-list">
                         <li className="mobile-menu-item">
-                            <a href="#about" className="mobile-menu-link" onClick={closeMenu}>О нас</a>
-                        </li>
-                        <li className="mobile-menu-item">
                             <a href="#catalog" className="mobile-menu-link" onClick={closeMenu}>Каталог</a>
                         </li>
                         <li className="mobile-menu-item">
@@ -159,9 +156,9 @@ const Navbar = () => {
                     </ul>
 
                     <div className="mobile-menu-footer">
-                        <a href="tel:+998901234567" className="mobile-phone">
+                        <a href="tel:+998914433443" className="mobile-phone">
                             <FiPhone className="mobile-phone-icon" />
-                            +998 90 123 45 67
+                            +998 91 443 34 43
                         </a>
                         <button className="mobile-cart" onClick={openCart}>
                             <FiShoppingCart className="mobile-cart-icon" />
