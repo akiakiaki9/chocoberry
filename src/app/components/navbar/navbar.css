@@ -1,5 +1,3 @@
-/* Импорт иконок не нужен в CSS, они уже подключены через react-icons */
-
 .navbar {
     position: fixed;
     top: 0;
@@ -496,5 +494,62 @@
 
     to {
         opacity: 1;
+    }
+}
+
+/* Логотип с изображением */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.logo-image {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover .logo-image {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    color: var(--red);
+}
+
+.logo-highlight {
+    color: var(--gold);
+    position: relative;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .logo-image {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .navbar-logo {
+        font-size: 1.5rem;
+        gap: 8px;
+    }
+}
+
+/* Адаптация для очень маленьких экранов */
+@media (max-width: 480px) {
+    .logo-image {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .navbar-logo {
+        font-size: 1.3rem;
+        gap: 6px;
     }
 }

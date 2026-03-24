@@ -96,8 +96,13 @@ const Navbar = () => {
             <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
                 <div className="navbar-container">
                     <a href="/" className="navbar-logo">
-                        <span className="logo-text">Choco</span>
-                        <span className="logo-highlight">berry</span>
+                        {/* Добавляем логотип слева от текста */}
+                        <img
+                            src="/images/logo.png"
+                            alt="Chocoberry Logo"
+                            className="logo-image"
+                        />
+                        <span className="logo-text">Choco<span className="logo-highlight">berry</span></span>
                     </a>
 
                     <ul className="navbar-menu">
