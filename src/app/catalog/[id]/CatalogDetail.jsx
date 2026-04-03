@@ -14,17 +14,8 @@ import {
     FiPackage,
 } from 'react-icons/fi';
 import {
-    GiStrawberry,
-    GiChocolateBar,
-    GiWeight,
-    GiCrown,
-    GiHeartWings,
-    GiFamilyHouse
-} from 'react-icons/gi';
-import {
     IoMdHeart,
     IoMdHeartEmpty,
-    IoMdStar,
 } from 'react-icons/io';
 import { FaFire } from 'react-icons/fa';
 import { HiOutlineLocationMarker, HiOutlineClock } from 'react-icons/hi';
@@ -33,7 +24,6 @@ export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    const [activeImage, setActiveImage] = useState(0);
     const [addedToCart, setAddedToCart] = useState(false);
     const [selectedTab, setSelectedTab] = useState('description');
     const [isFavorite, setIsFavorite] = useState(false);

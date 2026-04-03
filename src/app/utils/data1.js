@@ -44,7 +44,7 @@ export const products = [
     { id: 41, name: "Клубничный бокс", price: "900000", image: "/images/data/images/41.png" },
     { id: 42, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/42.png" },
     { id: 43, name: "Клубничный бокс", price: "400000", image: "/images/data/images/43.png" },
-    { id: 44, name: "Клубничный бокс", price: "100000", image: "/images/data/images/44.png" },
+    { id: 44, name: "Клубничный бокс", price: "1000000", image: "/images/data/images/44.png" },
     { id: 45, name: "Клубничный бокс", price: "350000", image: "/images/data/images/45.png" },
 ];
 
