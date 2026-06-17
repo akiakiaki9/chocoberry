@@ -1,3 +1,19 @@
+/* ============================================
+   ROOT VARIABLES
+   ============================================ */
+:root {
+    --container-width: 1200px;
+    --gold: #bc8c4c;
+    --gold-dark: #a0753a;
+    --gold-light: #d4a373;
+    --red: #ff4d4d;
+    --dark: #2d2a24;
+    --white: #ffffff;
+    --gray: #666;
+    --light-gray: #f5f5f5;
+    --font-heading: 'Georgia', serif;
+}
+
 /* ===== ОСНОВНЫЕ СТИЛИ ===== */
 .interior-showcase {
     padding: 80px 0;
@@ -43,17 +59,13 @@
     margin-bottom: 50px;
 }
 
-.section-header h2 {
-    color: #2d2a24 !important;
-}
-
 .section-title {
     font-size: clamp(2rem, 5vw, 3rem);
     margin-bottom: 20px;
     position: relative;
     display: inline-block;
     font-family: var(--font-heading);
-    color: #2d2a24 !important;
+    color: #2d2a24;
 }
 
 .section-title::after {
@@ -109,6 +121,7 @@
     height: 450px;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
+    display: block;
 }
 
 .interior-main-image.zoomed {
@@ -138,6 +151,7 @@
     transition: all 0.3s ease;
     z-index: 5;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -170,6 +184,7 @@
     transition: all 0.3s ease;
     z-index: 5;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -222,6 +237,7 @@
     font-size: 1.5rem;
     color: #2d2a24;
     box-shadow: 0 4px 15px rgba(188, 140, 76, 0.4);
+    flex-shrink: 0;
 }
 
 .interior-caption-text h3 {
@@ -260,6 +276,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .thumbnail:hover {
@@ -378,16 +395,18 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
+    display: block;
 }
 
 .box-card:hover .box-card-image img {
     transform: scale(1.15);
 }
 
-/* Кнопки на изображении */
-.box-card-like,
-.box-card-quick {
+/* Кнопка лайка */
+.box-card-like {
     position: absolute;
+    top: 15px;
+    right: 15px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -400,21 +419,11 @@
     transition: all 0.3s ease;
     z-index: 4;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.box-card-like {
-    top: 15px;
-    right: 15px;
-}
-
-.box-card-quick {
-    bottom: 15px;
-    right: 15px;
-}
-
-.box-card-like svg,
-.box-card-quick svg {
+.box-card-like svg {
     width: 18px;
     height: 18px;
     color: #2d2a24;
@@ -425,14 +434,12 @@
     fill: #ff4d4d;
 }
 
-.box-card-like:hover,
-.box-card-quick:hover {
-    background: #bc8c4c;
+.box-card-like:hover {
+    background: #ff4d4d;
     transform: scale(1.1);
 }
 
-.box-card-like:hover svg,
-.box-card-quick:hover svg {
+.box-card-like:hover svg {
     color: #ffffff;
 }
 
@@ -469,20 +476,6 @@
     font-weight: 600;
 }
 
-.box-card-details {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.box-card-detail {
-    font-size: 0.8rem;
-    color: #666;
-    background: #f5f5f5;
-    padding: 4px 10px;
-    border-radius: 20px;
-}
-
 /* Футер карточки */
 .box-card-footer {
     display: flex;
@@ -509,376 +502,6 @@
     font-weight: 700;
     font-size: 1rem;
 }
-
-.box-card-cart {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #ff4d4d;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.box-card-cart:hover {
-    background: #bc8c4c;
-    transform: rotate(90deg) scale(1.1);
-    color: #2d2a24;
-}
-
-.cart-icon {
-    width: 18px;
-    height: 18px;
-}
-
-/* ===== МЕДИА ЗАПРОСЫ ===== */
-
-/* Десктоп (1024px и больше) */
-@media (min-width: 1025px) {
-    .showcase-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-/* Планшеты (768px - 1024px) */
-@media (max-width: 1024px) {
-    .interior-showcase {
-        padding: 60px 0;
-    }
-
-    .showcase-grid {
-        grid-template-columns: 1fr;
-        gap: 50px;
-        margin-top: 40px;
-    }
-
-    .interior-main-image {
-        height: 400px;
-    }
-
-    .boxes-grid {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-}
-
-/* Мобильные (768px и меньше) */
-@media (max-width: 768px) {
-    .interior-showcase {
-        padding: 50px 0;
-    }
-
-    .interior-showcase::after {
-        font-size: 100px;
-        bottom: 30px;
-        right: 30px;
-    }
-
-    .section-header {
-        margin-bottom: 35px;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .section-subtitle {
-        font-size: 1rem;
-        padding: 0 20px;
-    }
-
-    .interior-main-image {
-        height: 300px;
-    }
-
-    .interior-caption {
-        padding: 20px;
-    }
-
-    .interior-caption-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
-
-    .interior-caption-text h3 {
-        font-size: 1.1rem;
-    }
-
-    .interior-caption-text p {
-        font-size: 0.85rem;
-    }
-
-    .interior-nav {
-        width: 40px;
-        height: 40px;
-    }
-
-    .interior-nav svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .interior-zoom-btn {
-        width: 40px;
-        height: 40px;
-        top: 15px;
-        right: 15px;
-    }
-
-    .thumbnail {
-        height: 70px;
-    }
-
-    .boxes-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .boxes-title {
-        font-size: 1.8rem;
-    }
-
-    .boxes-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        max-width: 400px;
-    }
-
-    .box-card-image {
-        height: 200px;
-    }
-
-    .box-card-name {
-        font-size: 1.2rem;
-    }
-
-    .box-card-price {
-        font-size: 1.1rem;
-    }
-
-    .box-card-like,
-    .box-card-quick {
-        width: 44px;
-        height: 44px;
-    }
-
-    .box-card-like svg,
-    .box-card-quick svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .box-card-cart {
-        width: 44px;
-        height: 44px;
-    }
-
-    .cart-icon {
-        width: 20px;
-        height: 20px;
-    }
-}
-
-/* Маленькие телефоны (480px и меньше) */
-@media (max-width: 480px) {
-    .interior-showcase {
-        padding: 40px 0;
-    }
-
-    .interior-showcase::after {
-        font-size: 80px;
-        bottom: 20px;
-        right: 20px;
-        opacity: 0.02;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .section-subtitle {
-        font-size: 0.95rem;
-        padding: 0 15px;
-    }
-
-    .interior-main-image {
-        height: 250px;
-    }
-
-    .interior-caption {
-        padding: 15px;
-        gap: 10px;
-    }
-
-    .interior-caption-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-    }
-
-    .interior-caption-text h3 {
-        font-size: 1rem;
-    }
-
-    .interior-caption-text p {
-        font-size: 0.8rem;
-    }
-
-    .interior-nav {
-        width: 36px;
-        height: 36px;
-    }
-
-    .interior-thumbnails {
-        gap: 10px;
-    }
-
-    .thumbnail {
-        height: 60px;
-    }
-
-    .boxes-title {
-        font-size: 1.5rem;
-    }
-
-    .boxes-grid {
-        gap: 15px;
-    }
-
-    .box-card-image {
-        height: 180px;
-    }
-
-    .box-card-name {
-        font-size: 1.1rem;
-    }
-
-    .box-card-detail {
-        font-size: 0.75rem;
-    }
-
-    .box-card-price {
-        font-size: 1rem;
-    }
-}
-
-/* Очень маленькие телефоны (360px и меньше) */
-@media (max-width: 360px) {
-    .section-title {
-        font-size: 1.5rem;
-    }
-
-    .interior-main-image {
-        height: 200px;
-    }
-
-    .interior-caption {
-        padding: 12px;
-    }
-
-    .interior-caption-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-    }
-
-    .interior-caption-text h3 {
-        font-size: 0.9rem;
-    }
-
-    .interior-caption-text p {
-        font-size: 0.75rem;
-    }
-
-    .thumbnail {
-        height: 50px;
-    }
-
-    .box-card-image {
-        height: 160px;
-    }
-}
-
-/* Landscape ориентация */
-@media (max-width: 850px) and (max-height: 500px) and (orientation: landscape) {
-    .interior-showcase {
-        padding: 30px 0;
-    }
-
-    .showcase-grid {
-        gap: 30px;
-    }
-
-    .interior-main-image {
-        height: 250px;
-    }
-
-    .boxes-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .box-card-image {
-        height: 150px;
-    }
-}
-
-/* Touch устройства */
-@media (hover: none) and (pointer: coarse) {
-    .interior-main:hover .interior-main-image:not(.zoomed) {
-        transform: none;
-    }
-
-    .box-card:hover {
-        transform: none;
-    }
-
-    .box-card:hover .box-card-image img {
-        transform: none;
-    }
-
-    .interior-nav:hover {
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.95);
-        color: #2d2a24;
-    }
-
-    .box-card-like:active,
-    .box-card-quick:active,
-    .box-card-cart:active {
-        transform: scale(0.9);
-    }
-}
-
-/* Улучшения доступности */
-@media (prefers-reduced-motion: reduce) {
-    .interior-main-image,
-    .box-card-image img,
-    .box-card,
-    .interior-nav,
-    .interior-zoom-btn,
-    .box-card-like,
-    .box-card-quick,
-    .box-card-cart {
-        animation: none;
-        transition: none;
-    }
-
-    .interior-main:hover .interior-main-image:not(.zoomed) {
-        transform: none;
-    }
-
-    .box-card:hover {
-        transform: none;
-    }
-}
-
-/* Добавьте или обновите эти стили в interior.css */
 
 .box-card-cart {
     width: 44px;
@@ -969,4 +592,489 @@
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* ============================================
+   МЕДИА ЗАПРОСЫ
+   ============================================ */
+
+/* Десктоп (1024px и больше) */
+@media (min-width: 1025px) {
+    .showcase-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+    .interior-showcase {
+        padding: 60px 0;
+    }
+
+    .showcase-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+        margin-top: 40px;
+    }
+
+    .interior-main-image {
+        height: 400px;
+    }
+
+    .boxes-grid {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .interior-showcase::after {
+        font-size: 120px;
+        opacity: 0.02;
+    }
+}
+
+/* Мобильные (768px и меньше) */
+@media (max-width: 768px) {
+    .interior-showcase {
+        padding: 50px 0;
+    }
+
+    .container {
+        padding: 0 15px;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .interior-showcase::after {
+        display: none;
+    }
+
+    .interior-showcase::before {
+        height: 150px;
+    }
+
+    .section-header {
+        margin-bottom: 35px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .section-title::after {
+        width: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+        padding: 0 10px;
+        text-align: center;
+    }
+
+    .showcase-grid {
+        gap: 40px;
+        margin-top: 30px;
+    }
+
+    .interior-main-image {
+        height: 300px;
+    }
+
+    .interior-caption {
+        padding: 20px;
+        gap: 12px;
+    }
+
+    .interior-caption-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .interior-caption-text h3 {
+        font-size: 1.1rem;
+    }
+
+    .interior-caption-text p {
+        font-size: 0.85rem;
+    }
+
+    .interior-nav {
+        width: 40px;
+        height: 40px;
+    }
+
+    .interior-nav svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .interior-nav.prev {
+        left: 10px;
+    }
+
+    .interior-nav.next {
+        right: 10px;
+    }
+
+    .interior-zoom-btn {
+        width: 40px;
+        height: 40px;
+        top: 15px;
+        right: 15px;
+    }
+
+    .thumbnail {
+        height: 70px;
+    }
+
+    .boxes-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .boxes-title {
+        font-size: 1.8rem;
+    }
+
+    .boxes-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        max-width: 100%;
+    }
+
+    .box-card-image {
+        height: 160px;
+    }
+
+    .box-card-name {
+        font-size: 1rem;
+    }
+
+    .box-card-price {
+        font-size: 0.95rem;
+    }
+
+    .box-card-cart {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cart-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .box-card-like {
+        width: 36px;
+        height: 36px;
+        top: 10px;
+        right: 10px;
+    }
+
+    .box-card-like svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .box-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .boxes-stats-item {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Маленькие телефоны (480px и меньше) */
+@media (max-width: 480px) {
+    .interior-showcase {
+        padding: 40px 0;
+    }
+
+    .container {
+        padding: 0 12px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+        padding: 0 5px;
+    }
+
+    .interior-main-image {
+        height: 250px;
+    }
+
+    .interior-caption {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .interior-caption-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .interior-caption-text h3 {
+        font-size: 1rem;
+    }
+
+    .interior-caption-text p {
+        font-size: 0.8rem;
+    }
+
+    .interior-nav {
+        width: 36px;
+        height: 36px;
+    }
+
+    .interior-nav svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .interior-zoom-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .interior-zoom-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .interior-thumbnails {
+        gap: 10px;
+    }
+
+    .thumbnail {
+        height: 60px;
+    }
+
+    .boxes-title {
+        font-size: 1.5rem;
+    }
+
+    .boxes-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+
+    .box-card-image {
+        height: 180px;
+    }
+
+    .box-card-name {
+        font-size: 1.1rem;
+    }
+
+    .box-card-price {
+        font-size: 1rem;
+    }
+
+    .box-card-cart {
+        width: 44px;
+        height: 44px;
+    }
+
+    .box-card-info {
+        padding: 14px;
+    }
+
+    .box-card-footer {
+        padding-top: 12px;
+    }
+}
+
+/* Очень маленькие телефоны (360px и меньше) */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 8px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .interior-main-image {
+        height: 200px;
+    }
+
+    .interior-caption {
+        padding: 12px;
+    }
+
+    .interior-caption-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .interior-caption-text h3 {
+        font-size: 0.9rem;
+    }
+
+    .interior-caption-text p {
+        font-size: 0.75rem;
+    }
+
+    .thumbnail {
+        height: 50px;
+    }
+
+    .boxes-grid {
+        max-width: 300px;
+    }
+
+    .box-card-image {
+        height: 160px;
+    }
+
+    .box-card-name {
+        font-size: 1rem;
+    }
+
+    .box-card-price {
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape ориентация */
+@media (max-width: 850px) and (max-height: 500px) and (orientation: landscape) {
+    .interior-showcase {
+        padding: 30px 0;
+    }
+
+    .showcase-grid {
+        gap: 30px;
+    }
+
+    .interior-main-image {
+        height: 250px;
+    }
+
+    .interior-thumbnails {
+        gap: 10px;
+    }
+
+    .thumbnail {
+        height: 60px;
+    }
+
+    .boxes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .box-card-image {
+        height: 140px;
+    }
+
+    .box-card-info {
+        padding: 12px;
+    }
+
+    .box-card-name {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+}
+
+/* Touch устройства */
+@media (hover: none) and (pointer: coarse) {
+    .interior-main:hover .interior-main-image:not(.zoomed) {
+        transform: none;
+    }
+
+    .box-card:hover {
+        transform: none;
+    }
+
+    .box-card:hover .box-card-image img {
+        transform: none;
+    }
+
+    .interior-nav:hover {
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        color: #2d2a24;
+    }
+
+    .box-card-like:active,
+    .box-card-cart:active {
+        transform: scale(0.9);
+    }
+}
+
+/* Улучшения доступности */
+@media (prefers-reduced-motion: reduce) {
+    .interior-main-image,
+    .box-card-image img,
+    .box-card,
+    .interior-nav,
+    .interior-zoom-btn,
+    .box-card-like,
+    .box-card-cart {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .interior-main:hover .interior-main-image:not(.zoomed) {
+        transform: none !important;
+    }
+
+    .box-card:hover {
+        transform: none !important;
+    }
+
+    .box-card-cart::before {
+        display: none;
+    }
+}
+
+/* High contrast */
+@media (prefers-contrast: high) {
+    .box-card {
+        border: 2px solid #bc8c4c;
+    }
+
+    .box-card-badge {
+        background: #ffd700;
+        color: #000000;
+    }
+
+    .box-card-cart {
+        background: #ffd700;
+    }
+
+    .box-card-price {
+        color: #ff0000;
+    }
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #ffd700;
+    outline-offset: 2px;
 }

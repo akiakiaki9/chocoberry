@@ -72,7 +72,7 @@ const Footer = () => {
                             </ul>
                         </div>
 
-                        {/* Колонка 4: Контакты */}
+                        {/* Колонка 3: Контакты */}
                         <div className="footer-col">
                             <h3 className="footer-title">Контакты</h3>
                             <ul className="footer-contact">

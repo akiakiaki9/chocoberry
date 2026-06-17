@@ -7,6 +7,7 @@ const Cart = ({ isOpen, onClose }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showOrderModal, setShowOrderModal] = useState(false);
+    const [imageErrors, setImageErrors] = useState({});
 
     // Загрузка корзины из localStorage
     const loadCart = () => {
@@ -16,7 +17,6 @@ const Cart = ({ isOpen, onClose }) => {
                 const items = JSON.parse(savedCart);
                 setCartItems(items);
 
-                // Обновляем счетчик в navbar при загрузке
                 const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
                 window.dispatchEvent(new CustomEvent('cartUpdated', {
                     detail: { count: totalItems }
@@ -34,10 +34,10 @@ const Cart = ({ isOpen, onClose }) => {
     useEffect(() => {
         if (isOpen) {
             loadCart();
+            setImageErrors({}); // Сбрасываем ошибки при открытии
         }
     }, [isOpen]);
 
-    // Сохранение корзины в localStorage и обновление счетчика
     const saveCart = (newCart) => {
         localStorage.setItem('chocoberry-cart', JSON.stringify(newCart));
         setCartItems(newCart);
@@ -48,7 +48,6 @@ const Cart = ({ isOpen, onClose }) => {
         }));
     };
 
-    // Блокировка скролла при открытой корзине
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -99,7 +98,6 @@ const Cart = ({ isOpen, onClose }) => {
     };
 
     const handleCallOrder = () => {
-        // Формируем текст заказа
         const orderText = cartItems.map(item => {
             return `${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}`;
         }).join('\n');
@@ -107,10 +105,8 @@ const Cart = ({ isOpen, onClose }) => {
         const totalText = `\n\nИтого: ${formatPrice(getTotalPrice())}`;
         const message = encodeURIComponent(`Здравствуйте! Хочу оформить заказ:\n\n${orderText}${totalText}`);
         
-        // Открываем WhatsApp
         window.open(`https://t.me/ddaa_770?text=${message}`, '_blank');
         
-        // Очищаем корзину
         saveCart([]);
         setShowOrderModal(false);
         onClose();
@@ -118,6 +114,29 @@ const Cart = ({ isOpen, onClose }) => {
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('uz-UZ').format(price) + ' сум';
+    };
+
+    // Обработчик ошибок загрузки изображений
+    const handleImageError = (itemId) => {
+        setImageErrors(prev => ({ ...prev, [itemId]: true }));
+    };
+
+    // Функция для получения правильного пути к изображению
+    const getImagePath = (imagePath) => {
+        if (!imagePath) return '/images/placeholder.png';
+        
+        // Если путь уже начинается с /, возвращаем как есть
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        // Если путь начинается с images/, добавляем /
+        if (imagePath.startsWith('images/')) {
+            return '/' + imagePath;
+        }
+        
+        // Иначе возвращаем с / в начале
+        return '/' + imagePath;
     };
 
     if (!isOpen) return null;
@@ -160,55 +179,58 @@ const Cart = ({ isOpen, onClose }) => {
                     ) : (
                         <>
                             <div className="cart-items">
-                                {cartItems.map((item) => (
-                                    <div key={item.id} className="cart-item">
-                                        <div className="item-image">
-                                            <img
-                                                src={item.image}
-                                                alt={item.name}
-                                                onError={(e) => {
-                                                    console.log('Ошибка загрузки изображения:', item.image);
-                                                    e.target.src = '/images/placeholder.jpg';
-                                                    e.onerror = null;
-                                                }}
-                                            />
-                                        </div>
+                                {cartItems.map((item) => {
+                                    const imageSrc = imageErrors[item.id] 
+                                        ? '/images/placeholder.png' 
+                                        : getImagePath(item.image);
+                                    
+                                    return (
+                                        <div key={item.id} className="cart-item">
+                                            <div className="item-image">
+                                                <img
+                                                    src={imageSrc}
+                                                    alt={item.name}
+                                                    onError={() => handleImageError(item.id)}
+                                                    loading="lazy"
+                                                />
+                                            </div>
 
-                                        <div className="item-details">
-                                            <h3 className="item-name">{item.name}</h3>
-                                            <p className="item-price">{formatPrice(item.price)}</p>
+                                            <div className="item-details">
+                                                <h3 className="item-name">{item.name}</h3>
+                                                <p className="item-price">{formatPrice(item.price)}</p>
 
-                                            <div className="item-actions">
-                                                <div className="quantity-control">
+                                                <div className="item-actions">
+                                                    <div className="quantity-control">
+                                                        <button
+                                                            className="quantity-btn"
+                                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        >
+                                                            −
+                                                        </button>
+                                                        <span className="quantity">{item.quantity}</span>
+                                                        <button
+                                                            className="quantity-btn"
+                                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+
                                                     <button
-                                                        className="quantity-btn"
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        className="remove-item"
+                                                        onClick={() => removeItem(item.id)}
+                                                        title="Удалить"
                                                     >
-                                                        −
-                                                    </button>
-                                                    <span className="quantity">{item.quantity}</span>
-                                                    <button
-                                                        className="quantity-btn"
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    >
-                                                        +
+                                                        <svg viewBox="0 0 24 24" fill="none">
+                                                            <path d="M3 6H5H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                                            <path d="M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6" stroke="currentColor" strokeWidth="2" />
+                                                        </svg>
                                                     </button>
                                                 </div>
-
-                                                <button
-                                                    className="remove-item"
-                                                    onClick={() => removeItem(item.id)}
-                                                    title="Удалить"
-                                                >
-                                                    <svg viewBox="0 0 24 24" fill="none">
-                                                        <path d="M3 6H5H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                                        <path d="M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6" stroke="currentColor" strokeWidth="2" />
-                                                    </svg>
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             <div className="cart-footer">
@@ -253,22 +275,27 @@ const Cart = ({ isOpen, onClose }) => {
                             <h3 className="order-modal-title">Ваш заказ</h3>
                             
                             <div className="order-modal-items">
-                                {cartItems.map((item) => (
-                                    <div key={item.id} className="order-modal-item">
-                                        <div className="order-item-image">
-                                            <img 
-                                                src={item.image} 
-                                                alt={item.name}
-                                                onError={(e) => {
-                                                    e.target.src = '/images/placeholder.jpg';
-                                                }}
-                                            />
+                                {cartItems.map((item) => {
+                                    const imageSrc = imageErrors[item.id] 
+                                        ? '/images/placeholder.png' 
+                                        : getImagePath(item.image);
+                                    
+                                    return (
+                                        <div key={item.id} className="order-modal-item">
+                                            <div className="order-item-image">
+                                                <img 
+                                                    src={imageSrc}
+                                                    alt={item.name}
+                                                    onError={() => handleImageError(item.id)}
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                            <span className="order-item-name">{item.name}</span>
+                                            <span className="order-item-quantity">x{item.quantity}</span>
+                                            <span className="order-item-price">{formatPrice(item.price * item.quantity)}</span>
                                         </div>
-                                        <span className="order-item-name">{item.name}</span>
-                                        <span className="order-item-quantity">x{item.quantity}</span>
-                                        <span className="order-item-price">{formatPrice(item.price * item.quantity)}</span>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             <div className="order-modal-total">
@@ -277,7 +304,7 @@ const Cart = ({ isOpen, onClose }) => {
                             </div>
 
                             <p className="order-modal-text">
-                                Нажмите кнопку "Позвонить", и наш менеджер свяжется с вами для подтверждения заказа
+                                Нажмите кнопку "Заказать", и наш менеджер свяжется с вами для подтверждения заказа
                             </p>
 
                             <div className="order-modal-buttons">

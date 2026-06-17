@@ -9,7 +9,6 @@ const HeroCarousel = () => {
     const [isMobile, setIsMobile] = useState(false);
     const videoRef = useRef(null);
 
-    // Определяем тип устройства сразу без задержки
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -17,7 +16,6 @@ const HeroCarousel = () => {
 
         checkMobile();
 
-        // Запускаем видео сразу после монтирования
         if (videoRef.current) {
             videoRef.current.play().catch(e => console.log('Auto-play failed:', e));
         }

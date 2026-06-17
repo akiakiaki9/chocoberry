@@ -14,6 +14,7 @@ import { useState } from 'react';
 
 const Contacts = () => {
     const [hoveredSocial, setHoveredSocial] = useState(null);
+    const [imageErrors, setImageErrors] = useState({});
 
     const socialLinks = [
         {
@@ -30,6 +31,36 @@ const Contacts = () => {
             name: 'Telegram',
             url: 'https://t.me/chocoberry_fruits_bukhara'
         },
+    ];
+
+    // Функция для получения правильного пути к изображению
+    const getImagePath = (imagePath) => {
+        if (!imagePath) return '/images/placeholder.png';
+        
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        if (imagePath.startsWith('images/')) {
+            return '/' + imagePath;
+        }
+        
+        if (imagePath.startsWith('data/images/')) {
+            return '/' + imagePath;
+        }
+        
+        return '/' + imagePath;
+    };
+
+    // Обработчик ошибок загрузки изображений
+    const handleImageError = (id) => {
+        setImageErrors(prev => ({ ...prev, [id]: true }));
+    };
+
+    const galleryImages = [
+        { id: 1, src: '/images/data/images/45.png', alt: 'Фасад бутика', icon: <FiMapPin /> },
+        { id: 2, src: '/images/data/images/42.png', alt: 'Внутри бутика', icon: <FiHeart /> },
+        { id: 3, src: '/images/data/images/41.png', alt: 'Витрина', icon: <FiMapPin /> }
     ];
 
     return (
@@ -59,7 +90,7 @@ const Contacts = () => {
                                 </div>
                                 <div className="contact-content">
                                     <strong>Адрес:</strong>
-                                    <p>Ашхобот 2v<br />, Бухара</p>
+                                    <p>Ашхобот 2v, Бухара</p>
                                 </div>
                             </div>
 
@@ -70,7 +101,7 @@ const Contacts = () => {
                                 <div className="contact-content">
                                     <strong>Телефон:</strong>
                                     <p>
-                                        <a href="tel:+998914433443" className="contact-link">91 443 34 43</a>
+                                        <a href="tel:+998914433443" className="contact-link">+998 91 443 34 43</a>
                                     </p>
                                 </div>
                             </div>
@@ -81,7 +112,7 @@ const Contacts = () => {
                                 </div>
                                 <div className="contact-content">
                                     <strong>Часы работы:</strong>
-                                    <p>Ежедневно: 10:00 - 0:00<br />Без выходных</p>
+                                    <p>Ежедневно: 10:00 - 22:00</p>
                                 </div>
                             </div>
 
@@ -97,8 +128,8 @@ const Contacts = () => {
                                             className="social-link"
                                             aria-label={social.name}
                                             style={{
-                                                backgroundColor: hoveredSocial === social.id ? social.color : 'var(--bg-gray)',
-                                                color: hoveredSocial === social.id ? '#fff' : 'var(--black)'
+                                                backgroundColor: hoveredSocial === social.id ? social.color : '#f5f5f5',
+                                                color: hoveredSocial === social.id ? '#fff' : '#2d2a24'
                                             }}
                                             onMouseEnter={() => setHoveredSocial(social.id)}
                                             onMouseLeave={() => setHoveredSocial(null)}
@@ -127,36 +158,25 @@ const Contacts = () => {
 
                         {/* Фото бутика */}
                         <div className="map-gallery">
-                            <div className="gallery-item">
-                                <img
-                                    src="/images/data/images/45.png"
-                                    alt="Фасад бутика"
-                                    loading="lazy"
-                                />
-                                <div className="gallery-overlay">
-                                    <FiMapPin className="overlay-icon" />
-                                </div>
-                            </div>
-                            <div className="gallery-item">
-                                <img
-                                    src="/images/data/images/42.png"
-                                    alt="Внутри бутика"
-                                    loading="lazy"
-                                />
-                                <div className="gallery-overlay">
-                                    <FiHeart className="overlay-icon" />
-                                </div>
-                            </div>
-                            <div className="gallery-item">
-                                <img
-                                    src="/images/data/images/41.png"
-                                    alt="Витрина"
-                                    loading="lazy"
-                                />
-                                <div className="gallery-overlay">
-                                    <FiMapPin className="overlay-icon" />
-                                </div>
-                            </div>
+                            {galleryImages.map((img) => {
+                                const imageSrc = imageErrors[img.id] 
+                                    ? '/images/placeholder.png' 
+                                    : getImagePath(img.src);
+
+                                return (
+                                    <div key={img.id} className="gallery-item">
+                                        <img
+                                            src={imageSrc}
+                                            alt={img.alt}
+                                            loading="lazy"
+                                            onError={() => handleImageError(img.id)}
+                                        />
+                                        <div className="gallery-overlay">
+                                            <span className="overlay-icon">{img.icon}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

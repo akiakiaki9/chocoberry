@@ -66,15 +66,19 @@ const Navbar = () => {
         };
     }, []);
 
+    // Улучшенное управление скроллом
     useEffect(() => {
         if (isOpen) {
+            document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
         }
 
         return () => {
-            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
         };
     }, [isOpen]);
 
@@ -88,7 +92,7 @@ const Navbar = () => {
 
     const closeCart = () => {
         setIsCartOpen(false);
-        updateCartCount(); // Обновляем при закрытии на всякий случай
+        updateCartCount();
     };
 
     return (
@@ -96,7 +100,6 @@ const Navbar = () => {
             <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
                 <div className="navbar-container">
                     <a href="/" className="navbar-logo">
-                        {/* Добавляем логотип слева от текста */}
                         <img
                             src="/images/logo.png"
                             alt="Chocoberry Logo"
@@ -143,20 +146,19 @@ const Navbar = () => {
 
             <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
                 <div className="mobile-menu-container">
-                    {/* Кнопка закрытия в мобильном меню */}
                     <button className="mobile-close-btn" onClick={closeMenu} aria-label="Закрыть меню">
                         <FiX className="mobile-close-icon" />
                     </button>
 
                     <ul className="mobile-menu-list">
                         <li className="mobile-menu-item">
-                            <a href="#catalog" className="mobile-menu-link" onClick={closeMenu}>Каталог</a>
+                            <Link href="/catalog" className="mobile-menu-link" onClick={closeMenu}>Каталог</Link>
                         </li>
                         <li className="mobile-menu-item">
-                            <a href="#gallery" className="mobile-menu-link" onClick={closeMenu}>Галерея</a>
+                            <Link href="/gallery" className="mobile-menu-link" onClick={closeMenu}>Галерея</Link>
                         </li>
                         <li className="mobile-menu-item">
-                            <a href="#contacts" className="mobile-menu-link" onClick={closeMenu}>Контакты</a>
+                            <Link href="/contacts" className="mobile-menu-link" onClick={closeMenu}>Контакты</Link>
                         </li>
                     </ul>
 

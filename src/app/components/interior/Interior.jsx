@@ -15,13 +15,14 @@ import { GiChocolateBar } from "react-icons/gi";
 import { GiHeartWings } from "react-icons/gi";
 import { GiFamilyHouse } from "react-icons/gi";
 import { IoMdHeart, IoMdPricetag } from 'react-icons/io';
-import products from '@/app/utils/data1';
+import { products } from '@/app/utils/data1';
 
 const InteriorShowcase = () => {
     const [activeImage, setActiveImage] = useState(0);
     const [likedBoxes, setLikedBoxes] = useState({});
     const [isZoomed, setIsZoomed] = useState(false);
     const [addedToCart, setAddedToCart] = useState({});
+    const [imageErrors, setImageErrors] = useState({});
 
     const interiors = [
         {
@@ -56,6 +57,30 @@ const InteriorShowcase = () => {
         icon: [<GiCrowNest />, <GiHeartWings />, <GiFamilyHouse />, <GiChocolateBar />][index % 4],
         badge: index === 0 ? "Хит" : index === 1 ? "Love" : index === 2 ? "Family" : "VIP"
     }));
+
+    // Функция для получения правильного пути к изображению
+    const getImagePath = (imagePath) => {
+        if (!imagePath) return '/images/placeholder.png';
+        
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        if (imagePath.startsWith('images/')) {
+            return '/' + imagePath;
+        }
+        
+        if (imagePath.startsWith('data/images/')) {
+            return '/' + imagePath;
+        }
+        
+        return '/' + imagePath;
+    };
+
+    // Обработчик ошибок загрузки изображений
+    const handleImageError = (id) => {
+        setImageErrors(prev => ({ ...prev, [id]: true }));
+    };
 
     // Функция для парсинга цены (поддержка диапазонов)
     const parsePrice = (priceStr) => {
@@ -149,6 +174,9 @@ const InteriorShowcase = () => {
                                 className={`interior-main-image ${isZoomed ? 'zoomed' : ''}`}
                                 onClick={() => setIsZoomed(!isZoomed)}
                                 loading="lazy"
+                                onError={(e) => {
+                                    e.target.src = '/images/placeholder.png';
+                                }}
                             />
 
                             <button className="interior-zoom-btn" onClick={() => setIsZoomed(!isZoomed)}>
@@ -204,55 +232,59 @@ const InteriorShowcase = () => {
                         </div>
 
                         <div className="boxes-grid">
-                            {featuredBoxes.map(box => (
-                                <div key={box.id} className="box-card">
-                                    {box.badge && (
-                                        <div className="box-card-badge">{box.badge}</div>
-                                    )}
+                            {featuredBoxes.map(box => {
+                                const imageSrc = imageErrors[box.id] 
+                                    ? '/images/placeholder.png' 
+                                    : getImagePath(box.image);
 
-                                    <div className="box-card-image">
-                                        <img
-                                            src={box.image}
-                                            alt={box.name}
-                                            loading="lazy"
-                                            onError={(e) => {
-                                                e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
-                                            }}
-                                        />
+                                return (
+                                    <div key={box.id} className="box-card">
+                                        {box.badge && (
+                                            <div className="box-card-badge">{box.badge}</div>
+                                        )}
 
-                                        <button
-                                            className="box-card-like"
-                                            onClick={() => toggleLike(box.id)}
-                                            aria-label="Добавить в избранное"
-                                        >
-                                            <FiHeart className={likedBoxes[box.id] ? 'liked' : ''} />
-                                        </button>
+                                        <div className="box-card-image">
+                                            <img
+                                                src={imageSrc}
+                                                alt={box.name}
+                                                loading="lazy"
+                                                onError={() => handleImageError(box.id)}
+                                            />
 
-                                        <div className="box-card-icons">
-                                            <span className="box-icon">{box.icon}</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="box-card-info">
-                                        <h4 className="box-card-name">{box.name}</h4>
-
-                                        <div className="box-card-footer">
-                                            <div className="box-card-price-section">
-                                                <IoMdPricetag className="price-icon" />
-                                                <span className="box-card-price">{formatPrice(box.price)}</span>
-                                            </div>
                                             <button
-                                                className={`box-card-cart ${addedToCart[box.id] ? 'added' : ''}`}
-                                                onClick={(e) => addToCart(box, e)}
-                                                aria-label="Добавить в корзину"
+                                                className="box-card-like"
+                                                onClick={() => toggleLike(box.id)}
+                                                aria-label="Добавить в избранное"
                                             >
-                                                <FiShoppingCart className="cart-icon" />
-                                                {addedToCart[box.id] && <span className="cart-check">✓</span>}
+                                                <FiHeart className={likedBoxes[box.id] ? 'liked' : ''} />
                                             </button>
+
+                                            <div className="box-card-icons">
+                                                <span className="box-icon">{box.icon}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="box-card-info">
+                                            <h4 className="box-card-name">{box.name}</h4>
+
+                                            <div className="box-card-footer">
+                                                <div className="box-card-price-section">
+                                                    <IoMdPricetag className="price-icon" />
+                                                    <span className="box-card-price">{formatPrice(box.price)}</span>
+                                                </div>
+                                                <button
+                                                    className={`box-card-cart ${addedToCart[box.id] ? 'added' : ''}`}
+                                                    onClick={(e) => addToCart(box, e)}
+                                                    aria-label="Добавить в корзину"
+                                                >
+                                                    <FiShoppingCart className="cart-icon" />
+                                                    {addedToCart[box.id] && <span className="cart-check">✓</span>}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

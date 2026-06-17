@@ -70,7 +70,7 @@ const WhyUs = () => {
                                     <div
                                         className="why-card-icon"
                                         style={{
-                                            backgroundColor: hoveredCard === feature.id ? feature.color : 'var(--gold)',
+                                            backgroundColor: hoveredCard === feature.id ? feature.color : '#bc8c4c',
                                             color: hoveredCard === feature.id ? '#fff' : '#2d2a24'
                                         }}
                                     >

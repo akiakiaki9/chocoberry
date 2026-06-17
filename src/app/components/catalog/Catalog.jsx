@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { products } from '@/app/utils/data1';
 import './catalog.css';
 import {
@@ -21,6 +21,7 @@ const CatalogPreview = () => {
     const [activeCategory, setActiveCategory] = useState('all');
     const [addedToCart, setAddedToCart] = useState({});
     const [wishlist, setWishlist] = useState({});
+    const [imageErrors, setImageErrors] = useState({});
 
     const categories = [
         { id: 'all', name: 'Все', icon: <GiGiftOfKnowledge /> },
@@ -50,6 +51,34 @@ const CatalogPreview = () => {
         return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
     };
 
+    // Функция для получения правильного пути к изображению
+    const getImagePath = (imagePath) => {
+        if (!imagePath) return '/images/placeholder.png';
+        
+        // Если путь уже начинается с /, возвращаем как есть
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        // Если путь начинается с images/, добавляем /
+        if (imagePath.startsWith('images/')) {
+            return '/' + imagePath;
+        }
+        
+        // Если путь начинается с data/images/, добавляем /
+        if (imagePath.startsWith('data/images/')) {
+            return '/' + imagePath;
+        }
+        
+        // Иначе возвращаем с / в начале
+        return '/' + imagePath;
+    };
+
+    // Обработчик ошибок загрузки изображений
+    const handleImageError = (productId) => {
+        setImageErrors(prev => ({ ...prev, [productId]: true }));
+    };
+
     // Определяем популярные товары (первые 3)
     const popularProductIds = [1, 2, 3];
     const isProductPopular = (id) => popularProductIds.includes(id);
@@ -73,7 +102,7 @@ const CatalogPreview = () => {
                     name: product.name,
                     price: parsePrice(product.price),
                     priceRaw: product.price,
-                    image: product.image || '/images/placeholder.jpg',
+                    image: product.image || '/images/placeholder.png',
                     quantity: 1
                 });
             }
@@ -137,75 +166,79 @@ const CatalogPreview = () => {
 
                 {/* Сетка товаров */}
                 <div className="preview-grid">
-                    {previewProducts.map((product, index) => (
-                        <Link
-                            key={product.id}
-                            href={`/catalog/${product.id}`}
-                            className="preview-card-link"
-                            style={{ animationDelay: `${index * 0.1}s` }}
-                        >
-                            <div className="preview-card">
-                                {isProductPopular(product.id) && (
-                                    <div className="card-badge">
-                                        <FaFire className="badge-icon" />
-                                        <span>Хит продаж</span>
-                                    </div>
-                                )}
+                    {previewProducts.map((product, index) => {
+                        const imageSrc = imageErrors[product.id] 
+                            ? '/images/placeholder.png' 
+                            : getImagePath(product.image);
 
-                                <button
-                                    className={`wishlist-btn ${wishlist[product.id] ? 'active' : ''}`}
-                                    onClick={(e) => toggleWishlist(product.id, e)}
-                                    aria-label="Добавить в избранное"
-                                >
-                                    <FiHeart className={`wishlist-icon ${wishlist[product.id] ? 'filled' : ''}`} />
-                                </button>
-
-                                <div className="card-image">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name}
-                                        onError={(e) => {
-                                            e.target.src = 'https://via.placeholder.com/300x200?text=Chocoberry';
-                                        }}
-                                        loading="lazy"
-                                    />
-                                    <div className="card-overlay">
-                                        <button
-                                            className="quick-view"
-                                            onClick={(e) => quickView(product, e)}
-                                        >
-                                            <FiEye className="quick-view-icon" />
-                                            <span>Быстрый просмотр</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="card-content">
-                                    <div className="card-header">
-                                        <h3 className="card-title">{product.name}</h3>
-                                    </div>
-
-                                    <div className="card-footer">
-                                        <div className="price-section">
-                                            <span className="card-price">
-                                                {formatPrice(product.price)}
-                                            </span>
+                        return (
+                            <Link
+                                key={product.id}
+                                href={`/catalog/${product.id}`}
+                                className="preview-card-link"
+                                style={{ animationDelay: `${index * 0.1}s` }}
+                            >
+                                <div className="preview-card">
+                                    {isProductPopular(product.id) && (
+                                        <div className="card-badge">
+                                            <FaFire className="badge-icon" />
+                                            <span>Хит продаж</span>
                                         </div>
-                                        <button
-                                            className={`card-add ${addedToCart[product.id] ? 'added' : ''}`}
-                                            onClick={(e) => addToCart(product, e)}
-                                        >
-                                            {addedToCart[product.id] ? (
-                                                <FiCheck className="check-icon" />
-                                            ) : (
-                                                <FiShoppingCart className="cart-icon" />
-                                            )}
-                                        </button>
+                                    )}
+
+                                    <button
+                                        className={`wishlist-btn ${wishlist[product.id] ? 'active' : ''}`}
+                                        onClick={(e) => toggleWishlist(product.id, e)}
+                                        aria-label="Добавить в избранное"
+                                    >
+                                        <FiHeart className={`wishlist-icon ${wishlist[product.id] ? 'filled' : ''}`} />
+                                    </button>
+
+                                    <div className="card-image">
+                                        <img
+                                            src={imageSrc}
+                                            alt={product.name}
+                                            onError={() => handleImageError(product.id)}
+                                            loading="lazy"
+                                        />
+                                        <div className="card-overlay">
+                                            <button
+                                                className="quick-view"
+                                                onClick={(e) => quickView(product, e)}
+                                            >
+                                                <FiEye className="quick-view-icon" />
+                                                <span>Быстрый просмотр</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="card-content">
+                                        <div className="card-header">
+                                            <h3 className="card-title">{product.name}</h3>
+                                        </div>
+
+                                        <div className="card-footer">
+                                            <div className="price-section">
+                                                <span className="card-price">
+                                                    {formatPrice(product.price)}
+                                                </span>
+                                            </div>
+                                            <button
+                                                className={`card-add ${addedToCart[product.id] ? 'added' : ''}`}
+                                                onClick={(e) => addToCart(product, e)}
+                                            >
+                                                {addedToCart[product.id] ? (
+                                                    <FiCheck className="check-icon" />
+                                                ) : (
+                                                    <FiShoppingCart className="cart-icon" />
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Кнопка "Все боксы" */}
