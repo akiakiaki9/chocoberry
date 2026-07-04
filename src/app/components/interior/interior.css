@@ -6,20 +6,47 @@
     --gold: #bc8c4c;
     --gold-dark: #a0753a;
     --gold-light: #d4a373;
+    --gold-gradient: linear-gradient(135deg, #bc8c4c, #daa520);
     --red: #ff4d4d;
     --dark: #2d2a24;
     --white: #ffffff;
     --gray: #666;
     --light-gray: #f5f5f5;
     --font-heading: 'Georgia', serif;
+    --shadow-gold: 0 10px 40px rgba(188, 140, 76, 0.2);
+    --shadow-dark: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== ОСНОВНЫЕ СТИЛИ ===== */
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ
+   ============================================ */
 .interior-showcase {
-    padding: 80px 0;
-    background: linear-gradient(135deg, #ffffff 0%, #faf6f1 100%);
+    padding: 100px 0 80px;
+    background: linear-gradient(180deg, #ffffff 0%, #faf6f1 100%);
     position: relative;
     overflow: hidden;
+}
+
+.interior-showcase::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background: linear-gradient(180deg, rgba(188, 140, 76, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.interior-showcase::after {
+    content: '🍫';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 300px;
+    opacity: 0.02;
+    transform: rotate(-15deg) translate(50px, 50px);
+    pointer-events: none;
 }
 
 .container {
@@ -30,79 +57,79 @@
     z-index: 2;
 }
 
-/* Декоративный фон */
-.interior-showcase::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 300px;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.interior-showcase::after {
-    content: '🍫';
-    position: absolute;
-    bottom: 50px;
-    right: 50px;
-    font-size: 150px;
-    opacity: 0.03;
-    transform: rotate(-15deg);
-    pointer-events: none;
-}
-
-/* ===== ЗАГОЛОВОК СЕКЦИИ ===== */
+/* ============================================
+   ЗАГОЛОВОК СЕКЦИИ
+   ============================================ */
 .section-header {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 6px 20px;
+    background: rgba(188, 140, 76, 0.15);
+    color: var(--gold);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(188, 140, 76, 0.2);
 }
 
 .section-title {
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin-bottom: 20px;
-    position: relative;
-    display: inline-block;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    margin-bottom: 16px;
     font-family: var(--font-heading);
     color: #2d2a24;
 }
 
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background: linear-gradient(90deg, #ff4d4d, #bc8c4c);
-    border-radius: 3px;
-}
-
 .gold-text {
-    color: #bc8c4c;
+    color: var(--gold);
     position: relative;
-    display: inline-block;
 }
 
 .section-subtitle {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: #666;
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    color: var(--gray);
     max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
+    margin: 0 auto 24px;
+    line-height: 1.8;
 }
 
-/* ===== ОСНОВНАЯ СЕТКА ===== */
+.section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.divider-line {
+    width: 60px;
+    height: 2px;
+    background: var(--gold-gradient);
+    border-radius: 2px;
+    opacity: 0.3;
+}
+
+.divider-icon {
+    font-size: 1.5rem;
+}
+
+/* ============================================
+   ОСНОВНАЯ СЕТКА
+   ============================================ */
 .showcase-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 50px;
+    gap: 50px;
+    margin-top: 40px;
 }
 
-/* ===== ЛЕВАЯ КОЛОНКА - ИНТЕРЬЕР ===== */
+/* ============================================
+   ЛЕВАЯ КОЛОНКА - ИНТЕРЬЕР
+   ============================================ */
 .interior-column {
     position: relative;
 }
@@ -112,32 +139,64 @@
     border-radius: 24px;
     overflow: hidden;
     margin-bottom: 20px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-dark);
     cursor: pointer;
+    background: #f5f5f5;
 }
 
 .interior-main-image {
     width: 100%;
-    height: 450px;
+    height: 500px;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
     display: block;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .interior-main-image.zoomed {
-    transform: scale(1.5);
+    transform: scale(1.8);
     cursor: zoom-out;
 }
 
-.interior-main:hover .interior-main-image:not(.zoomed) {
-    transform: scale(1.05);
+/* Индикатор прогресса */
+.interior-progress {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
 }
 
-/* Кнопка зума */
-.interior-zoom-btn {
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+    background: var(--gold);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* Кнопки управления */
+.interior-controls {
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 5;
+}
+
+.interior-zoom-btn,
+.interior-autoplay-btn {
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -149,19 +208,15 @@
     justify-content: center;
     color: #2d2a24;
     transition: all 0.3s ease;
-    z-index: 5;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
 }
 
-.interior-zoom-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.interior-zoom-btn:hover {
-    background: #bc8c4c;
+.interior-zoom-btn:hover,
+.interior-autoplay-btn:hover {
+    background: var(--gold);
     color: #ffffff;
     transform: scale(1.1);
 }
@@ -171,8 +226,8 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.95);
     border: none;
@@ -194,15 +249,15 @@
 }
 
 .interior-nav.prev {
-    left: 20px;
+    left: 16px;
 }
 
 .interior-nav.next {
-    right: 20px;
+    right: 16px;
 }
 
 .interior-nav:hover {
-    background: #bc8c4c;
+    background: var(--gold);
     color: #ffffff;
     transform: translateY(-50%) scale(1.1);
 }
@@ -213,7 +268,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 30px;
+    padding: 30px 30px 25px;
     background: linear-gradient(0deg, 
         rgba(45, 42, 36, 0.95) 0%, 
         rgba(45, 42, 36, 0.7) 50%,
@@ -221,42 +276,41 @@
     color: #ffffff;
     display: flex;
     align-items: center;
-    gap: 15px;
-    transform: translateY(0);
-    transition: transform 0.3s ease;
+    gap: 16px;
 }
 
 .interior-caption-icon {
     width: 50px;
     height: 50px;
-    background: #bc8c4c;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: #2d2a24;
-    box-shadow: 0 4px 15px rgba(188, 140, 76, 0.4);
+    color: #ffffff;
     flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .interior-caption-text h3 {
     font-size: 1.3rem;
-    margin-bottom: 5px;
-    color: #bc8c4c;
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .interior-caption-text p {
-    font-size: 0.95rem;
-    opacity: 0.9;
+    font-size: 0.9rem;
+    opacity: 0.8;
     color: #f0f0f0;
+    margin: 0;
 }
 
 /* Миниатюры */
 .interior-thumbnails {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 12px;
 }
 
 .thumbnail {
@@ -265,9 +319,9 @@
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.6;
     transition: all 0.3s ease;
-    height: 90px;
+    height: 100px;
     position: relative;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
@@ -280,23 +334,33 @@
 }
 
 .thumbnail:hover {
-    opacity: 0.9;
+    opacity: 0.8;
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(188, 140, 76, 0.2);
 }
 
 .thumbnail.active {
     opacity: 1;
-    border: 3px solid #bc8c4c;
+    border: 3px solid var(--gold);
     transform: scale(1.02);
     box-shadow: 0 4px 15px rgba(188, 140, 76, 0.3);
 }
 
-/* ===== ПРАВАЯ КОЛОНКА - БОКСЫ ===== */
+.thumbnail-active-indicator {
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--gold);
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+/* ============================================
+   ПРАВАЯ КОЛОНКА - БОКСЫ
+   ============================================ */
 .boxes-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 30px;
     flex-wrap: wrap;
     gap: 15px;
@@ -306,24 +370,18 @@
     font-size: 2rem;
     font-family: var(--font-heading);
     color: #2d2a24;
-    position: relative;
-    padding-bottom: 10px;
+    margin: 0;
 }
 
-.boxes-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: #bc8c4c;
-    border-radius: 3px;
+.boxes-subtitle {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin: 4px 0 0;
 }
 
 .boxes-stats {
     display: flex;
-    gap: 15px;
+    gap: 12px;
 }
 
 .boxes-stats-item {
@@ -331,9 +389,9 @@
     align-items: center;
     gap: 6px;
     background: #f0f0f0;
-    padding: 8px 15px;
+    padding: 8px 16px;
     border-radius: 30px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #2d2a24;
 }
@@ -341,7 +399,7 @@
 .stats-icon {
     width: 18px;
     height: 18px;
-    color: #bc8c4c;
+    color: var(--gold);
 }
 
 /* Сетка боксов */
@@ -358,34 +416,52 @@
     transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     position: relative;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(188, 140, 76, 0.05);
 }
 
 .box-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-gold);
+    border-color: rgba(188, 140, 76, 0.2);
 }
 
-/* Бейдж */
-.box-card-badge {
+/* Бейджи */
+.box-card-badges {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    background: #bc8c4c;
-    color: #2d2a24;
-    padding: 5px 15px;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    font-weight: 700;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     z-index: 3;
-    box-shadow: 0 4px 10px rgba(188, 140, 76, 0.3);
+}
+
+.box-card-badge {
+    padding: 4px 14px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.box-card-badge.new {
+    background: linear-gradient(135deg, #2ed573, #26de81);
+}
+
+.badge-icon {
+    width: 12px;
+    height: 12px;
 }
 
 /* Изображение */
 .box-card-image {
     position: relative;
-    height: 180px;
+    height: 200px;
     overflow: hidden;
     background: #f5f5f5;
 }
@@ -399,14 +475,43 @@
 }
 
 .box-card:hover .box-card-image img {
-    transform: scale(1.15);
+    transform: scale(1.1);
+}
+
+/* Overlay */
+.box-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay-text {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 24px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.box-card:hover .overlay-text {
+    transform: translateY(0);
 }
 
 /* Кнопка лайка */
 .box-card-like {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 12px;
+    right: 12px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -427,15 +532,16 @@
     width: 18px;
     height: 18px;
     color: #2d2a24;
+    transition: all 0.3s ease;
 }
 
 .box-card-like svg.liked {
-    color: #ff4d4d;
-    fill: #ff4d4d;
+    color: #ff4757;
+    fill: #ff4757;
 }
 
 .box-card-like:hover {
-    background: #ff4d4d;
+    background: #ff4757;
     transform: scale(1.1);
 }
 
@@ -446,34 +552,38 @@
 /* Иконка категории */
 .box-card-icons {
     position: absolute;
-    bottom: 15px;
-    left: 15px;
+    bottom: 12px;
+    left: 12px;
     z-index: 4;
 }
 
 .box-icon {
     width: 40px;
     height: 40px;
-    background: #bc8c4c;
+    background: var(--gold-gradient);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #2d2a24;
+    color: #ffffff;
     font-size: 1.2rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Информация */
 .box-card-info {
-    padding: 18px;
+    padding: 16px 18px 18px;
 }
 
 .box-card-name {
-    font-size: 1.1rem;
-    margin-bottom: 12px;
+    font-size: 1.05rem;
+    margin: 0 0 12px;
     color: #2d2a24;
     font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* Футер карточки */
@@ -481,24 +591,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #eee;
-    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
 }
 
 .box-card-price-section {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .price-icon {
     width: 16px;
     height: 16px;
-    color: #bc8c4c;
+    color: var(--gold);
 }
 
 .box-card-price {
-    color: #ff4d4d;
+    color: var(--red);
     font-weight: 700;
     font-size: 1rem;
 }
@@ -507,105 +617,54 @@
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #bc8c4c 0%, #ffd700 100%);
+    background: var(--gold-gradient);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.box-card-cart::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.box-card-cart:hover::before {
-    width: 100px;
-    height: 100px;
+    box-shadow: 0 4px 15px rgba(188, 140, 76, 0.3);
 }
 
 .box-card-cart:hover {
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(188, 140, 76, 0.4);
+    box-shadow: 0 6px 20px rgba(188, 140, 76, 0.4);
 }
 
 .box-card-cart.added {
-    background: #4caf50;
-    animation: cartSuccess 0.5s ease;
+    background: #2ed573;
+    box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
 }
 
 .cart-icon {
     width: 20px;
     height: 20px;
     color: #1a1a1a;
-    transition: all 0.3s ease;
-}
-
-.box-card-cart:hover .cart-icon {
-    transform: scale(1.1);
 }
 
 .box-card-cart.added .cart-icon {
     color: #ffffff;
 }
 
-.cart-check {
-    position: absolute;
+.box-card-cart span {
     font-size: 1.2rem;
-    animation: checkMark 0.3s ease;
-}
-
-@keyframes cartSuccess {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes checkMark {
-    0% {
-        opacity: 0;
-        transform: scale(0);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.2);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    font-weight: 700;
+    color: #ffffff;
 }
 
 /* ============================================
    МЕДИА ЗАПРОСЫ
    ============================================ */
 
-/* Десктоп (1024px и больше) */
+/* Десктоп */
 @media (min-width: 1025px) {
     .showcase-grid {
         grid-template-columns: 1fr 1fr;
     }
 }
 
-/* Планшеты (768px - 1024px) */
+/* Планшеты */
 @media (max-width: 1024px) {
     .interior-showcase {
         padding: 60px 0;
@@ -614,7 +673,7 @@
     .showcase-grid {
         grid-template-columns: 1fr;
         gap: 50px;
-        margin-top: 40px;
+        margin-top: 30px;
     }
 
     .interior-main-image {
@@ -625,32 +684,21 @@
         max-width: 600px;
         margin: 0 auto;
     }
-
-    .interior-showcase::after {
-        font-size: 120px;
-        opacity: 0.02;
-    }
 }
 
-/* Мобильные (768px и меньше) */
+/* Мобильные */
 @media (max-width: 768px) {
     .interior-showcase {
-        padding: 50px 0;
+        padding: 50px 0 40px;
     }
 
     .container {
         padding: 0 15px;
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
     }
 
     .interior-showcase::after {
-        display: none;
-    }
-
-    .interior-showcase::before {
-        height: 150px;
+        font-size: 150px;
+        opacity: 0.015;
     }
 
     .section-header {
@@ -659,30 +707,58 @@
 
     .section-title {
         font-size: 2rem;
-        display: block;
-        width: 100%;
-        text-align: center;
-    }
-
-    .section-title::after {
-        width: 60px;
-        left: 50%;
-        transform: translateX(-50%);
     }
 
     .section-subtitle {
-        font-size: 1rem;
+        font-size: 0.95rem;
         padding: 0 10px;
-        text-align: center;
+    }
+
+    .section-divider {
+        gap: 12px;
+    }
+
+    .divider-line {
+        width: 40px;
     }
 
     .showcase-grid {
         gap: 40px;
-        margin-top: 30px;
     }
 
     .interior-main-image {
-        height: 300px;
+        height: 320px;
+    }
+
+    .interior-nav {
+        width: 40px;
+        height: 40px;
+    }
+
+    .interior-nav svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .interior-nav.prev {
+        left: 10px;
+    }
+
+    .interior-nav.next {
+        right: 10px;
+    }
+
+    .interior-controls {
+        top: 12px;
+        right: 12px;
+        gap: 8px;
+    }
+
+    .interior-zoom-btn,
+    .interior-autoplay-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
     }
 
     .interior-caption {
@@ -704,43 +780,41 @@
         font-size: 0.85rem;
     }
 
-    .interior-nav {
-        width: 40px;
-        height: 40px;
+    .interior-progress {
+        bottom: 80px;
+        gap: 6px;
     }
 
-    .interior-nav svg {
+    .progress-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .progress-dot.active {
         width: 20px;
-        height: 20px;
-    }
-
-    .interior-nav.prev {
-        left: 10px;
-    }
-
-    .interior-nav.next {
-        right: 10px;
-    }
-
-    .interior-zoom-btn {
-        width: 40px;
-        height: 40px;
-        top: 15px;
-        right: 15px;
     }
 
     .thumbnail {
-        height: 70px;
+        height: 80px;
     }
 
     .boxes-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: stretch;
+        gap: 12px;
     }
 
     .boxes-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+    }
+
+    .boxes-stats {
+        gap: 10px;
+    }
+
+    .boxes-stats-item {
+        padding: 6px 14px;
+        font-size: 0.85rem;
     }
 
     .boxes-grid {
@@ -754,11 +828,11 @@
     }
 
     .box-card-name {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .box-card-price {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     .box-card-cart {
@@ -774,8 +848,6 @@
     .box-card-like {
         width: 36px;
         height: 36px;
-        top: 10px;
-        right: 10px;
     }
 
     .box-card-like svg {
@@ -789,16 +861,16 @@
         font-size: 1rem;
     }
 
-    .boxes-stats-item {
-        padding: 6px 12px;
-        font-size: 0.85rem;
+    .box-card-badge {
+        font-size: 0.6rem;
+        padding: 3px 10px;
     }
 }
 
-/* Маленькие телефоны (480px и меньше) */
+/* Маленькие телефоны */
 @media (max-width: 480px) {
     .interior-showcase {
-        padding: 40px 0;
+        padding: 40px 0 30px;
     }
 
     .container {
@@ -806,26 +878,25 @@
     }
 
     .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 
     .section-subtitle {
-        font-size: 0.95rem;
-        padding: 0 5px;
+        font-size: 0.85rem;
     }
 
     .interior-main-image {
-        height: 250px;
+        height: 280px;
     }
 
     .interior-caption {
-        padding: 15px;
+        padding: 16px;
         gap: 10px;
     }
 
     .interior-caption-icon {
-        width: 35px;
-        height: 35px;
+        width: 36px;
+        height: 36px;
         font-size: 1rem;
     }
 
@@ -847,26 +918,19 @@
         height: 18px;
     }
 
-    .interior-zoom-btn {
-        width: 36px;
-        height: 36px;
+    .interior-zoom-btn,
+    .interior-autoplay-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.8rem;
     }
 
-    .interior-zoom-btn svg {
-        width: 16px;
-        height: 16px;
-    }
-
-    .interior-thumbnails {
-        gap: 10px;
+    .interior-progress {
+        bottom: 70px;
     }
 
     .thumbnail {
-        height: 60px;
-    }
-
-    .boxes-title {
-        font-size: 1.5rem;
+        height: 70px;
     }
 
     .boxes-grid {
@@ -881,11 +945,11 @@
     }
 
     .box-card-name {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .box-card-price {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .box-card-cart {
@@ -898,35 +962,31 @@
     }
 
     .box-card-footer {
-        padding-top: 12px;
+        padding-top: 10px;
     }
 }
 
-/* Очень маленькие телефоны (360px и меньше) */
+/* Очень маленькие телефоны */
 @media (max-width: 360px) {
     .container {
         padding: 0 8px;
     }
 
     .section-title {
-        font-size: 1.5rem;
-    }
-
-    .section-subtitle {
-        font-size: 0.85rem;
+        font-size: 1.4rem;
     }
 
     .interior-main-image {
-        height: 200px;
+        height: 240px;
     }
 
     .interior-caption {
-        padding: 12px;
+        padding: 14px;
     }
 
     .interior-caption-icon {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         font-size: 0.9rem;
     }
 
@@ -939,7 +999,7 @@
     }
 
     .thumbnail {
-        height: 50px;
+        height: 60px;
     }
 
     .boxes-grid {
@@ -948,14 +1008,6 @@
 
     .box-card-image {
         height: 160px;
-    }
-
-    .box-card-name {
-        font-size: 1rem;
-    }
-
-    .box-card-price {
-        font-size: 0.9rem;
     }
 }
 
@@ -967,10 +1019,11 @@
 
     .showcase-grid {
         gap: 30px;
+        margin-top: 20px;
     }
 
     .interior-main-image {
-        height: 250px;
+        height: 280px;
     }
 
     .interior-thumbnails {
@@ -978,7 +1031,7 @@
     }
 
     .thumbnail {
-        height: 60px;
+        height: 70px;
     }
 
     .boxes-grid {
@@ -995,8 +1048,12 @@
     }
 
     .box-card-name {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         margin-bottom: 8px;
+    }
+
+    .section-header {
+        margin-bottom: 25px;
     }
 }
 
@@ -1014,8 +1071,11 @@
         transform: none;
     }
 
+    .box-card-overlay {
+        display: none;
+    }
+
     .interior-nav:hover {
-        transform: translateY(-50%);
         background: rgba(255, 255, 255, 0.95);
         color: #2d2a24;
     }
@@ -1024,10 +1084,22 @@
     .box-card-cart:active {
         transform: scale(0.9);
     }
+
+    .thumbnail:active {
+        transform: scale(0.95);
+    }
 }
 
 /* Улучшения доступности */
 @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
     .interior-main-image,
     .box-card-image img,
     .box-card,
@@ -1035,7 +1107,6 @@
     .interior-zoom-btn,
     .box-card-like,
     .box-card-cart {
-        animation: none !important;
         transition: none !important;
     }
 
@@ -1046,29 +1117,30 @@
     .box-card:hover {
         transform: none !important;
     }
-
-    .box-card-cart::before {
-        display: none;
-    }
 }
 
 /* High contrast */
 @media (prefers-contrast: high) {
     .box-card {
-        border: 2px solid #bc8c4c;
+        border: 2px solid var(--gold);
     }
 
     .box-card-badge {
-        background: #ffd700;
-        color: #000000;
+        background: #ffd700 !important;
+        color: #000000 !important;
     }
 
     .box-card-cart {
         background: #ffd700;
+        color: #000000;
     }
 
     .box-card-price {
         color: #ff0000;
+    }
+
+    .thumbnail.active {
+        border: 3px solid #ffd700;
     }
 }
 

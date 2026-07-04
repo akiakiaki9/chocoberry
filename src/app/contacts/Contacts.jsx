@@ -22,6 +22,7 @@ import {
 import { HiOutlineLocationMarker, HiOutlinePhone } from 'react-icons/hi';
 import { MdOutlineAccessTime } from 'react-icons/md';
 import { useState } from 'react';
+import './contacts.css';
 
 export default function ContactsPage() {
     const [hoveredSocial, setHoveredSocial] = useState(null);
@@ -196,21 +197,25 @@ export default function ContactsPage() {
                                         src="/images/data/images/45.png"
                                         alt="Фасад бутика"
                                         loading="lazy"
+                                        style={{maxWidth: '100%'}}
                                     />
                                     <img
                                         src="/images/data/images/42.png"
                                         alt="Внутри бутика"
                                         loading="lazy"
+                                        style={{maxWidth: '100%'}}
                                     />
                                     <img
                                         src="/images/data/images/41.png"
                                         alt="Витрина"
                                         loading="lazy"
+                                        style={{maxWidth: '100%'}}
                                     />
                                     <img
                                         src="/images/data/images/40.png"
                                         alt="Золотая витрина"
                                         loading="lazy"
+                                        style={{maxWidth: '100%'}}
                                     />
                                 </div>
                             </div>

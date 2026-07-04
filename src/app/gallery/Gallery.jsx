@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './gallery.css';
 import {
   FiGrid,
   FiHome,
-  FiGift,
   FiHeart,
   FiCalendar,
   FiX,
@@ -14,24 +13,20 @@ import {
   FiZoomIn,
   FiCamera,
   FiPackage,
-  FiUsers
 } from 'react-icons/fi';
 import {
   GiStrawberry,
-  GiChocolateBar,
   GiCrown,
-  GiHeartWings,
-  GiFamilyHouse,
-  GiPartyPopper
 } from 'react-icons/gi';
-import { IoMdPhotos, IoMdHeart } from 'react-icons/io';
-import { FaFire } from 'react-icons/fa';
-import { BiCategory } from 'react-icons/bi';
+import { IoMdPhotos } from 'react-icons/io';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loadedImages, setLoadedImages] = useState({});
+  const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
     interior: 0,
@@ -49,7 +44,6 @@ export default function GalleryPage() {
   ];
 
   const galleryItems = [
-    // Интерьер
     {
       id: 1,
       image: '/images/carousel/carousel/1.png',
@@ -84,7 +78,15 @@ export default function GalleryPage() {
     },
   ];
 
-  // Подсчет статистики при загрузке
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     const newStats = {
       total: galleryItems.length,
@@ -110,53 +112,136 @@ export default function GalleryPage() {
     document.body.style.overflow = 'unset';
   };
 
-  const nextImage = () => {
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+  const nextImage = useCallback(() => {
+    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage?.id);
+    if (currentIndex === -1) return;
     const nextIndex = (currentIndex + 1) % filteredItems.length;
     setSelectedImage(filteredItems[nextIndex]);
-  };
+  }, [filteredItems, selectedImage]);
 
-  const prevImage = () => {
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+  const prevImage = useCallback(() => {
+    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage?.id);
+    if (currentIndex === -1) return;
     const prevIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
     setSelectedImage(filteredItems[prevIndex]);
-  };
+  }, [filteredItems, selectedImage]);
 
   const handleImageLoad = (id) => {
     setLoadedImages(prev => ({ ...prev, [id]: true }));
   };
 
-  const handleKeyDown = (e) => {
-    if (!selectedImage) return;
+  // Touch events for swipe
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+  };
 
-    if (e.key === 'ArrowRight') {
-      nextImage();
-    } else if (e.key === 'ArrowLeft') {
-      prevImage();
-    } else if (e.key === 'Escape') {
-      closeLightbox();
+  const handleTouchEnd = (e) => {
+    if (!touchStart || !selectedImage) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextImage();
+      } else {
+        prevImage();
+      }
+    }
+    setTouchStart(null);
+  };
+
+  // Keyboard events
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!selectedImage) return;
+      if (e.key === 'ArrowRight') nextImage();
+      else if (e.key === 'ArrowLeft') prevImage();
+      else if (e.key === 'Escape') closeLightbox();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImage, nextImage, prevImage]);
+
+  // Variants for animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.1
+      }
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedImage]);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25
+      }
+    }
+  };
+
+  const lightboxVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.3 }
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
+  };
+
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 30
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.9,
+      transition: { duration: 0.2 }
+    }
+  };
 
   return (
     <div className="gallery-page">
       {/* Шапка */}
       <div className="gallery-header">
         <div className="container">
-          <h1 className="gallery-title">
-            Наша <span className="gold-text">галерея</span>
-          </h1>
-          <p className="gallery-subtitle">
-            Интерьер бутика, наши работы и процесс создания
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="gallery-title">
+              Наша <span className="gold-text">галерея</span>
+            </h1>
+            <p className="gallery-subtitle">
+              Интерьер бутика, наши работы и процесс создания
+            </p>
+          </motion.div>
 
           {/* Статистика */}
-          <div className="gallery-stats">
+          <motion.div
+            className="gallery-stats"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             <div className="stat-item">
               <IoMdPhotos className="stat-icon" />
               <span className="stat-value">{stats.total}</span>
@@ -172,7 +257,7 @@ export default function GalleryPage() {
               <span className="stat-value">{stats.boxes}</span>
               <span className="stat-label">боксы</span>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -180,11 +265,16 @@ export default function GalleryPage() {
       <div className="gallery-categories">
         <div className="container">
           <div className="category-list">
-            {categories.map(cat => (
-              <button
+            {categories.map((cat, index) => (
+              <motion.button
                 key={cat.id}
                 className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
                 onClick={() => setActiveCategory(cat.id)}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
               >
                 <span className="category-icon">{cat.icon}</span>
                 <span className="category-name">{cat.name}</span>
@@ -193,7 +283,7 @@ export default function GalleryPage() {
                     {cat.id === 'all' ? stats.total : stats[cat.id]}
                   </span>
                 )}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -202,13 +292,19 @@ export default function GalleryPage() {
       {/* Сетка галереи */}
       <div className="gallery-content">
         <div className="container">
-          <div className="masonry-grid">
-            {filteredItems.map((item, index) => (
-              <div
+          <motion.div
+            className="masonry-grid"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredItems.map((item) => (
+              <motion.div
                 key={item.id}
                 className={`masonry-item ${item.size} ${loadedImages[item.id] ? 'loaded' : ''}`}
-                style={{ animationDelay: `${index * 0.05}s` }}
+                variants={itemVariants}
                 onClick={() => openLightbox(item)}
+                whileHover={!isMobile ? { y: -8 } : {}}
               >
                 {!loadedImages[item.id] && (
                   <div className="image-placeholder">
@@ -230,55 +326,82 @@ export default function GalleryPage() {
                   <h3>{item.title}</h3>
                   <FiZoomIn className="overlay-icon" />
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Лайтбокс */}
-      {selectedImage && (
-        <div className="gallery-lightbox" onClick={closeLightbox}>
-          <button className="lightbox-close" onClick={closeLightbox}>
-            <FiX />
-          </button>
-
-          <button
-            className="lightbox-nav lightbox-prev"
-            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            className="gallery-lightbox"
+            variants={lightboxVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={closeLightbox}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
-            <FiChevronLeft />
-          </button>
+            <motion.button
+              className="lightbox-close"
+              onClick={closeLightbox}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiX />
+            </motion.button>
 
-          <button
-            className="lightbox-nav lightbox-next"
-            onClick={(e) => { e.stopPropagation(); nextImage(); }}
-          >
-            <FiChevronRight />
-          </button>
+            <motion.button
+              className="lightbox-nav lightbox-prev"
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiChevronLeft />
+            </motion.button>
 
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={selectedImage.image}
-              alt={selectedImage.title}
-              onError={(e) => {
-                e.target.src = 'https://images.pexels.com/photos/5632398/pexels-photo-5632398.jpeg?auto=compress&cs=tinysrgb&w=600';
-              }}
-            />
-            <div className="lightbox-caption">
-              <h2>{selectedImage.title}</h2>
-              <div className="lightbox-category">
-                {selectedImage.icon}
-                <span>{categories.find(c => c.id === selectedImage.category)?.name}</span>
+            <motion.button
+              className="lightbox-nav lightbox-next"
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FiChevronRight />
+            </motion.button>
+
+            <motion.div
+              className="lightbox-content"
+              onClick={(e) => e.stopPropagation()}
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <img
+                src={selectedImage.image}
+                alt={selectedImage.title}
+                onError={(e) => {
+                  e.target.src = 'https://images.pexels.com/photos/5632398/pexels-photo-5632398.jpeg?auto=compress&cs=tinysrgb&w=600';
+                }}
+              />
+              <div className="lightbox-caption">
+                <h2>{selectedImage.title}</h2>
+                <div className="lightbox-category">
+                  {selectedImage.icon}
+                  <span>{categories.find(c => c.id === selectedImage.category)?.name}</span>
+                </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
 
-          <div className="lightbox-counter">
-            {filteredItems.findIndex(item => item.id === selectedImage.id) + 1} / {filteredItems.length}
-          </div>
-        </div>
-      )}
+            <div className="lightbox-counter">
+              {filteredItems.findIndex(item => item.id === selectedImage.id) + 1} / {filteredItems.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,29 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Cart from '../cart/Cart';
 import './navbar.css';
 import Link from 'next/link';
-import { FiPhone, FiShoppingCart, FiX } from 'react-icons/fi';
+import { FiPhone, FiShoppingCart, FiX, FiHeart } from 'react-icons/fi';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    // Функция для обновления счетчика из localStorage
-    const updateCartCount = () => {
+    const updateCartCount = useCallback(() => {
         try {
             const savedCart = localStorage.getItem('chocoberry-cart');
             if (savedCart) {
@@ -36,21 +28,26 @@ const Navbar = () => {
         } catch (error) {
             console.error('Ошибка загрузки корзины:', error);
         }
-    };
-
-    // Загружаем при монтировании
-    useEffect(() => {
-        updateCartCount();
     }, []);
 
-    // Слушаем события обновления корзины
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        updateCartCount();
+    }, [updateCartCount]);
+
     useEffect(() => {
         const handleCartUpdate = (e) => {
-            console.log('Cart updated event received:', e.detail);
             setCartCount(e.detail.count);
         };
 
-        // Также слушаем storage события (для других вкладок)
         const handleStorageChange = (e) => {
             if (e.key === 'chocoberry-cart') {
                 updateCartCount();
@@ -64,20 +61,16 @@ const Navbar = () => {
             window.removeEventListener('cartUpdated', handleCartUpdate);
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [updateCartCount]);
 
-    // Улучшенное управление скроллом
     useEffect(() => {
         if (isOpen) {
-            document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
         } else {
-            document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
         }
 
         return () => {
-            document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
         };
     }, [isOpen]);
@@ -95,29 +88,43 @@ const Navbar = () => {
         updateCartCount();
     };
 
+    const menuItems = [
+        { href: '/catalog', label: 'Каталог' },
+        { href: '/gallery', label: 'Галерея' },
+        { href: '/contacts', label: 'Контакты' },
+    ];
+
     return (
         <>
-            <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
+            <nav 
+                className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
                 <div className="navbar-container">
-                    <a href="/" className="navbar-logo">
-                        <img
-                            src="/images/logo.png"
-                            alt="Chocoberry Logo"
-                            className="logo-image"
-                        />
-                        <span className="logo-text">Choco<span className="logo-highlight">berry</span></span>
-                    </a>
+                    <Link href="/" className="navbar-logo">
+                        <div className="logo-wrapper">
+                            <img
+                                src="/images/logo.png"
+                                alt="Chocoberry Logo"
+                                className="logo-image"
+                            />
+                            <div className="logo-glow"></div>
+                        </div>
+                        <span className="logo-text">
+                            Choco<span className="logo-highlight">berry</span>
+                        </span>
+                    </Link>
 
                     <ul className="navbar-menu">
-                        <li className="menu-item">
-                            <Link href="/catalog" className="menu-link">Каталог</Link>
-                        </li>
-                        <li className="menu-item">
-                            <Link href="/gallery" className="menu-link">Галерея</Link>
-                        </li>
-                        <li className="menu-item">
-                            <Link href="/contacts" className="menu-link">Контакты</Link>
-                        </li>
+                        {menuItems.map((item) => (
+                            <li key={item.href} className="menu-item">
+                                <Link href={item.href} className="menu-link">
+                                    {item.label}
+                                    <span className="menu-link-underline"></span>
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
 
                     <div className="navbar-right">
@@ -128,9 +135,24 @@ const Navbar = () => {
 
                         <button className="navbar-cart" onClick={openCart}>
                             <FiShoppingCart className="cart-icon" />
-                            {cartCount > 0 && (
-                                <span className="cart-badge">{cartCount}</span>
-                            )}
+                            <AnimatePresence>
+                                {cartCount > 0 && (
+                                    <motion.span
+                                        key="badge"
+                                        className="cart-badge"
+                                        initial={{ scale: 0, rotate: -180 }}
+                                        animate={{ scale: 1, rotate: 0 }}
+                                        exit={{ scale: 0, rotate: 180 }}
+                                        transition={{ 
+                                            type: "spring",
+                                            stiffness: 500,
+                                            damping: 15
+                                        }}
+                                    >
+                                        {cartCount}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
                         </button>
 
                         <button
@@ -138,49 +160,89 @@ const Navbar = () => {
                             onClick={toggleMenu}
                             aria-label="Меню"
                         >
-                            {isOpen ? <FiX className="close-icon" /> : <GiHamburgerMenu className="burger-icon" />}
+                            <div className="burger-line"></div>
+                            <div className="burger-line"></div>
+                            <div className="burger-line"></div>
                         </button>
                     </div>
                 </div>
             </nav>
 
-            <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
-                <div className="mobile-menu-container">
-                    <button className="mobile-close-btn" onClick={closeMenu} aria-label="Закрыть меню">
-                        <FiX className="mobile-close-icon" />
-                    </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <motion.div
+                            className="menu-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={closeMenu}
+                            transition={{ duration: 0.3 }}
+                        />
 
-                    <ul className="mobile-menu-list">
-                        <li className="mobile-menu-item">
-                            <Link href="/catalog" className="mobile-menu-link" onClick={closeMenu}>Каталог</Link>
-                        </li>
-                        <li className="mobile-menu-item">
-                            <Link href="/gallery" className="mobile-menu-link" onClick={closeMenu}>Галерея</Link>
-                        </li>
-                        <li className="mobile-menu-item">
-                            <Link href="/contacts" className="mobile-menu-link" onClick={closeMenu}>Контакты</Link>
-                        </li>
-                    </ul>
+                        <motion.div
+                            className="mobile-menu"
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ 
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 30
+                            }}
+                        >
+                            <div className="mobile-menu-container">
+                                <button 
+                                    className="mobile-close-btn" 
+                                    onClick={closeMenu} 
+                                    aria-label="Закрыть меню"
+                                >
+                                    <FiX className="mobile-close-icon" />
+                                </button>
 
-                    <div className="mobile-menu-footer">
-                        <a href="tel:+998914433443" className="mobile-phone">
-                            <FiPhone className="mobile-phone-icon" />
-                            +998 91 443 34 43
-                        </a>
-                        <button className="mobile-cart" onClick={openCart}>
-                            <FiShoppingCart className="mobile-cart-icon" />
-                            Корзина
-                            {cartCount > 0 && (
-                                <span className="mobile-cart-badge">{cartCount}</span>
-                            )}
-                        </button>
-                    </div>
-                </div>
-            </div>
+                                <ul className="mobile-menu-list">
+                                    {menuItems.map((item, index) => (
+                                        <motion.li
+                                            key={item.href}
+                                            className="mobile-menu-item"
+                                            initial={{ opacity: 0, x: 50 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.1 + 0.2 }}
+                                        >
+                                            <Link 
+                                                href={item.href} 
+                                                className="mobile-menu-link"
+                                                onClick={closeMenu}
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        </motion.li>
+                                    ))}
+                                </ul>
 
-            {isOpen && (
-                <div className="menu-overlay" onClick={closeMenu}></div>
-            )}
+                                <motion.div 
+                                    className="mobile-menu-footer"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4 }}
+                                >
+                                    <a href="tel:+998914433443" className="mobile-phone">
+                                        <FiPhone className="mobile-phone-icon" />
+                                        +998 91 443 34 43
+                                    </a>
+                                    <button className="mobile-cart" onClick={openCart}>
+                                        <FiShoppingCart className="mobile-cart-icon" />
+                                        Корзина
+                                        <span className="mobile-cart-badge">
+                                            {cartCount}
+                                        </span>
+                                    </button>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             <Cart isOpen={isCartOpen} onClose={closeCart} />
         </>

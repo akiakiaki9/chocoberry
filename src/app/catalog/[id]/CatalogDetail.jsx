@@ -12,13 +12,13 @@ import {
     FiGift,
     FiCreditCard,
     FiPackage,
+    FiHeart,
+    FiShare2,
+    FiCheck
 } from 'react-icons/fi';
-import {
-    IoMdHeart,
-    IoMdHeartEmpty,
-} from 'react-icons/io';
 import { FaFire } from 'react-icons/fa';
 import { HiOutlineLocationMarker, HiOutlineClock } from 'react-icons/hi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -27,8 +27,18 @@ export default function ProductDetailPage() {
     const [addedToCart, setAddedToCart] = useState(false);
     const [selectedTab, setSelectedTab] = useState('description');
     const [isFavorite, setIsFavorite] = useState(false);
+    const [imageError, setImageError] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
-    // Функция для парсинга цены
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const parsePrice = (priceStr) => {
         if (typeof priceStr === 'number') return priceStr;
         if (priceStr.includes('-')) {
@@ -37,7 +47,6 @@ export default function ProductDetailPage() {
         return parseInt(priceStr);
     };
 
-    // Функция для форматирования цены
     const formatPrice = (price) => {
         if (price.includes('-')) {
             const [min, max] = price.split('-').map(p => parseInt(p));
@@ -46,7 +55,6 @@ export default function ProductDetailPage() {
         return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
     };
 
-    // Загрузка товара
     useEffect(() => {
         if (id) {
             const productData = products.find(p => p.id === parseInt(id));
@@ -54,7 +62,6 @@ export default function ProductDetailPage() {
         }
     }, [id]);
 
-    // Похожие товары (первые 4, исключая текущий)
     const relatedProducts = products
         .filter(p => p.id !== product?.id)
         .slice(0, 4);
@@ -94,7 +101,6 @@ export default function ProductDetailPage() {
         }
     };
 
-    // Определяем популярные товары (первые 3)
     const popularProductIds = [1, 2, 3];
     const isProductPopular = (id) => popularProductIds.includes(id);
 
@@ -105,6 +111,8 @@ export default function ProductDetailPage() {
             </div>
         );
     }
+
+    const imageSrc = imageError ? '/images/placeholder.png' : product.image;
 
     return (
         <div className="product-detail-page">
@@ -123,26 +131,34 @@ export default function ProductDetailPage() {
                 <div className="container">
                     <div className="product-detail-grid">
                         {/* Левая колонка - фото */}
-                        <div className="product-gallery">
+                        <motion.div
+                            className="product-gallery"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
                             <div className="main-image">
                                 <img
-                                    src={product.image}
+                                    src={imageSrc}
                                     alt={product.name}
-                                    onError={(e) => {
-                                        e.target.src = 'https://via.placeholder.com/600x600?text=Chocoberry';
-                                    }}
+                                    onError={() => setImageError(true)}
                                 />
                                 {isProductPopular(product.id) && (
                                     <span className="gallery-badge">
                                         <FaFire className="badge-icon" />
-                                        Хит продаж
+                                        Хит
                                     </span>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Правая колонка - информация */}
-                        <div className="product-info">
+                        <motion.div
+                            className="product-info"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
                             <h1 className="product-title">{product.name}</h1>
 
                             <div className="product-price-section">
@@ -155,6 +171,7 @@ export default function ProductDetailPage() {
                                     <button
                                         className="quantity-btn"
                                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        disabled={quantity <= 1}
                                     >
                                         −
                                     </button>
@@ -167,19 +184,44 @@ export default function ProductDetailPage() {
                                     </button>
                                 </div>
 
-                                <button
+                                <motion.button
                                     className={`add-to-cart-btn ${addedToCart ? 'added' : ''}`}
                                     onClick={addToCart}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
-                                    <FiShoppingCart className="btn-icon" />
-                                    <span>{addedToCart ? 'Добавлено' : 'В корзину'}</span>
-                                </button>
+                                    <AnimatePresence mode="wait">
+                                        {addedToCart ? (
+                                            <motion.span
+                                                key="check"
+                                                initial={{ scale: 0, rotate: -180 }}
+                                                animate={{ scale: 1, rotate: 0 }}
+                                                exit={{ scale: 0, rotate: 180 }}
+                                                className="add-content"
+                                            >
+                                                <FiCheck className="btn-icon" />
+                                                Добавлено
+                                            </motion.span>
+                                        ) : (
+                                            <motion.span
+                                                key="cart"
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                exit={{ scale: 0 }}
+                                                className="add-content"
+                                            >
+                                                <FiShoppingCart className="btn-icon" />
+                                                В корзину
+                                            </motion.span>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.button>
 
                                 <button
                                     className={`favorite-btn ${isFavorite ? 'active' : ''}`}
                                     onClick={() => setIsFavorite(!isFavorite)}
                                 >
-                                    {isFavorite ? <IoMdHeart /> : <IoMdHeartEmpty />}
+                                    <FiHeart />
                                 </button>
                             </div>
 
@@ -198,11 +240,22 @@ export default function ProductDetailPage() {
                                     <span>Оплата картой или наличными</span>
                                 </div>
                             </div>
-                        </div>
+
+                            {/* Кнопка поделиться */}
+                            <button className="share-btn">
+                                <FiShare2 />
+                                <span>Поделиться</span>
+                            </button>
+                        </motion.div>
                     </div>
 
                     {/* Табы с информацией */}
-                    <div className="product-tabs">
+                    <motion.div
+                        className="product-tabs"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    >
                         <div className="tabs-header">
                             <button
                                 className={`tab-btn ${selectedTab === 'description' ? 'active' : ''}`}
@@ -214,7 +267,7 @@ export default function ProductDetailPage() {
                                 className={`tab-btn ${selectedTab === 'delivery' ? 'active' : ''}`}
                                 onClick={() => setSelectedTab('delivery')}
                             >
-                                Доставка и оплата
+                                Доставка
                             </button>
                         </div>
 
@@ -231,11 +284,6 @@ export default function ProductDetailPage() {
                                         создания романтической атмосферы. Бокс упаковывается в фирменную
                                         коробку с золотым тиснением.
                                     </p>
-                                    <p className="description-text">
-                                        Свежая клубника в бельгийском шоколаде - это сочетание натуральных
-                                        ингредиентов и мастерства наших кондитеров. Каждый бокс - это
-                                        уникальное произведение искусства.
-                                    </p>
                                 </div>
                             )}
 
@@ -246,19 +294,15 @@ export default function ProductDetailPage() {
                                         <ul>
                                             <li>
                                                 <FiTruck className="delivery-icon" />
-                                                Бесплатная доставка по Бухаре при заказе от 500 000 сум
-                                            </li>
-                                            <li>
-                                                <FiCreditCard className="delivery-icon" />
-                                                Доставка до 500 000 сум - 20 000 сум
+                                                Бесплатно от 500 000 сум
                                             </li>
                                             <li>
                                                 <HiOutlineClock className="delivery-icon" />
-                                                Доставка осуществляется с 10:00 до 22:00
+                                                10:00 - 22:00
                                             </li>
                                             <li>
                                                 <HiOutlineLocationMarker className="delivery-icon" />
-                                                Возможен самовывоз из нашего бутика
+                                                Самовывоз из бутика
                                             </li>
                                         </ul>
 
@@ -266,26 +310,22 @@ export default function ProductDetailPage() {
                                         <ul>
                                             <li>
                                                 <FiCreditCard className="delivery-icon" />
-                                                Оплата картой на сайте
+                                                Картой на сайте
                                             </li>
                                             <li>
                                                 <FiPackage className="delivery-icon" />
                                                 Наличными при получении
-                                            </li>
-                                            <li>
-                                                <FiGift className="delivery-icon" />
-                                                Переводом на карту
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* Возможно вам понравится */}
+            {/* Похожие товары */}
             <section className="related-products">
                 <div className="container">
                     <h2 className="section-title">
@@ -294,32 +334,37 @@ export default function ProductDetailPage() {
 
                     <div className="related-grid">
                         {relatedProducts.map((relatedProduct, index) => (
-                            <Link
-                                href={`/catalog/${relatedProduct.id}`}
+                            <motion.div
                                 key={relatedProduct.id}
-                                className="related-card"
-                                style={{ animationDelay: `${index * 0.1}s` }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.08 }}
                             >
-                                <div className="related-image">
-                                    <img
-                                        src={relatedProduct.image}
-                                        alt={relatedProduct.name}
-                                        onError={(e) => {
-                                            e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
-                                        }}
-                                    />
-                                    {isProductPopular(relatedProduct.id) && (
-                                        <span className="related-badge">
-                                            <FaFire className="badge-icon" />
-                                            Хит
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="related-info">
-                                    <h3 className="related-name">{relatedProduct.name}</h3>
-                                    <span className="related-price">{formatPrice(relatedProduct.price)}</span>
-                                </div>
-                            </Link>
+                                <Link
+                                    href={`/catalog/${relatedProduct.id}`}
+                                    className="related-card"
+                                >
+                                    <div className="related-image">
+                                        <img
+                                            src={relatedProduct.image}
+                                            alt={relatedProduct.name}
+                                            onError={(e) => {
+                                                e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
+                                            }}
+                                        />
+                                        {isProductPopular(relatedProduct.id) && (
+                                            <span className="related-badge">
+                                                <FaFire className="badge-icon" />
+                                                Хит
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="related-info">
+                                        <h3 className="related-name">{relatedProduct.name}</h3>
+                                        <span className="related-price">{formatPrice(relatedProduct.price)}</span>
+                                    </div>
+                                </Link>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
