@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { products } from '../utils/data1';
 import './catalog.css';
@@ -12,9 +12,9 @@ import {
     FiEye,
     FiStar,
     FiRefreshCw,
-    FiHeart,
     FiGrid,
-    FiList
+    FiList,
+    FiArrowRight
 } from 'react-icons/fi';
 import {
     GiStrawberry,
@@ -22,7 +22,7 @@ import {
     GiCrown,
     GiFlowerEmblem 
 } from 'react-icons/gi';
-import { FaFire, FaMagic, FaWandMagicSparkles } from 'react-icons/fa';
+import { FaFire, FaMagic } from 'react-icons/fa';
 import { IoMdPricetag } from 'react-icons/io';
 import { RiFlowerFill } from 'react-icons/ri';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -170,6 +170,12 @@ export default function CatalogPage() {
     const toggleFilters = () => {
         setIsFilterVisible(!isFilterVisible);
         setShowFilters(!showFilters);
+    };
+
+    const openQuickView = (product, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setQuickView(product);
     };
 
     const containerVariants = {
@@ -425,57 +431,56 @@ export default function CatalogPage() {
                                             onMouseEnter={() => setHoveredCard(product.id)}
                                             onMouseLeave={() => setHoveredCard(null)}
                                         >
-                                            <Link
-                                                href={`/catalog/${product.id}`}
-                                                className="product-card-link"
-                                            >
-                                                <div className={`product-card ${hoveredCard === product.id ? 'hovered' : ''}`}>
-                                                    <div className="card-flower-texture"></div>
+                                            <div className={`product-card ${hoveredCard === product.id ? 'hovered' : ''}`}>
+                                                <div className="card-flower-texture"></div>
 
-                                                    {isProductPopular(product.id) && (
-                                                        <div className="product-badge">
-                                                            <FaFire className="badge-icon" />
-                                                            <span>Хит</span>
-                                                        </div>
-                                                    )}
+                                                {isProductPopular(product.id) && (
+                                                    <div className="product-badge">
+                                                        <FaFire className="badge-icon" />
+                                                        <span>Хит</span>
+                                                    </div>
+                                                )}
 
-                                                    <div className="product-image">
-                                                        <img
-                                                            src={product.image}
-                                                            alt={product.name}
-                                                            onError={(e) => {
-                                                                e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
-                                                            }}
-                                                            loading="lazy"
-                                                        />
-                                                        <button
-                                                            className="product-quick-view"
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                setQuickView(product);
-                                                            }}
-                                                        >
-                                                            <FiEye />
-                                                        </button>
-                                                        <div className="image-overlay-flower">
-                                                            <GiFlowerEmblem />
-                                                        </div>
+                                                <div className="product-image">
+                                                    <img
+                                                        src={product.image}
+                                                        alt={product.name}
+                                                        onError={(e) => {
+                                                            e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
+                                                        }}
+                                                        loading="lazy"
+                                                    />
+                                                    
+                                                    {/* Кнопка быстрого просмотра - всегда видна на мобилке */}
+                                                    <button
+                                                        className="product-quick-view"
+                                                        onClick={(e) => openQuickView(product, e)}
+                                                        aria-label="Быстрый просмотр"
+                                                    >
+                                                        <FiEye />
+                                                    </button>
+                                                    
+                                                    <div className="image-overlay-flower">
+                                                        <GiFlowerEmblem />
+                                                    </div>
+                                                </div>
+
+                                                <div className="product-info">
+                                                    <h3 className="product-name">{product.name}</h3>
+
+                                                    <div className="product-meta">
+                                                        <span className="product-category">
+                                                            {categories.find(c => c.id === product.category)?.emoji || '🍓'}
+                                                        </span>
                                                     </div>
 
-                                                    <div className="product-info">
-                                                        <h3 className="product-name">{product.name}</h3>
-
-                                                        <div className="product-meta">
-                                                            <span className="product-category">
-                                                                {categories.find(c => c.id === product.category)?.emoji || '🍓'}
-                                                            </span>
-                                                        </div>
-
-                                                        <div className="product-footer">
-                                                            <span className="product-price">{formatPrice(product.price)}</span>
+                                                    <div className="product-footer">
+                                                        <span className="product-price">{formatPrice(product.price)}</span>
+                                                        <div className="product-actions-group">
                                                             <button
                                                                 className={`product-add ${addedToCart[product.id] ? 'added' : ''}`}
                                                                 onClick={(e) => addToCart(product, e)}
+                                                                aria-label="Добавить в корзину"
                                                             >
                                                                 <FiShoppingCart className="cart-icon" />
                                                                 <span>{addedToCart[product.id] ? '✓' : ''}</span>
@@ -483,25 +488,35 @@ export default function CatalogPage() {
                                                         </div>
                                                     </div>
 
-                                                    {hoveredCard === product.id && (
-                                                        <div className="floating-flowers">
-                                                            {[...Array(6)].map((_, i) => (
-                                                                <div
-                                                                    key={i}
-                                                                    className="floating-flower"
-                                                                    style={{
-                                                                        left: `${Math.random() * 100}%`,
-                                                                        top: `${Math.random() * 100}%`,
-                                                                        animationDelay: `${i * 0.1}s`
-                                                                    }}
-                                                                >
-                                                                    {['🌸', '🌷', '🌹', '🌺', '🌻', '🌼'][i % 6]}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                    {/* Кнопка "Подробнее" - всегда видна на мобилке */}
+                                                    <Link
+                                                        href={`/catalog/${product.id}`}
+                                                        className="product-details-link"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <span>Подробнее</span>
+                                                        <FiArrowRight className="details-icon" />
+                                                    </Link>
                                                 </div>
-                                            </Link>
+
+                                                {hoveredCard === product.id && (
+                                                    <div className="floating-flowers">
+                                                        {[...Array(6)].map((_, i) => (
+                                                            <div
+                                                                key={i}
+                                                                className="floating-flower"
+                                                                style={{
+                                                                    left: `${Math.random() * 100}%`,
+                                                                    top: `${Math.random() * 100}%`,
+                                                                    animationDelay: `${i * 0.1}s`
+                                                                }}
+                                                            >
+                                                                {['🌸', '🌷', '🌹', '🌺', '🌻', '🌼'][i % 6]}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </motion.div>
                                     ))}
                                 </motion.div>
@@ -538,16 +553,31 @@ export default function CatalogPage() {
                                 <div className="quick-view-info">
                                     <h2>{quickView.name}</h2>
                                     <div className="quick-view-price">{formatPrice(quickView.price)}</div>
-                                    <button
-                                        className="btn btn-primary quick-view-add"
-                                        onClick={(e) => {
-                                            addToCart(quickView, e);
-                                            setQuickView(null);
-                                        }}
-                                    >
-                                        <FiShoppingCart />
-                                        Добавить в корзину
-                                    </button>
+                                    <div className="quick-view-category">
+                                        {categories.find(c => c.id === quickView.category)?.emoji || '🍓'}
+                                        <span>{categories.find(c => c.id === quickView.category)?.name || 'Классика'}</span>
+                                    </div>
+                                    
+                                    <div className="quick-view-actions">
+                                        <button
+                                            className="btn btn-primary quick-view-add"
+                                            onClick={(e) => {
+                                                addToCart(quickView, e);
+                                                setQuickView(null);
+                                            }}
+                                        >
+                                            <FiShoppingCart />
+                                            Добавить в корзину
+                                        </button>
+                                        <Link
+                                            href={`/catalog/${quickView.id}`}
+                                            className="btn btn-secondary quick-view-details"
+                                            onClick={() => setQuickView(null)}
+                                        >
+                                            Подробнее
+                                            <FiArrowRight />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
