@@ -1,4 +1,3 @@
-import CatalogPreview from "./components/catalog/Catalog";
 import Contacts from "./components/contacts/Contacts";
 import Footer from "./components/footer/Footer";
 import GalleryGrid from "./components/gallery/Gallery";
@@ -12,7 +11,6 @@ export default function Home() {
     <div>
       <Navbar />
       <HeroCarousel />
-      <CatalogPreview />
       <WhyUs />
       <InteriorShowcase />
       <GalleryGrid />

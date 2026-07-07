@@ -5,7 +5,6 @@
     height: calc(100vh - 80px);
     min-height: 700px;
     max-height: 1080px;
-    background: linear-gradient(135deg, #2d2a24 0%, #1a1a1a 100%);
     overflow: hidden;
     isolation: isolate;
     margin-top: 80px;
@@ -23,7 +22,6 @@
 .decoration-circle {
     position: absolute;
     border-radius: 50%;
-    border: 2px solid rgba(255, 215, 0, 0.1);
     animation: floatCircle 20s ease-in-out infinite;
 }
 
@@ -509,13 +507,7 @@
     .overlay-gradient {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.85) 0%,
-            rgba(0, 0, 0, 0.5) 30%,
-            rgba(0, 0, 0, 0.2) 60%,
-            rgba(0, 0, 0, 0.4) 100%
-        );
+        background: rgba(0, 0, 0, 0.5);
     }
 
     .overlay-pattern {
@@ -535,7 +527,6 @@
         height: 44px;
         font-size: 18px;
         z-index: 5;
-        background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 215, 0, 0.2);
     }

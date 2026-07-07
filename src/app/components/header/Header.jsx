@@ -24,7 +24,7 @@ const HeroCarousel = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    const videoSrc = isMobile ? "/images/videos/mobile.mp4" : "/images/videos/pc.mp4";
+    const videoSrc = isMobile ? "/videos/FRAGGER.mp4" : "/videos/FRAGGER.mp4";
 
     return (
         <section className="hero">
@@ -37,7 +37,7 @@ const HeroCarousel = () => {
                     muted
                     playsInline
                     className="hero-video"
-                    poster="/images/video-poster.jpg"
+                    poster="/videos/video-poster.jpg"
                     preload="auto"
                 >
                     <source
@@ -55,7 +55,7 @@ const HeroCarousel = () => {
                         <span className="hero-subtitle">Добро пожаловать</span>
                         <h1 className="hero-title">
                             ChocoBerry <br />
-                            Бутик
+                            Fruits
                         </h1>
                         <p className="hero-description">
                             Ваш уютный уголок в самом сердце Бухары. <br />
