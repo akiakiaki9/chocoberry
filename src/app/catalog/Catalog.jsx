@@ -22,7 +22,7 @@ import { IoMdPricetag } from 'react-icons/io';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CatalogPage() {
-    const [sortBy, setSortBy] = useState('price-desc'); // По умолчанию от дорогих к дешевым
+    const [sortBy, setSortBy] = useState('price-asc'); // По умолчанию от дешевых к дорогим
     const [priceRange, setPriceRange] = useState([0, 2000000]);
     const [showFilters, setShowFilters] = useState(true);
     const [addedToCart, setAddedToCart] = useState({});
@@ -153,7 +153,7 @@ export default function CatalogPage() {
 
     const resetFilters = () => {
         setPriceRange([0, 2000000]);
-        setSortBy('price-desc');
+        setSortBy('price-asc');
     };
 
     const popularProductIds = [1, 2, 3, 4, 5];
