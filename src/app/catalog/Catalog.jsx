@@ -16,19 +16,13 @@ import {
     FiList,
     FiArrowRight
 } from 'react-icons/fi';
-import {
-    GiStrawberry,
-    GiHeartWings,
-    GiCrown,
-    GiFlowerEmblem 
-} from 'react-icons/gi';
+import { GiFlowerEmblem } from 'react-icons/gi';
 import { FaFire, FaMagic } from 'react-icons/fa';
 import { IoMdPricetag } from 'react-icons/io';
-import { RiFlowerFill } from 'react-icons/ri';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CatalogPage() {
-    const [sortBy, setSortBy] = useState('popular');
+    const [sortBy, setSortBy] = useState('price-desc'); // По умолчанию от дорогих к дешевым
     const [priceRange, setPriceRange] = useState([0, 2000000]);
     const [showFilters, setShowFilters] = useState(true);
     const [addedToCart, setAddedToCart] = useState({});
@@ -36,7 +30,6 @@ export default function CatalogPage() {
     const [isMobile, setIsMobile] = useState(false);
     const [hoveredCard, setHoveredCard] = useState(null);
     const [viewMode, setViewMode] = useState('grid');
-    const [activeCategory, setActiveCategory] = useState('all');
     const [isFilterVisible, setIsFilterVisible] = useState(true);
     const filterRef = useRef(null);
 
@@ -57,13 +50,6 @@ export default function CatalogPage() {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
-
-    const categories = [
-        { id: 'all', name: 'Все боксы', icon: GiStrawberry, color: '#ff6b9d', emoji: '🌸' },
-        { id: 'classic', name: 'Классические', icon: GiStrawberry, color: '#ff9eb5', emoji: '🍓' },
-        { id: 'premium', name: 'Премиум', icon: GiCrown, color: '#ffd700', emoji: '👑' },
-        { id: 'romantic', name: 'Романтические', icon: GiHeartWings, color: '#ff4d6d', emoji: '❤️' }
-    ];
 
     const parsePrice = (priceStr) => {
         if (typeof priceStr === 'number') return priceStr;
@@ -89,26 +75,33 @@ export default function CatalogPage() {
         return parseInt(priceStr);
     };
 
+    // Сортировка: сначала по id (от большего к меньшему), затем по цене
     const filteredProducts = products.filter(product => {
         const productMinPrice = getMinPrice(product.price);
         const productMaxPrice = getMaxPrice(product.price);
         const inPriceRange = productMinPrice <= priceRange[1] && productMaxPrice >= priceRange[0];
-        const inCategory = activeCategory === 'all' || product.category === activeCategory;
-        return inPriceRange && inCategory;
+        return inPriceRange; // Убрана фильтрация по категориям
     });
 
-    const sortedProducts = [...filteredProducts].sort((a, b) => {
-        const priceA = parsePrice(a.price);
-        const priceB = parsePrice(b.price);
+    const sortedProducts = [...filteredProducts]
+        .sort((a, b) => {
+            // Сначала сортируем по ID от большего к меньшему
+            if (a.id !== b.id) {
+                return b.id - a.id;
+            }
+            return 0;
+        })
+        .sort((a, b) => {
+            // Затем по цене (с учетом выбранного направления)
+            const priceA = parsePrice(a.price);
+            const priceB = parsePrice(b.price);
 
-        switch (sortBy) {
-            case 'price-asc': return priceA - priceB;
-            case 'price-desc': return priceB - priceA;
-            case 'popular':
-                return (b.popularity || 0) - (a.popularity || 0);
-            default: return 0;
-        }
-    });
+            switch (sortBy) {
+                case 'price-asc': return priceA - priceB;
+                case 'price-desc': return priceB - priceA;
+                default: return 0;
+            }
+        });
 
     const addToCart = (product, e) => {
         e.preventDefault();
@@ -160,8 +153,7 @@ export default function CatalogPage() {
 
     const resetFilters = () => {
         setPriceRange([0, 2000000]);
-        setSortBy('popular');
-        setActiveCategory('all');
+        setSortBy('price-desc');
     };
 
     const popularProductIds = [1, 2, 3, 4, 5];
@@ -252,7 +244,7 @@ export default function CatalogPage() {
                             >
                                 <FiFilter className="filter-icon" />
                                 <span>Фильтры</span>
-                                <motion.span 
+                                <motion.span
                                     className="filter-indicator"
                                     animate={{ rotate: isFilterVisible ? 180 : 0 }}
                                     transition={{ duration: 0.3 }}
@@ -286,9 +278,8 @@ export default function CatalogPage() {
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                             >
-                                <option value="popular">Популярные</option>
-                                <option value="price-asc">Дешевле</option>
-                                <option value="price-desc">Дороже</option>
+                                <option value="price-desc">Сначала дорогие</option>
+                                <option value="price-asc">Сначала дешевые</option>
                             </select>
                         </div>
                     </div>
@@ -297,7 +288,7 @@ export default function CatalogPage() {
                         {/* Фильтры */}
                         <AnimatePresence>
                             {(isFilterVisible || !isMobile) && (
-                                <motion.aside 
+                                <motion.aside
                                     className={`catalog-filters ${showFilters ? 'active' : ''}`}
                                     ref={filterRef}
                                     initial={{ opacity: 0, height: 0 }}
@@ -313,42 +304,14 @@ export default function CatalogPage() {
                                             <GiFlowerEmblem className="header-flower" />
                                         </h3>
                                         {isMobile && (
-                                            <button 
-                                                className="filters-close" 
+                                            <button
+                                                className="filters-close"
                                                 onClick={toggleFilters}
                                                 aria-label="Закрыть фильтры"
                                             >
                                                 <FiX />
                                             </button>
                                         )}
-                                    </div>
-
-                                    <div className="filter-section">
-                                        <h4>
-                                            <RiFlowerFill className="section-icon" />
-                                            Категории
-                                        </h4>
-                                        <div className="filter-categories">
-                                            {categories.map((cat) => (
-                                                <button
-                                                    key={cat.id}
-                                                    className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
-                                                    onClick={() => setActiveCategory(cat.id)}
-                                                    style={{
-                                                        '--category-color': cat.color
-                                                    }}
-                                                >
-                                                    <span className="category-emoji">{cat.emoji}</span>
-                                                    <span className="category-name">{cat.name}</span>
-                                                    <span className="category-count">
-                                                        {products.filter(p => cat.id === 'all' || p.category === cat.id).length}
-                                                    </span>
-                                                    {activeCategory === cat.id && (
-                                                        <span className="category-active-dot" />
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
                                     </div>
 
                                     <div className="filter-section">
@@ -402,7 +365,7 @@ export default function CatalogPage() {
                         {/* Товары */}
                         <div className="catalog-products">
                             {sortedProducts.length === 0 ? (
-                                <motion.div 
+                                <motion.div
                                     className="no-products"
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
@@ -417,7 +380,7 @@ export default function CatalogPage() {
                                     </button>
                                 </motion.div>
                             ) : (
-                                <motion.div 
+                                <motion.div
                                     className={`products-grid ${viewMode === 'list' ? 'list-view' : ''}`}
                                     variants={containerVariants}
                                     initial="hidden"
@@ -445,13 +408,9 @@ export default function CatalogPage() {
                                                     <img
                                                         src={product.image}
                                                         alt={product.name}
-                                                        onError={(e) => {
-                                                            e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
-                                                        }}
                                                         loading="lazy"
                                                     />
-                                                    
-                                                    {/* Кнопка быстрого просмотра - всегда видна на мобилке */}
+
                                                     <button
                                                         className="product-quick-view"
                                                         onClick={(e) => openQuickView(product, e)}
@@ -459,7 +418,7 @@ export default function CatalogPage() {
                                                     >
                                                         <FiEye />
                                                     </button>
-                                                    
+
                                                     <div className="image-overlay-flower">
                                                         <GiFlowerEmblem />
                                                     </div>
@@ -467,12 +426,6 @@ export default function CatalogPage() {
 
                                                 <div className="product-info">
                                                     <h3 className="product-name">{product.name}</h3>
-
-                                                    <div className="product-meta">
-                                                        <span className="product-category">
-                                                            {categories.find(c => c.id === product.category)?.emoji || '🍓'}
-                                                        </span>
-                                                    </div>
 
                                                     <div className="product-footer">
                                                         <span className="product-price">{formatPrice(product.price)}</span>
@@ -488,7 +441,6 @@ export default function CatalogPage() {
                                                         </div>
                                                     </div>
 
-                                                    {/* Кнопка "Подробнее" - всегда видна на мобилке */}
                                                     <Link
                                                         href={`/catalog/${product.id}`}
                                                         className="product-details-link"
@@ -529,14 +481,14 @@ export default function CatalogPage() {
             {/* Quick View Modal */}
             <AnimatePresence>
                 {quickView && (
-                    <motion.div 
+                    <motion.div
                         className="quick-view-modal"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setQuickView(null)}
                     >
-                        <motion.div 
+                        <motion.div
                             className="quick-view-content"
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
@@ -553,11 +505,7 @@ export default function CatalogPage() {
                                 <div className="quick-view-info">
                                     <h2>{quickView.name}</h2>
                                     <div className="quick-view-price">{formatPrice(quickView.price)}</div>
-                                    <div className="quick-view-category">
-                                        {categories.find(c => c.id === quickView.category)?.emoji || '🍓'}
-                                        <span>{categories.find(c => c.id === quickView.category)?.name || 'Классика'}</span>
-                                    </div>
-                                    
+
                                     <div className="quick-view-actions">
                                         <button
                                             className="btn btn-primary quick-view-add"
