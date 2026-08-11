@@ -37,10 +37,10 @@ export const products = [
     { id: 34, name: "Клубничный бокс", price: "500000", image: "/images/data/images/34.png" },
     { id: 35, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/35.png" },
     { id: 36, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/36.png" },
-    { id: 37, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/37.png" },
+    // { id: 37, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/37.png" }, Дубликат а цена 1200
     { id: 38, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/38.png" },
     { id: 39, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/39.png" },
-    { id: 40, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/40.png" },
+    { id: 40, name: "Клубничный бокс", price: "1100000", image: "/images/data/images/40.png" },
     { id: 41, name: "Клубничный бокс", price: "900000", image: "/images/data/images/41.png" },
     { id: 42, name: "Клубничный бокс", price: "1500000", image: "/images/data/images/42.png" },
     { id: 43, name: "Клубничный бокс", price: "400000", image: "/images/data/images/43.png" },
