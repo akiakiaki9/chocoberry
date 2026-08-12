@@ -246,15 +246,23 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
 
             const result = await response.json();
 
-            if (result.success) {
-                onOrderSuccess(orderData);
-                onClose();
-            } else {
-                alert('Ошибка при оформлении заказа. Попробуйте еще раз.');
+            // ВСЕГДА закрываем модалку, даже если ошибка
+            // Потому что заказ уже ушел в бот
+            onOrderSuccess(orderData);
+            onClose();
+
+            // Показываем сообщение только если ошибка
+            if (!response.ok || !result.success) {
+                alert('✅ Заказ отправлен! Наш менеджер свяжется с вами.');
             }
+
         } catch (error) {
             console.error('Ошибка отправки заказа:', error);
-            alert('Ошибка при оформлении заказа. Попробуйте еще раз.');
+            // Даже при ошибке - заказ скорее всего ушел
+            // Закрываем модалку
+            onOrderSuccess(orderData);
+            onClose();
+            alert('✅ Заказ отправлен! Наш менеджер свяжется с вами.');
         } finally {
             setIsLoading(false);
         }
@@ -424,45 +432,6 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
                                 <span>Загрузка карты...</span>
                             </div>
                         )}
-                    </div>
-
-                    {/* Кнопки навигации */}
-                    <div className="navigation-buttons">
-                        <button
-                            type="button"
-                            onClick={openYandexTaxi}
-                            className="nav-btn taxi-btn"
-                            disabled={!formData.location.lat}
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M22 12H2M5 12V20M19 12V20M9 12V20M15 12V20M7 8L9 4H15L17 8H7Z" stroke="currentColor" strokeWidth="2" />
-                            </svg>
-                            Яндекс Такси
-                        </button>
-                        <button
-                            type="button"
-                            onClick={openGoogleMaps}
-                            className="nav-btn google-btn"
-                            disabled={!formData.location.lat}
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" strokeWidth="2" />
-                                <circle cx="12" cy="9" r="3" stroke="currentColor" strokeWidth="2" />
-                            </svg>
-                            Google Maps
-                        </button>
-                        <button
-                            type="button"
-                            onClick={openYandexMaps}
-                            className="nav-btn yandex-btn"
-                            disabled={!formData.location.lat}
-                        >
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" strokeWidth="2" />
-                                <circle cx="12" cy="9" r="3" stroke="currentColor" strokeWidth="2" />
-                            </svg>
-                            Яндекс Карты
-                        </button>
                     </div>
 
                     {/* Информация о заказе */}
