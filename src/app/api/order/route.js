@@ -90,11 +90,6 @@ function formatOrderMessage(orderData) {
         month: '2-digit',
         year: 'numeric'
     });
-    const formattedTime = orderDate.toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
     
     let message = '🛍️ <b>НОВЫЙ ЗАКАЗ!</b>\n\n';
     message += `👤 <b>Имя:</b> ${customer.name}\n`;
@@ -121,23 +116,42 @@ function formatOrderMessage(orderData) {
     message += `\n💰 <b>Итого:</b> ${total} сум\n`;
     message += `🕐 <b>Дата:</b> ${formattedDate}\n`;
     
-    // Ссылки на карты с Яндекс Такси
+    // Ссылки на карты с Яндекс Такси - ИСПРАВЛЕННАЯ ВЕРСИЯ
     const { lat, lng, address } = customer.location;
     
-    // Формируем deeplink для Яндекс Такси (как в вашем коде)
+    // Формируем правильный адрес для ссылок
     const fullAddress = `Chocoberry Fruits, ${address}`;
-    const yandexTaxiDeeplink = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(fullAddress)}`;
-    const yandexTaxiFallback = `https://taxi.yandex.uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
     
-    // Формируем ссылки для Google Maps и Яндекс Карт
+    // 1. Универсальная ссылка Яндекс Такси (работает и в браузере, и в приложении)
+    const yandexTaxiWeb = `https://taxi.yandex.uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
+    
+    // 2. Deeplink для приложения (работает только если установлено приложение)
+    const yandexTaxiApp = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(fullAddress)}`;
+    
+    // 3. Альтернативная ссылка Яндекс Такси через web
+    const yandexTaxiAlt = `https://taxi.yandex.uz/ru_uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
+    
+    // 4. Яндекс Карты с точкой назначения и построением маршрута
+    const yandexMapsRoute = `https://yandex.uz/maps/?rtext=~${lat},${lng}&rtt=auto&z=16`;
+    
+    // 5. Google Maps
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    
+    // 6. Яндекс Карты (просмотр)
     const yandexMapsUrl = `https://yandex.uz/maps/?pt=${lng},${lat}&z=16`;
     
     message += '<b>🗺️ Построить маршрут:</b>\n';
-    message += `• <a href="${yandexTaxiDeeplink}">🚕 Яндекс Такси (приложение)</a>\n`;
-    message += `• <a href="${yandexTaxiFallback}">🚕 Яндекс Такси (веб)</a>\n`;
+    
+    // Для Яндекс Такси - сначала веб-версия (работает всегда)
+    message += `• <a href="${yandexTaxiWeb}">🚕 Яндекс Такси (заказать)</a>\n`;
+    
+    // Затем ссылка на приложение (если установлено)
+    message += `• <a href="${yandexTaxiApp}">📱 Яндекс Такси (приложение)</a> ⚠️ только если установлено\n`;
+    
+    // Остальные карты
+    message += `• <a href="${yandexMapsRoute}">🗺️ Яндекс Карты (маршрут)</a>\n`;
     message += `• <a href="${googleMapsUrl}">🗺️ Google Maps</a>\n`;
-    message += `• <a href="${yandexMapsUrl}">🗺️ Яндекс Карты</a>\n`;
+    message += `• <a href="${yandexMapsUrl}">🗺️ Яндекс Карты (просмотр)</a>\n`;
 
     return message;
 }
