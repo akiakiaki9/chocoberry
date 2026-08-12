@@ -108,10 +108,16 @@ function formatOrderMessage(orderData) {
     message += `\n💰 <b>Итого:</b> ${total} сум\n`;
     message += `🕐 <b>Время:</b> ${new Date(timestamp).toLocaleString('ru-RU')}\n\n`;
     
-    // Ссылки на карты
-    const { lat, lng } = customer.location;
+    // Ссылки на карты с Яндекс Такси через deeplink
+    const { lat, lng, address } = customer.location;
+    
+    // Формируем deeplink для Яндекс Такси
+    const yandexTaxiDeeplink = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(address)}`;
+    const yandexTaxiWeb = `https://taxi.yandex.ru/?rtext=~${lat},${lng}`;
+    
     message += '<b>🗺️ Построить маршрут:</b>\n';
-    message += `• <a href="https://taxi.yandex.ru/?rtext=~${lat},${lng}">🚕 Яндекс Такси</a>\n`;
+    message += `• <a href="${yandexTaxiDeeplink}">🚕 Яндекс Такси (приложение)</a>\n`;
+    message += `• <a href="${yandexTaxiWeb}">🚕 Яндекс Такси (веб)</a>\n`;
     message += `• <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">🗺️ Google Maps</a>\n`;
     message += `• <a href="https://yandex.uz/maps/?pt=${lng},${lat}&z=16">🗺️ Яндекс Карты</a>\n`;
 
