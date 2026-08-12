@@ -120,7 +120,6 @@ function formatOrderMessage(orderData) {
     
     message += `\n💰 <b>Итого:</b> ${total} сум\n`;
     message += `🕐 <b>Дата:</b> ${formattedDate}\n`;
-    message += `⏰ <b>Время:</b> ${formattedTime}\n\n`;
     
     // Ссылки на карты с Яндекс Такси
     const { lat, lng, address } = customer.location;
