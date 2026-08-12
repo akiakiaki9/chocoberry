@@ -1,0 +1,501 @@
+/* ============================================
+   ORDER MODAL STYLES - ИСПРАВЛЕННЫЙ
+   ============================================ */
+
+/* ОВЕРЛЕЙ - ВЕСЬ ЭКРАН */
+.order-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* КОНТЕЙНЕР МОДАЛКИ - ТОЧНО ПО ЦЕНТРУ */
+.order-modal-container {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 92% !important;
+    max-width: 580px !important;
+    max-height: 90vh !important;
+    background: #2d2a24 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+    z-index: 10000 !important;
+    border: 1px solid rgba(188, 140, 76, 0.3) !important;
+    overflow-y: auto !important;
+    padding: 30px 28px 28px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* СКРОЛЛ ВНУТРИ МОДАЛКИ */
+.order-modal-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.order-modal-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.order-modal-container::-webkit-scrollbar-thumb {
+    background: #bc8c4c;
+    border-radius: 2px;
+}
+
+/* КНОПКА ЗАКРЫТИЯ */
+.order-modal-close {
+    position: sticky !important;
+    top: 0 !important;
+    float: right !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    color: #fff !important;
+    z-index: 2 !important;
+    margin-bottom: 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.order-modal-close:hover {
+    background: #ff4d4d !important;
+    transform: rotate(90deg) !important;
+}
+
+.order-modal-close svg {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* ЗАГОЛОВОК */
+.order-modal-title {
+    font-family: 'Georgia', serif !important;
+    font-size: 1.6rem !important;
+    color: #fff !important;
+    text-align: center !important;
+    margin-bottom: 24px !important;
+    clear: both !important;
+}
+
+/* ФОРМА */
+.order-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+}
+
+.form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.form-group label {
+    color: #bc8c4c !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+}
+
+.form-input {
+    padding: 12px 16px !important;
+    border-radius: 10px !important;
+    border: 2px solid rgba(188, 140, 76, 0.2) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.form-input:focus {
+    outline: none !important;
+    border-color: #bc8c4c !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ЛОКАЦИЯ */
+.location-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+.location-actions {
+    display: flex !important;
+    gap: 8px !important;
+}
+
+.locate-btn,
+.edit-location-btn {
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(188, 140, 76, 0.3) !important;
+    background: rgba(188, 140, 76, 0.1) !important;
+    color: #bc8c4c !important;
+    font-size: 0.8rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+}
+
+.locate-btn:hover,
+.edit-location-btn:hover {
+    background: rgba(188, 140, 76, 0.2) !important;
+}
+
+.locate-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+.location-error {
+    color: #ff6b6b !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+    background: rgba(255, 107, 107, 0.1) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 107, 107, 0.2) !important;
+}
+
+.location-display {
+    padding: 12px 16px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 10px !important;
+    border: 2px solid rgba(188, 140, 76, 0.15) !important;
+}
+
+.location-address {
+    color: #fff !important;
+    display: block !important;
+    font-size: 0.95rem !important;
+}
+
+.location-coords {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.8rem !important;
+    display: block !important;
+    margin-top: 4px !important;
+}
+
+/* КАРТА */
+.map-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 200px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    border: 2px solid rgba(188, 140, 76, 0.2) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.map-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.map-loading {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.loading-spinner {
+    width: 30px !important;
+    height: 30px !important;
+    border: 3px solid rgba(188, 140, 76, 0.2) !important;
+    border-top: 3px solid #bc8c4c !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* КНОПКИ НАВИГАЦИИ */
+.navigation-buttons {
+    display: flex !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+.nav-btn {
+    flex: 1 !important;
+    min-width: 100px !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    color: #fff !important;
+}
+
+.nav-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+}
+
+.nav-btn:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+}
+
+.taxi-btn {
+    background: #ffe44d !important;
+    color: #1a1a1a !important;
+}
+
+.taxi-btn:hover:not(:disabled) {
+    background: #ffd700 !important;
+    transform: translateY(-2px) !important;
+}
+
+.google-btn {
+    background: #4285f4 !important;
+}
+
+.google-btn:hover:not(:disabled) {
+    background: #3367d6 !important;
+    transform: translateY(-2px) !important;
+}
+
+.yandex-btn {
+    background: #ff3333 !important;
+}
+
+.yandex-btn:hover:not(:disabled) {
+    background: #cc0000 !important;
+    transform: translateY(-2px) !important;
+}
+
+/* СУММА ЗАКАЗА */
+.order-summary {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    border: 1px solid rgba(188, 140, 76, 0.1) !important;
+}
+
+.order-summary h3 {
+    color: #bc8c4c !important;
+    font-size: 1rem !important;
+    margin-bottom: 12px !important;
+}
+
+.order-item-summary {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 6px 0 !important;
+    color: #fff !important;
+    font-size: 0.9rem !important;
+    border-bottom: 1px solid rgba(188, 140, 76, 0.05) !important;
+}
+
+.order-item-summary:last-of-type {
+    border-bottom: none !important;
+}
+
+.order-total {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding-top: 12px !important;
+    margin-top: 8px !important;
+    border-top: 2px solid rgba(188, 140, 76, 0.2) !important;
+    color: #fff !important;
+    font-size: 1.1rem !important;
+}
+
+/* КНОПКА ОТПРАВКИ */
+.submit-order-btn {
+    padding: 14px 24px !important;
+    border-radius: 50px !important;
+    border: none !important;
+    background: linear-gradient(135deg, #bc8c4c, #d4a059) !important;
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 20px rgba(188, 140, 76, 0.3) !important;
+    width: 100% !important;
+}
+
+.submit-order-btn:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 30px rgba(188, 140, 76, 0.4) !important;
+}
+
+.submit-order-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .order-modal-container {
+        padding: 24px 20px 20px !important;
+        width: 96% !important;
+        max-width: 500px !important;
+        max-height: 85vh !important;
+    }
+
+    .order-modal-title {
+        font-size: 1.3rem !important;
+    }
+
+    .navigation-buttons {
+        flex-direction: column !important;
+    }
+
+    .nav-btn {
+        width: 100% !important;
+    }
+
+    .map-container {
+        height: 160px !important;
+    }
+
+    .location-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .location-actions {
+        justify-content: stretch !important;
+    }
+
+    .locate-btn,
+    .edit-location-btn {
+        flex: 1 !important;
+        text-align: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-modal-container {
+        padding: 18px 14px 16px !important;
+        border-radius: 14px !important;
+        width: 98% !important;
+        max-width: 400px !important;
+        max-height: 90vh !important;
+    }
+
+    .order-modal-title {
+        font-size: 1.1rem !important;
+        margin-bottom: 18px !important;
+    }
+
+    .form-input {
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .map-container {
+        height: 140px !important;
+    }
+
+    .order-item-summary {
+        font-size: 0.8rem !important;
+    }
+
+    .order-total {
+        font-size: 0.95rem !important;
+    }
+
+    .submit-order-btn {
+        padding: 12px 20px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .nav-btn {
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        min-width: 80px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .order-modal-container {
+        padding: 14px 10px 12px !important;
+        max-width: 320px !important;
+    }
+
+    .order-modal-title {
+        font-size: 1rem !important;
+    }
+
+    .location-actions {
+        flex-direction: column !important;
+    }
+}
+
+/* ДЛЯ УСТРОЙСТВ С МАЛЕНЬКИМИ ЭКРАНАМИ */
+@media (max-height: 700px) {
+    .order-modal-container {
+        max-height: 95vh !important;
+        padding: 16px 16px 14px !important;
+    }
+
+    .map-container {
+        height: 120px !important;
+    }
+
+    .order-summary {
+        padding: 10px !important;
+    }
+
+    .order-item-summary {
+        padding: 4px 0 !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ОТКЛЮЧАЕМ АНИМАЦИИ ДЛЯ ТЕХ, КТО ПРЕДПОЧИТАЕТ МЕНЬШЕ АНИМАЦИИ */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

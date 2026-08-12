@@ -7,11 +7,9 @@ import {
     FiChevronRight,
     FiStar,
     FiHeart,
-    FiCamera,
     FiShoppingCart,
     FiMaximize2,
-    FiMinimize2,
-    FiAward
+    FiMinimize2
 } from 'react-icons/fi';
 import { GiCrowNest, GiChocolateBar, GiHeartWings, GiFamilyHouse } from "react-icons/gi";
 import { IoMdHeart, IoMdPricetag } from 'react-icons/io';

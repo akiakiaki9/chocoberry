@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import './cart.css';
 import { motion, AnimatePresence } from 'framer-motion';
+import OrderModal from './OrderModal';
 
 const Cart = ({ isOpen, onClose }) => {
     const [cartItems, setCartItems] = useState([]);
@@ -97,19 +98,14 @@ const Cart = ({ isOpen, onClose }) => {
         setShowOrderModal(true);
     };
 
-    const handleCallOrder = () => {
-        const orderText = cartItems.map(item => {
-            return `${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}`;
-        }).join('\n');
-
-        const totalText = `\n\nИтого: ${formatPrice(getTotalPrice())}`;
-        const message = encodeURIComponent(`Здравствуйте! Хочу оформить заказ:\n\n${orderText}${totalText}`);
-
-        window.open(`https://t.me/ddaa_770?text=${message}`, '_blank');
-
+    const handleOrderSuccess = (orderData) => {
+        // Очищаем корзину
         saveCart([]);
         setShowOrderModal(false);
         onClose();
+        
+        // Показываем уведомление
+        alert('Спасибо за заказ! Наш менеджер свяжется с вами в ближайшее время.');
     };
 
     const formatPrice = (price) => {
@@ -152,25 +148,6 @@ const Cart = ({ isOpen, onClose }) => {
         hidden: { opacity: 0 },
         visible: { opacity: 1 },
         exit: { opacity: 0 }
-    };
-
-    const modalVariants = {
-        hidden: { opacity: 0, scale: 0.9, y: 20 },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                stiffness: 400,
-                damping: 30
-            }
-        },
-        exit: {
-            opacity: 0,
-            scale: 0.9,
-            y: 20
-        }
     };
 
     const itemVariants = {
@@ -335,91 +312,14 @@ const Cart = ({ isOpen, onClose }) => {
                 </div>
             </motion.div>
 
-            {/* Order Modal */}
-            <AnimatePresence>
-                {showOrderModal && (
-                    <>
-                        <motion.div
-                            className="order-modal-overlay"
-                            onClick={() => setShowOrderModal(false)}
-                            variants={overlayVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                        />
-
-                        <motion.div
-                            className="order-modal"
-                            variants={modalVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                        >
-                            <button className="order-modal-close" onClick={() => setShowOrderModal(false)}>
-                                <svg viewBox="0 0 24 24" fill="none">
-                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                            </button>
-
-                            <div className="order-modal-content">
-                                <div className="order-modal-icon">
-                                    <svg viewBox="0 0 24 24" fill="none">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" strokeWidth="2" />
-                                        <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                    </svg>
-                                </div>
-
-                                <h3 className="order-modal-title">Ваш заказ</h3>
-
-                                <div className="order-modal-items">
-                                    {cartItems.map((item) => {
-                                        const imageSrc = imageErrors[item.id]
-                                            ? '/images/placeholder.png'
-                                            : getImagePath(item.image);
-
-                                        return (
-                                            <div key={item.id} className="order-modal-item">
-                                                <div className="order-item-image">
-                                                    <img
-                                                        src={imageSrc}
-                                                        alt={item.name}
-                                                        onError={() => handleImageError(item.id)}
-                                                        loading="lazy"
-                                                    />
-                                                </div>
-                                                <span className="order-item-name">{item.name}</span>
-                                                <span className="order-item-quantity">x{item.quantity}</span>
-                                                <span className="order-item-price">{formatPrice(item.price * item.quantity)}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="order-modal-total">
-                                    <span>Итого:</span>
-                                    <span className="order-total-price">{formatPrice(getTotalPrice())}</span>
-                                </div>
-
-                                <p className="order-modal-text">
-                                    Нажмите кнопку "Заказать", и наш менеджер свяжется с вами для подтверждения
-                                </p>
-
-                                <div className="order-modal-buttons">
-                                    <button className="order-call-btn" onClick={handleCallOrder}>
-                                        <svg viewBox="0 0 24 24" fill="none">
-                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                        Заказать
-                                    </button>
-                                    <button className="order-cancel-btn" onClick={() => setShowOrderModal(false)}>
-                                        Отмена
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+            {/* Order Modal - НОВАЯ МОДАЛКА */}
+            <OrderModal
+                isOpen={showOrderModal}
+                onClose={() => setShowOrderModal(false)}
+                cartItems={cartItems}
+                totalPrice={getTotalPrice()}
+                onOrderSuccess={handleOrderSuccess}
+            />
         </>
     );
 };
