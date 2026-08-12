@@ -206,7 +206,7 @@
 .map-container {
     position: relative !important;
     width: 100% !important;
-    height: 200px !important;
+    height: 280px !important; /* Было 200px */
     border-radius: 12px !important;
     overflow: hidden !important;
     border: 2px solid rgba(188, 140, 76, 0.2) !important;
@@ -394,7 +394,7 @@
     }
 
     .map-container {
-        height: 160px !important;
+        height: 220px !important;
     }
 
     .location-header {
@@ -433,7 +433,7 @@
     }
 
     .map-container {
-        height: 140px !important;
+        height: 180px !important;
     }
 
     .order-item-summary {

@@ -118,6 +118,75 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
         });
     };
 
+    // ПОЛУЧЕНИЕ АДРЕСА - СНАЧАЛА ЯНДЕКС, ПОТОМ STREETMAP
+    const getAddressFromCoords = async (lat, lng) => {
+        let address = null;
+        
+        // Пробуем Яндекс Геокодер
+        try {
+            const response = await fetch(
+                `https://geocode-maps.yandex.ru/1.x/?apikey=YOUR_YANDEX_API_KEY&geocode=${lng},${lat}&format=json`
+            );
+            const data = await response.json();
+            const geoObject = data.response.GeoObjectCollection.featureMember[0]?.GeoObject;
+            
+            if (geoObject) {
+                address = geoObject.metaDataProperty?.GeocoderMetaData?.text || null;
+                if (address) {
+                    console.log('✅ Адрес получен через Яндекс:', address);
+                    setFormData(prev => ({
+                        ...prev,
+                        location: {
+                            ...prev.location,
+                            address: address
+                        }
+                    }));
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('❌ Ошибка Яндекс геокодера:', error);
+        }
+
+        // Если Яндекс не дал адрес - пробуем StreetMap
+        if (!address) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+                );
+                const data = await response.json();
+                
+                if (data && data.display_name) {
+                    address = data.display_name;
+                    console.log('✅ Адрес получен через StreetMap:', address);
+                    setFormData(prev => ({
+                        ...prev,
+                        location: {
+                            ...prev.location,
+                            address: address
+                        }
+                    }));
+                    return;
+                }
+            } catch (error) {
+                console.error('❌ Ошибка StreetMap геокодера:', error);
+            }
+        }
+
+        // Если ничего не получилось - используем координаты
+        if (!address) {
+            address = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            console.log('⚠️ Адрес не найден, используем координаты:', address);
+            setFormData(prev => ({
+                ...prev,
+                location: {
+                    ...prev.location,
+                    address: address
+                }
+            }));
+        }
+    };
+
     const detectLocation = () => {
         setIsLocating(true);
         setLocationError('');
@@ -152,12 +221,14 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
                 setLocationError('Не удалось определить местоположение. Введите адрес вручную.');
                 setIsLocating(false);
                 // Устанавливаем координаты по умолчанию (центр Бухары)
+                const defaultLat = 39.7747;
+                const defaultLng = 64.4286;
                 setFormData(prev => ({
                     ...prev,
                     location: {
                         ...prev.location,
-                        lat: 39.7747,
-                        lng: 64.4286,
+                        lat: defaultLat,
+                        lng: defaultLng,
                         address: 'Бухара, Узбекистан'
                     }
                 }));
@@ -168,27 +239,6 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
                 maximumAge: 60000
             }
         );
-    };
-
-    const getAddressFromCoords = async (lat, lng) => {
-        try {
-            const response = await fetch(
-                `https://geocode-maps.yandex.ru/1.x/?apikey=YOUR_YANDEX_API_KEY&geocode=${lng},${lat}&format=json`
-            );
-            const data = await response.json();
-            const address = data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.metaDataProperty?.GeocoderMetaData?.text ||
-                `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-
-            setFormData(prev => ({
-                ...prev,
-                location: {
-                    ...prev.location,
-                    address: address
-                }
-            }));
-        } catch (error) {
-            console.error('Ошибка получения адреса:', error);
-        }
     };
 
     const handleInputChange = (e) => {
@@ -246,47 +296,21 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
 
             const result = await response.json();
 
-            // ВСЕГДА закрываем модалку, даже если ошибка
-            // Потому что заказ уже ушел в бот
             onOrderSuccess(orderData);
             onClose();
 
-            // Показываем сообщение только если ошибка
             if (!response.ok || !result.success) {
                 alert('✅ Заказ отправлен! Наш менеджер свяжется с вами.');
             }
 
         } catch (error) {
             console.error('Ошибка отправки заказа:', error);
-            // Даже при ошибке - заказ скорее всего ушел
-            // Закрываем модалку
             onOrderSuccess(orderData);
             onClose();
             alert('✅ Заказ отправлен! Наш менеджер свяжется с вами.');
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const openYandexTaxi = () => {
-        if (!formData.location.lat || !formData.location.lng) return;
-
-        const url = `https://taxi.yandex.ru/?rtext=~${formData.location.lat},${formData.location.lng}`;
-        window.open(url, '_blank');
-    };
-
-    const openGoogleMaps = () => {
-        if (!formData.location.lat || !formData.location.lng) return;
-
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${formData.location.lat},${formData.location.lng}`;
-        window.open(url, '_blank');
-    };
-
-    const openYandexMaps = () => {
-        if (!formData.location.lat || !formData.location.lng) return;
-
-        const url = `https://yandex.uz/maps/?pt=${formData.location.lng},${formData.location.lat}&z=16`;
-        window.open(url, '_blank');
     };
 
     const modalVariants = {
@@ -423,7 +447,7 @@ const OrderModal = ({ isOpen, onClose, cartItems, totalPrice, onOrderSuccess }) 
                         )}
                     </div>
 
-                    {/* Карта */}
+                    {/* Карта - УВЕЛИЧЕННАЯ ВЫСОТА */}
                     <div className="map-container">
                         <div ref={mapRef} className="map-wrapper"></div>
                         {!mapLoaded && (

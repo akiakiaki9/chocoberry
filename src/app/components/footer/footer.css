@@ -462,6 +462,9 @@
 
 /* Мобильные */
 @media (max-width: 768px) {
+    .footer {
+        padding-bottom: 50px;
+    }
     .container {
         padding: 0 15px;
     }

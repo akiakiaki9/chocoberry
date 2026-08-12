@@ -5,11 +5,9 @@ export async function POST(request) {
     try {
         const orderData = await request.json();
 
-        // Получаем данные из env с проверкой
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
         const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',').filter(id => id.trim()) || [];
 
-        // Детальное логирование для отладки
         console.log('=== ORDER API DEBUG ===');
         console.log('Bot Token exists:', !!botToken);
         console.log('Chat IDs:', chatIds);
@@ -40,17 +38,14 @@ export async function POST(request) {
             );
         }
 
-        // Формируем сообщение
         const message = formatOrderMessage(orderData);
 
-        // Отправляем всем админам
         const sendPromises = chatIds.map(chatId => 
             sendTelegramMessage(botToken, chatId.trim(), message)
         );
 
         const results = await Promise.allSettled(sendPromises);
         
-        // Проверяем результаты отправки
         const failed = results.filter(r => r.status === 'rejected');
         if (failed.length > 0) {
             console.error('❌ Some messages failed to send:', failed);
@@ -83,21 +78,23 @@ export async function POST(request) {
 function formatOrderMessage(orderData) {
     const { customer, items, total, timestamp } = orderData;
     
-    // Правильное форматирование времени
     const orderDate = new Date(timestamp);
     const formattedDate = orderDate.toLocaleDateString('ru-RU', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
     });
+    const formattedTime = orderDate.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
     
     let message = '🛍️ <b>НОВЫЙ ЗАКАЗ!</b>\n\n';
     message += `👤 <b>Имя:</b> ${customer.name}\n`;
     message += `📱 <b>Телефон:</b> ${customer.phone}\n`;
-    message += `📍 <b>Адрес:</b> ${customer.location.address}\n`;
+    message += `📍 <b>Адрес:</b> ${customer.location.address || 'Не указан'}\n`;
     message += `📌 <b>Координаты:</b> ${customer.location.lat}, ${customer.location.lng}\n\n`;
     
-    // Товары с фото сразу рядом
     message += '<b>🛒 Товары:</b>\n';
     items.forEach((item, index) => {
         const totalPrice = item.price * item.quantity;
@@ -115,43 +112,21 @@ function formatOrderMessage(orderData) {
     
     message += `\n💰 <b>Итого:</b> ${total} сум\n`;
     message += `🕐 <b>Дата:</b> ${formattedDate}\n`;
+    message += `⏰ <b>Время:</b> ${formattedTime}\n\n`;
     
-    // Ссылки на карты с Яндекс Такси - ИСПРАВЛЕННАЯ ВЕРСИЯ
     const { lat, lng, address } = customer.location;
+    const fullAddress = address || `${lat}, ${lng}`;
+    const fullAddressEncoded = encodeURIComponent(fullAddress);
     
-    // Формируем правильный адрес для ссылок
-    const fullAddress = `Chocoberry Fruits, ${address}`;
-    
-    // 1. Универсальная ссылка Яндекс Такси (работает и в браузере, и в приложении)
-    const yandexTaxiWeb = `https://taxi.yandex.uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
-    
-    // 2. Deeplink для приложения (работает только если установлено приложение)
-    const yandexTaxiApp = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(fullAddress)}`;
-    
-    // 3. Альтернативная ссылка Яндекс Такси через web
-    const yandexTaxiAlt = `https://taxi.yandex.uz/ru_uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
-    
-    // 4. Яндекс Карты с точкой назначения и построением маршрута
-    const yandexMapsRoute = `https://yandex.uz/maps/?rtext=~${lat},${lng}&rtt=auto&z=16`;
-    
-    // 5. Google Maps
+    // Ссылки на 3 карты
+    const yandexMapsUrl = `https://yandex.uz/maps/?rtext=~${lat},${lng}&rtt=auto&z=16`;
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-    
-    // 6. Яндекс Карты (просмотр)
-    const yandexMapsUrl = `https://yandex.uz/maps/?pt=${lng},${lat}&z=16`;
+    const twoGisUrl = `https://2gis.uz/route/geo/${lng},${lat}/0/построить-маршрут?m=${lng}%2C${lat}%2F16`;
     
     message += '<b>🗺️ Построить маршрут:</b>\n';
-    
-    // Для Яндекс Такси - сначала веб-версия (работает всегда)
-    message += `• <a href="${yandexTaxiWeb}">🚕 Яндекс Такси (заказать)</a>\n`;
-    
-    // Затем ссылка на приложение (если установлено)
-    message += `• <a href="${yandexTaxiApp}">📱 Яндекс Такси (приложение)</a> ⚠️ только если установлено\n`;
-    
-    // Остальные карты
-    message += `• <a href="${yandexMapsRoute}">🗺️ Яндекс Карты (маршрут)</a>\n`;
+    message += `• <a href="${yandexMapsUrl}">🗺️ Яндекс Карты</a>\n`;
     message += `• <a href="${googleMapsUrl}">🗺️ Google Maps</a>\n`;
-    message += `• <a href="${yandexMapsUrl}">🗺️ Яндекс Карты (просмотр)</a>\n`;
+    message += `• <a href="${twoGisUrl}">🗺️ 2ГИС</a>\n`;
 
     return message;
 }

@@ -1,5 +1,7 @@
+// app/layout.jsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
+import ClientLayout from "./ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,8 +44,8 @@ export const metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code", // Добавьте код верификации Google Search Console
-    yandex: "your-yandex-verification-code", // Добавьте код верификации Яндекс.Вебмастер
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
   },
   openGraph: {
     title: "Chocoberry | Клубничные боксы и букеты в Бухаре",
@@ -52,7 +54,7 @@ export const metadata = {
     siteName: "Chocoberry Бухара",
     images: [
       {
-        url: "/og-image.jpg", // Добавьте изображение для соцсетей
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Chocoberry - клубничные боксы и букеты",
@@ -65,8 +67,8 @@ export const metadata = {
     card: "summary_large_image",
     title: "Chocoberry | Клубничные боксы и букеты в Бухаре",
     description: "Доставка свежих клубничных боксов, букетов из клубники и сладких композиций в Бухаре",
-    images: ["/twitter-image.jpg"], // Добавьте изображение для Twitter
-    creator: "@chocoberry", // Добавьте ваш Twitter аккаунт
+    images: ["/twitter-image.jpg"],
+    creator: "@chocoberry",
   },
   alternates: {
     canonical: "https://chocoberrybukhara.uz",
@@ -76,7 +78,7 @@ export const metadata = {
     },
   },
   category: "food",
-  manifest: "/manifest.json", // Для PWA
+  manifest: "/manifest.json",
   icons: {
     icon: "/images/logo.png",
     shortcut: "/images/logo.png",
@@ -100,10 +102,6 @@ export const metadata = {
     email: true,
     address: true,
   },
-  verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-  },
   other: {
     "yandex-verification": "your-yandex-verification-code",
     "google-site-verification": "your-google-verification-code",
@@ -119,7 +117,6 @@ export default function RootLayout({ children }) {
         <meta name="geo.position" content="39.7747;64.4286" />
         <meta name="ICBM" content="39.7747, 64.4286" />
 
-        {/* Структурированные данные Schema.org для локального бизнеса */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -164,7 +161,6 @@ export default function RootLayout({ children }) {
           }}
         />
 
-        {/* Структурированные данные для продуктов */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -188,26 +184,26 @@ export default function RootLayout({ children }) {
           }}
         />
 
-        {/* Превью для мессенджеров */}
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="vk:image" content="/vk-image.jpg" />
         <meta name="telegram:channel" content="@chocoberry_bukhara" />
 
-        {/* Оптимизация для мобильных устройств */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Chocoberry" />
 
-        {/* Дополнительные мета-теги */}
         <meta name="theme-color" content="#e31b23" />
         <meta name="msapplication-TileColor" content="#e31b23" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        {/* КЛИЕНТСКАЯ ОБЕРТКА С СОСТОЯНИЕМ */}
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );
-};
+}

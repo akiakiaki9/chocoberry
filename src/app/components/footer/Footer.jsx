@@ -237,7 +237,7 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* Кнопка наверх */}
+            {/* Кнопка наверх
             <AnimatePresence>
                 {showBackToTop && (
                     <motion.button
@@ -258,7 +258,7 @@ const Footer = () => {
                         <span className="back-to-top-label">Наверх</span>
                     </motion.button>
                 )}
-            </AnimatePresence>
+            </AnimatePresence> */}
         </footer>
     );
 };
