@@ -83,6 +83,19 @@ export async function POST(request) {
 function formatOrderMessage(orderData) {
     const { customer, items, total, timestamp } = orderData;
     
+    // Правильное форматирование времени
+    const orderDate = new Date(timestamp);
+    const formattedDate = orderDate.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    const formattedTime = orderDate.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    
     let message = '🛍️ <b>НОВЫЙ ЗАКАЗ!</b>\n\n';
     message += `👤 <b>Имя:</b> ${customer.name}\n`;
     message += `📱 <b>Телефон:</b> ${customer.phone}\n`;
@@ -106,20 +119,26 @@ function formatOrderMessage(orderData) {
     });
     
     message += `\n💰 <b>Итого:</b> ${total} сум\n`;
-    message += `🕐 <b>Время:</b> ${new Date(timestamp).toLocaleString('ru-RU')}\n\n`;
+    message += `🕐 <b>Дата:</b> ${formattedDate}\n`;
+    message += `⏰ <b>Время:</b> ${formattedTime}\n\n`;
     
-    // Ссылки на карты с Яндекс Такси через deeplink
+    // Ссылки на карты с Яндекс Такси
     const { lat, lng, address } = customer.location;
     
-    // Формируем deeplink для Яндекс Такси
-    const yandexTaxiDeeplink = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(address)}`;
-    const yandexTaxiWeb = `https://taxi.yandex.ru/?rtext=~${lat},${lng}`;
+    // Формируем deeplink для Яндекс Такси (как в вашем коде)
+    const fullAddress = `Chocoberry Fruits, ${address}`;
+    const yandexTaxiDeeplink = `yandextaxi://route/?end-lat=${lat}&end-lon=${lng}&end-address=${encodeURIComponent(fullAddress)}`;
+    const yandexTaxiFallback = `https://taxi.yandex.uz/?rto=${lat},${lng}&text=${encodeURIComponent(fullAddress)}`;
+    
+    // Формируем ссылки для Google Maps и Яндекс Карт
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    const yandexMapsUrl = `https://yandex.uz/maps/?pt=${lng},${lat}&z=16`;
     
     message += '<b>🗺️ Построить маршрут:</b>\n';
     message += `• <a href="${yandexTaxiDeeplink}">🚕 Яндекс Такси (приложение)</a>\n`;
-    message += `• <a href="${yandexTaxiWeb}">🚕 Яндекс Такси (веб)</a>\n`;
-    message += `• <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">🗺️ Google Maps</a>\n`;
-    message += `• <a href="https://yandex.uz/maps/?pt=${lng},${lat}&z=16">🗺️ Яндекс Карты</a>\n`;
+    message += `• <a href="${yandexTaxiFallback}">🚕 Яндекс Такси (веб)</a>\n`;
+    message += `• <a href="${googleMapsUrl}">🗺️ Google Maps</a>\n`;
+    message += `• <a href="${yandexMapsUrl}">🗺️ Яндекс Карты</a>\n`;
 
     return message;
 }
