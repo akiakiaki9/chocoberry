@@ -5,14 +5,37 @@ export async function POST(request) {
     try {
         const orderData = await request.json();
 
-        // Получаем данные из env
+        // Получаем данные из env с проверкой
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',') || [];
+        const chatIds = process.env.TELEGRAM_CHAT_IDS?.split(',').filter(id => id.trim()) || [];
 
-        if (!botToken || chatIds.length === 0) {
-            console.error('Telegram credentials not configured');
+        // Детальное логирование для отладки
+        console.log('=== ORDER API DEBUG ===');
+        console.log('Bot Token exists:', !!botToken);
+        console.log('Chat IDs:', chatIds);
+        console.log('Site URL:', process.env.NEXT_PUBLIC_SITE_URL);
+        console.log('Order data:', JSON.stringify(orderData, null, 2));
+
+        if (!botToken) {
+            console.error('❌ TELEGRAM_BOT_TOKEN is not configured');
             return NextResponse.json(
-                { success: false, error: 'Telegram not configured' },
+                { 
+                    success: false, 
+                    error: 'Telegram bot token not configured',
+                    details: 'Please set TELEGRAM_BOT_TOKEN in environment variables'
+                },
+                { status: 500 }
+            );
+        }
+
+        if (chatIds.length === 0) {
+            console.error('❌ TELEGRAM_CHAT_IDS is not configured');
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Telegram chat IDs not configured',
+                    details: 'Please set TELEGRAM_CHAT_IDS in environment variables'
+                },
                 { status: 500 }
             );
         }
@@ -22,17 +45,36 @@ export async function POST(request) {
 
         // Отправляем всем админам
         const sendPromises = chatIds.map(chatId => 
-            sendTelegramMessage(botToken, chatId, message)
+            sendTelegramMessage(botToken, chatId.trim(), message)
         );
 
-        await Promise.all(sendPromises);
+        const results = await Promise.allSettled(sendPromises);
+        
+        // Проверяем результаты отправки
+        const failed = results.filter(r => r.status === 'rejected');
+        if (failed.length > 0) {
+            console.error('❌ Some messages failed to send:', failed);
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to send to some admins',
+                    details: failed.map(f => f.reason?.message || 'Unknown error')
+                },
+                { status: 500 }
+            );
+        }
 
+        console.log('✅ Order sent successfully to all admins');
         return NextResponse.json({ success: true });
 
     } catch (error) {
-        console.error('Error processing order:', error);
+        console.error('❌ Error processing order:', error);
         return NextResponse.json(
-            { success: false, error: 'Internal server error' },
+            { 
+                success: false, 
+                error: 'Internal server error',
+                details: error.message 
+            },
             { status: 500 }
         );
     }
@@ -53,10 +95,8 @@ function formatOrderMessage(orderData) {
         const totalPrice = item.price * item.quantity;
         const imageUrl = item.image ? `${process.env.NEXT_PUBLIC_SITE_URL}${item.image}` : '';
         
-        // Формат: 1. Клубника в шоколаде x2 (ФОТО) = 120000 сум
         let itemLine = `${index + 1}. ${item.name} x${item.quantity}`;
         
-        // Добавляем фото если есть
         if (imageUrl) {
             itemLine += ` (<a href="${imageUrl}">📸 ФОТО</a>)`;
         }
@@ -81,23 +121,31 @@ function formatOrderMessage(orderData) {
 async function sendTelegramMessage(botToken, chatId, message) {
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
     
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-            parse_mode: 'HTML',
-            disable_web_page_preview: false,
-        }),
-    });
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'HTML',
+                disable_web_page_preview: false,
+            }),
+        });
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Telegram API error: ${JSON.stringify(error)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error('❌ Telegram API error:', data);
+            throw new Error(`Telegram API error: ${data.description || 'Unknown error'}`);
+        }
+
+        console.log(`✅ Message sent to chat ${chatId}`);
+        return data;
+    } catch (error) {
+        console.error(`❌ Failed to send to chat ${chatId}:`, error);
+        throw error;
     }
-
-    return response.json();
 }
