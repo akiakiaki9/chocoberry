@@ -37,7 +37,6 @@ const HeroCarousel = () => {
                     muted
                     playsInline
                     className="hero-video"
-                    poster="/videos/video-poster.jpg"
                     preload="auto"
                 >
                     <source

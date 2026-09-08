@@ -1,4 +1,3 @@
-// app/layout.jsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
 import ClientLayout from "./ClientLayout";
@@ -78,7 +77,6 @@ export const metadata = {
     },
   },
   category: "food",
-  manifest: "/manifest.json",
   icons: {
     icon: "/images/logo.png",
     shortcut: "/images/logo.png",

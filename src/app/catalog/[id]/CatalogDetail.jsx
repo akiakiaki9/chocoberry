@@ -1,6 +1,7 @@
+// catalog/[id]/page.jsx - Оптимизированная версия
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { products } from '@/app/utils/data1';
@@ -14,11 +15,11 @@ import {
     FiPackage,
     FiHeart,
     FiShare2,
-    FiCheck
+    FiCheck,
+    FiArrowLeft
 } from 'react-icons/fi';
 import { FaFire } from 'react-icons/fa';
 import { HiOutlineLocationMarker, HiOutlineClock } from 'react-icons/hi';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -30,6 +31,7 @@ export default function ProductDetailPage() {
     const [imageError, setImageError] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
+    // Определение мобильного устройства
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -39,22 +41,25 @@ export default function ProductDetailPage() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    const parsePrice = (priceStr) => {
+    // Парсинг цены
+    const parsePrice = useCallback((priceStr) => {
         if (typeof priceStr === 'number') return priceStr;
-        if (priceStr.includes('-')) {
+        if (typeof priceStr === 'string' && priceStr.includes('-')) {
             return parseInt(priceStr.split('-')[0]);
         }
         return parseInt(priceStr);
-    };
+    }, []);
 
-    const formatPrice = (price) => {
-        if (price.includes('-')) {
+    // Форматирование цены
+    const formatPrice = useCallback((price) => {
+        if (typeof price === 'string' && price.includes('-')) {
             const [min, max] = price.split('-').map(p => parseInt(p));
             return `${new Intl.NumberFormat('uz-UZ').format(min)} - ${new Intl.NumberFormat('uz-UZ').format(max)} сум`;
         }
         return new Intl.NumberFormat('uz-UZ').format(parseInt(price)) + ' сум';
-    };
+    }, []);
 
+    // Загрузка товара
     useEffect(() => {
         if (id) {
             const productData = products.find(p => p.id === parseInt(id));
@@ -62,11 +67,22 @@ export default function ProductDetailPage() {
         }
     }, [id]);
 
-    const relatedProducts = products
-        .filter(p => p.id !== product?.id)
-        .slice(0, 4);
+    // Популярные товары
+    const popularProductIds = useMemo(() => [1, 2, 3], []);
+    const isProductPopular = useCallback((id) => popularProductIds.includes(id), [popularProductIds]);
 
-    const addToCart = () => {
+    // Похожие товары
+    const relatedProducts = useMemo(() => {
+        if (!product) return [];
+        return products
+            .filter(p => p.id !== product.id)
+            .slice(0, 4);
+    }, [product]);
+
+    // Добавление в корзину
+    const addToCart = useCallback(() => {
+        if (!product) return;
+
         try {
             const savedCart = localStorage.getItem('chocoberry-cart');
             let cart = savedCart ? JSON.parse(savedCart) : [];
@@ -94,16 +110,28 @@ export default function ProductDetailPage() {
             }));
 
             setAddedToCart(true);
-            setTimeout(() => setAddedToCart(false), 2000);
+            setTimeout(() => setAddedToCart(false), 1500);
 
         } catch (error) {
             console.error('Ошибка добавления в корзину:', error);
         }
-    };
+    }, [product, quantity, parsePrice]);
 
-    const popularProductIds = [1, 2, 3];
-    const isProductPopular = (id) => popularProductIds.includes(id);
+    // Увеличение/уменьшение количества
+    const decreaseQuantity = useCallback(() => {
+        setQuantity(prev => Math.max(1, prev - 1));
+    }, []);
 
+    const increaseQuantity = useCallback(() => {
+        setQuantity(prev => prev + 1);
+    }, []);
+
+    // Переключение избранного
+    const toggleFavorite = useCallback(() => {
+        setIsFavorite(prev => !prev);
+    }, []);
+
+    // Состояние загрузки
     if (!product) {
         return (
             <div className="product-loading">
@@ -131,34 +159,25 @@ export default function ProductDetailPage() {
                 <div className="container">
                     <div className="product-detail-grid">
                         {/* Левая колонка - фото */}
-                        <motion.div
-                            className="product-gallery"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
+                        <div className="product-gallery">
                             <div className="main-image">
                                 <img
                                     src={imageSrc}
                                     alt={product.name}
                                     onError={() => setImageError(true)}
+                                    loading="lazy"
                                 />
                                 {isProductPopular(product.id) && (
                                     <span className="gallery-badge">
-                                        <FaFire className="badge-icon" />
+                                        <FaFire />
                                         Хит
                                     </span>
                                 )}
                             </div>
-                        </motion.div>
+                        </div>
 
                         {/* Правая колонка - информация */}
-                        <motion.div
-                            className="product-info"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.1 }}
-                        >
+                        <div className="product-info">
                             <h1 className="product-title">{product.name}</h1>
 
                             <div className="product-price-section">
@@ -170,73 +189,52 @@ export default function ProductDetailPage() {
                                 <div className="quantity-selector">
                                     <button
                                         className="quantity-btn"
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        onClick={decreaseQuantity}
                                         disabled={quantity <= 1}
+                                        aria-label="Уменьшить количество"
                                     >
                                         −
                                     </button>
                                     <span className="quantity">{quantity}</span>
                                     <button
                                         className="quantity-btn"
-                                        onClick={() => setQuantity(quantity + 1)}
+                                        onClick={increaseQuantity}
+                                        aria-label="Увеличить количество"
                                     >
                                         +
                                     </button>
                                 </div>
 
-                                <motion.button
+                                <button
                                     className={`add-to-cart-btn ${addedToCart ? 'added' : ''}`}
                                     onClick={addToCart}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
                                 >
-                                    <AnimatePresence mode="wait">
-                                        {addedToCart ? (
-                                            <motion.span
-                                                key="check"
-                                                initial={{ scale: 0, rotate: -180 }}
-                                                animate={{ scale: 1, rotate: 0 }}
-                                                exit={{ scale: 0, rotate: 180 }}
-                                                className="add-content"
-                                            >
-                                                <FiCheck className="btn-icon" />
-                                                Добавлено
-                                            </motion.span>
-                                        ) : (
-                                            <motion.span
-                                                key="cart"
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                exit={{ scale: 0 }}
-                                                className="add-content"
-                                            >
-                                                <FiShoppingCart className="btn-icon" />
-                                                В корзину
-                                            </motion.span>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.button>
-
-                                <button
-                                    className={`favorite-btn ${isFavorite ? 'active' : ''}`}
-                                    onClick={() => setIsFavorite(!isFavorite)}
-                                >
-                                    <FiHeart />
+                                    {addedToCart ? (
+                                        <>
+                                            <FiCheck />
+                                            Добавлено
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FiShoppingCart />
+                                            В корзину
+                                        </>
+                                    )}
                                 </button>
                             </div>
 
                             {/* Преимущества */}
                             <div className="product-benefits">
                                 <div className="benefit">
-                                    <FiTruck className="benefit-icon" />
+                                    <FiTruck />
                                     <span>Бесплатная доставка от 500 000 сум</span>
                                 </div>
                                 <div className="benefit">
-                                    <FiGift className="benefit-icon" />
+                                    <FiGift />
                                     <span>Подарочная упаковка</span>
                                 </div>
                                 <div className="benefit">
-                                    <FiCreditCard className="benefit-icon" />
+                                    <FiCreditCard />
                                     <span>Оплата картой или наличными</span>
                                 </div>
                             </div>
@@ -246,16 +244,11 @@ export default function ProductDetailPage() {
                                 <FiShare2 />
                                 <span>Поделиться</span>
                             </button>
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/* Табы с информацией */}
-                    <motion.div
-                        className="product-tabs"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
+                    <div className="product-tabs">
                         <div className="tabs-header">
                             <button
                                 className={`tab-btn ${selectedTab === 'description' ? 'active' : ''}`}
@@ -290,30 +283,30 @@ export default function ProductDetailPage() {
                             {selectedTab === 'delivery' && (
                                 <div className="tab-pane">
                                     <div className="delivery-info">
-                                        <h3>Доставка</h3>
+                                        <h3>🚚 Доставка</h3>
                                         <ul>
                                             <li>
-                                                <FiTruck className="delivery-icon" />
+                                                <FiTruck />
                                                 Бесплатно от 500 000 сум
                                             </li>
                                             <li>
-                                                <HiOutlineClock className="delivery-icon" />
-                                                10:00 - 22:00
+                                                <HiOutlineClock />
+                                                10:00 - 0:00
                                             </li>
                                             <li>
-                                                <HiOutlineLocationMarker className="delivery-icon" />
+                                                <HiOutlineLocationMarker />
                                                 Самовывоз из бутика
                                             </li>
                                         </ul>
 
-                                        <h3>Оплата</h3>
+                                        <h3>💳 Оплата</h3>
                                         <ul>
                                             <li>
-                                                <FiCreditCard className="delivery-icon" />
+                                                <FiCreditCard />
                                                 Картой на сайте
                                             </li>
                                             <li>
-                                                <FiPackage className="delivery-icon" />
+                                                <FiPackage />
                                                 Наличными при получении
                                             </li>
                                         </ul>
@@ -321,26 +314,22 @@ export default function ProductDetailPage() {
                                 </div>
                             )}
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
             {/* Похожие товары */}
-            <section className="related-products">
-                <div className="container">
-                    <h2 className="section-title">
-                        Возможно вам <span className="gold-text">понравится</span>
-                    </h2>
+            {relatedProducts.length > 0 && (
+                <section className="related-products">
+                    <div className="container">
+                        <h2 className="section-title">
+                            Возможно вам <span className="gold-text">понравится</span>
+                        </h2>
 
-                    <div className="related-grid">
-                        {relatedProducts.map((relatedProduct, index) => (
-                            <motion.div
-                                key={relatedProduct.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.08 }}
-                            >
+                        <div className="related-grid">
+                            {relatedProducts.map((relatedProduct) => (
                                 <Link
+                                    key={relatedProduct.id}
                                     href={`/catalog/${relatedProduct.id}`}
                                     className="related-card"
                                 >
@@ -348,13 +337,14 @@ export default function ProductDetailPage() {
                                         <img
                                             src={relatedProduct.image}
                                             alt={relatedProduct.name}
+                                            loading="lazy"
                                             onError={(e) => {
-                                                e.target.src = 'https://via.placeholder.com/300x300?text=Chocoberry';
+                                                e.target.src = '/images/placeholder.png';
                                             }}
                                         />
                                         {isProductPopular(relatedProduct.id) && (
                                             <span className="related-badge">
-                                                <FaFire className="badge-icon" />
+                                                <FaFire />
                                                 Хит
                                             </span>
                                         )}
@@ -364,11 +354,11 @@ export default function ProductDetailPage() {
                                         <span className="related-price">{formatPrice(relatedProduct.price)}</span>
                                     </div>
                                 </Link>
-                            </motion.div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
         </div>
     );
 }

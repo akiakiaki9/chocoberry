@@ -7,7 +7,6 @@ import {
     FaMapMarkerAlt,
     FaPhoneAlt,
     FaClock,
-    FaArrowUp,
     FaHeart
 } from 'react-icons/fa';
 import { FiChevronRight } from 'react-icons/fi';
@@ -27,10 +26,6 @@ const Footer = () => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
 
     const socialLinks = [
         { id: 'insta', icon: <FaInstagram />, url: 'https://www.instagram.com/chocoberry_fruits_bukhara_kafe?igsh=MTk1emh4dDk4ZHJ4eA%3D%3D', color: '#E4405F', label: 'Instagram' },
@@ -84,13 +79,13 @@ const Footer = () => {
     };
 
     const backToTopVariants = {
-        hidden: { 
-            opacity: 0, 
+        hidden: {
+            opacity: 0,
             scale: 0.8,
             y: 20
         },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             scale: 1,
             y: 0,
             transition: {
@@ -113,7 +108,7 @@ const Footer = () => {
         <footer className="footer">
             <div className="footer-main">
                 <div className="container">
-                    <motion.div 
+                    <motion.div
                         className="footer-grid"
                         variants={footerVariants}
                         initial="hidden"
@@ -128,7 +123,7 @@ const Footer = () => {
                                 <span className="logo-dot">🍓</span>
                             </div>
                             <p className="footer-description">
-                                Первый клубничный бутик в Бухаре. Создаём боксы премиум-класса 
+                                Первый клубничный бутик в Бухаре. Создаём боксы премиум-класса
                                 из свежей клубники и бельгийского шоколада.
                             </p>
                             <div className="footer-social">
@@ -149,10 +144,10 @@ const Footer = () => {
                                         }}
                                     >
                                         {social.icon}
-                                        <motion.span 
+                                        <motion.span
                                             className="social-tooltip"
                                             initial={{ opacity: 0, y: 10 }}
-                                            animate={{ 
+                                            animate={{
                                                 opacity: hoveredSocial === social.id ? 1 : 0,
                                                 y: hoveredSocial === social.id ? 0 : 10
                                             }}
@@ -170,7 +165,7 @@ const Footer = () => {
                             <h3 className="footer-title">Меню</h3>
                             <ul className="footer-links">
                                 {menuLinks.map((link, index) => (
-                                    <motion.li 
+                                    <motion.li
                                         key={link.href}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
@@ -189,26 +184,26 @@ const Footer = () => {
                         <motion.div className="footer-col" variants={itemVariants}>
                             <h3 className="footer-title">Контакты</h3>
                             <ul className="footer-contact">
-                                <motion.li 
+                                <motion.li
                                     whileHover={{ x: 5 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 >
                                     <FaMapMarkerAlt className="contact-icon" />
                                     <span>Ашхобот 2v, Бухара</span>
                                 </motion.li>
-                                <motion.li 
+                                <motion.li
                                     whileHover={{ x: 5 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 >
                                     <FaPhoneAlt className="contact-icon" />
                                     <a href="tel:+998914433443">+998 91 443 34 43</a>
                                 </motion.li>
-                                <motion.li 
+                                <motion.li
                                     whileHover={{ x: 5 }}
                                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 >
                                     <FaClock className="contact-icon" />
-                                    <span>Ежедневно: 10:00 - 22:00</span>
+                                    <span>Ежедневно: 10:00 - 0:00</span>
                                 </motion.li>
                             </ul>
                         </motion.div>
@@ -221,44 +216,20 @@ const Footer = () => {
                 <div className="container">
                     <div className="footer-bottom-content">
                         <p className="copyright">
-                            © {currentYear} Chocoberry. 
+                            © {currentYear} Chocoberry.
                             <span className="copyright-heart">
                                 <FaHeart />
                             </span>
                             Первый клубничный бутик в Бухаре
                         </p>
                         <p className="developer">
-                            Разработка сайта: 
-                            <a href="https://akbarsoft.uz" target="_blank" rel="noopener noreferrer">
-                                Akbar Soft
+                            Разработал сайт:
+                            <a href="https://akbarsoft.uz" target="_blank" rel="noopener noreferrer"> Akbar Soft
                             </a>
                         </p>
                     </div>
                 </div>
             </div>
-
-            {/* Кнопка наверх
-            <AnimatePresence>
-                {showBackToTop && (
-                    <motion.button
-                        className="back-to-top"
-                        onClick={scrollToTop}
-                        aria-label="Наверх"
-                        variants={backToTopVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        whileHover={{ 
-                            scale: 1.1,
-                            boxShadow: "0 8px 30px rgba(188, 140, 76, 0.4)"
-                        }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        <FaArrowUp />
-                        <span className="back-to-top-label">Наверх</span>
-                    </motion.button>
-                )}
-            </AnimatePresence> */}
         </footer>
     );
 };
