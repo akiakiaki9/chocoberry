@@ -73,6 +73,30 @@ export const products = [
     { id: 72, name: "Клубничный бокс", price: "250000", image: "/images/data/images-bg/72.JPEG" },
     { id: 73, name: "Клубничный бокс", price: "350000", image: "/images/data/images-bg/73.JPEG" },
     { id: 74, name: "Клубничный бокс", price: "225000", image: "/images/data/images-bg/74.JPEG" },
+
+    // Новые позиции (75–81)
+    { id: 75, name: "Клубника в шоколаде с разными шоколадными", price: "600000", image: "/images/data/images-bg/75.JPEG" },
+    { id: 76, name: "Бокс с ягодой, голубика в шоколаде, малина в шоколаде", price: "600000", image: "/images/data/images-bg/76.JPEG" },
+    { id: 77, name: "Карамельный медовый", price: "25000", image: "/images/data/images-bg/77.JPEG" },
+    { id: 78, name: "Клубничный бокс", price: "350000", image: "/images/data/images-bg/78.JPEG" },
+    { id: 79, name: "Малиновый Меренга целый", price: "200000", price2: "90000", image: "/images/data/images-bg/79.JPEG" },
+    { id: 80, name: "Клубничная корзина", price: "700000", image: "/images/data/images-bg/80.JPEG" },
+];
+
+// Напитки — отдельный массив, так как у них другой путь к изображениям
+export const drinks = [
+    { id: 101, name: "Капучино", price: "25000", image: "/images/drinks/1.png" },
+    { id: 102, name: "Эспрессо", price: "20000", image: "/images/drinks/2.png" },
+    { id: 103, name: "Американо", price: "20000", image: "/images/drinks/3.png" },
+    { id: 104, name: "Латте", price: "25000", image: "/images/drinks/4.png" },
+    { id: 105, name: "Кола 0,5", price: "8000", image: "/images/drinks/5.png" },
+    { id: 106, name: "Кола 0,25", price: "8000", image: "/images/drinks/6.png" },
+    { id: 107, name: "Кола 1 литр", price: "15000", image: "/images/drinks/7.png" },
+    { id: 108, name: "Фанта 0,5", price: "8000", image: "/images/drinks/8.png" },
+    { id: 109, name: "Фанта 1 литр", price: "15000", image: "/images/drinks/9.png" },
+    { id: 110, name: "Спрайт 0,5", price: "8000", image: "/images/drinks/10.png" },
+    { id: 111, name: "Спрайт 1 литр", price: "15000", image: "/images/drinks/11.png" },
+    { id: 112, name: "Спрайт 0,25", price: "8000", image: "/images/drinks/12.png" },
 ];
 
 export default products;

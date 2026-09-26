@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { products } from '../utils/data1';
+import { products, drinks } from '../utils/data1';
 import './catalog.css';
 import {
     FiFilter,
     FiX,
     FiChevronDown,
+    FiChevronLeft,
+    FiChevronRight,
     FiShoppingCart,
     FiEye,
     FiStar,
@@ -19,6 +21,45 @@ import {
 import { GiFlowerEmblem } from 'react-icons/gi';
 import { FaFire } from 'react-icons/fa';
 
+// Явные категории
+const CATEGORIES = [
+    { id: 'heart', name: 'Клубничное сердце', image: '/images/data/images-bg/1.JPEG' },
+    { id: 'box', name: 'Клубничный бокс', image: '/images/data/images-bg/2.JPEG' },
+    { id: 'basket', name: 'Клубничная корзина', image: '/images/data/images-bg/27.PNG' },
+    { id: 'dessert', name: 'Десерты', image: '/images/data/images-bg/63.JPEG' },
+    { id: 'drinks', name: 'Напитки', image: '/images/drinks/1.png' },
+];
+
+// Определяем категорию по названию товара
+const getProductCategory = (name) => {
+    const n = name.toLowerCase();
+
+    // Напитки — только точные слова (границы слов), чтобы "шоколаде" не попадало
+    if (/\b(капучино|эспрессо|американо|латте|кола|фанта|спрайт)\b/.test(n)) return 'drinks';
+    if (n.includes('напит')) return 'drinks';
+
+    if (n.includes('сердце')) return 'heart';
+    if (n.includes('корзин')) return 'basket';
+    if (n.includes('бокс')) return 'box';
+    if (n.includes('десерт') || n.includes('меренг') || n.includes('карамельн')) return 'dessert';
+
+    return 'dessert';
+};
+
+// Объединяем товары и напитки, добавляя поле category и isDrink
+const allItems = [
+    ...products.map(p => ({ ...p, category: getProductCategory(p.name), isDrink: false })),
+    ...drinks.map(d => ({ ...d, category: 'drinks', isDrink: true })),
+];
+
+// Категории с количеством
+const buildCategories = () => {
+    return CATEGORIES.map(cat => ({
+        ...cat,
+        count: allItems.filter(item => item.category === cat.id).length,
+    })).filter(cat => cat.count > 0);
+};
+
 export default function CatalogPage() {
     // Состояния
     const [sortBy, setSortBy] = useState('price-asc');
@@ -28,6 +69,15 @@ export default function CatalogPage() {
     const [quickView, setQuickView] = useState(null);
     const [isMobile, setIsMobile] = useState(false);
     const [viewMode, setViewMode] = useState('grid');
+    const [activeCategory, setActiveCategory] = useState('all');
+
+    // Карусель
+    const carouselRef = useRef(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+
+    // Категории
+    const categories = useMemo(() => buildCategories(), []);
 
     // Определение мобильного устройства
     useEffect(() => {
@@ -47,7 +97,7 @@ export default function CatalogPage() {
     useEffect(() => {
         if (quickView) {
             document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = '5px'; // Компенсация скролла
+            document.body.style.paddingRight = '5px';
         } else {
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';
@@ -83,23 +133,31 @@ export default function CatalogPage() {
         return parseInt(price);
     }, []);
 
-    // Фильтрация и сортировка
+    // Фильтрация
     const filteredProducts = useMemo(() => {
-        return products.filter(product => {
+        return allItems.filter(product => {
             const minPrice = getMinPrice(product.price);
             const maxPrice = getMaxPrice(product.price);
-            return minPrice <= priceRange[1] && maxPrice >= priceRange[0];
+            const matchPrice = minPrice <= priceRange[1] && maxPrice >= priceRange[0];
+            const matchCategory = activeCategory === 'all' || product.category === activeCategory;
+            return matchPrice && matchCategory;
         });
-    }, [priceRange, getMinPrice, getMaxPrice]);
+    }, [priceRange, activeCategory, getMinPrice, getMaxPrice]);
 
+    // Сортировка: сначала еда (по цене), потом напитки
     const sortedProducts = useMemo(() => {
-        return [...filteredProducts]
-            .sort((a, b) => b.id - a.id)
-            .sort((a, b) => {
-                const priceA = parsePrice(a.price);
-                const priceB = parsePrice(b.price);
-                return sortBy === 'price-asc' ? priceA - priceB : priceB - priceA;
-            });
+        return [...filteredProducts].sort((a, b) => {
+            // 1. Напитки всегда в конце
+            if (a.isDrink !== b.isDrink) return a.isDrink ? 1 : -1;
+
+            // 2. Внутри группы — по выбранной сортировке
+            const priceA = parsePrice(a.price);
+            const priceB = parsePrice(b.price);
+            if (sortBy === 'price-asc') return priceA - priceB;
+            if (sortBy === 'price-desc') return priceB - priceA;
+
+            return priceA - priceB;
+        });
     }, [filteredProducts, sortBy, parsePrice]);
 
     // Добавление в корзину
@@ -154,6 +212,7 @@ export default function CatalogPage() {
     const resetFilters = useCallback(() => {
         setPriceRange([0, 2000000]);
         setSortBy('price-asc');
+        setActiveCategory('all');
     }, []);
 
     const toggleFilters = useCallback(() => {
@@ -173,6 +232,33 @@ export default function CatalogPage() {
     // Популярные товары
     const popularProductIds = useMemo(() => [1, 2, 3, 4, 5], []);
     const isProductPopular = useCallback((id) => popularProductIds.includes(id), [popularProductIds]);
+
+    // Карусель: проверка скролла
+    const updateScrollButtons = useCallback(() => {
+        const el = carouselRef.current;
+        if (!el) return;
+        setCanScrollLeft(el.scrollLeft > 5);
+        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
+    }, []);
+
+    useEffect(() => {
+        const el = carouselRef.current;
+        if (!el) return;
+        updateScrollButtons();
+        el.addEventListener('scroll', updateScrollButtons);
+        window.addEventListener('resize', updateScrollButtons);
+        return () => {
+            el.removeEventListener('scroll', updateScrollButtons);
+            window.removeEventListener('resize', updateScrollButtons);
+        };
+    }, [updateScrollButtons, categories.length]);
+
+    const scrollCarousel = useCallback((dir) => {
+        const el = carouselRef.current;
+        if (!el) return;
+        const amount = el.clientWidth * 0.8;
+        el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+    }, []);
 
     // Компонент карточки товара
     const ProductCard = useCallback(({ product }) => {
@@ -229,6 +315,54 @@ export default function CatalogPage() {
             </div>
         );
     }, [addedToCart, addToCart, formatPrice, isProductPopular, openQuickView]);
+
+    // Компонент карусели категорий
+    const CategoriesCarousel = useCallback(() => (
+        <div className="categories-carousel-wrapper">
+            <button
+                className={`carousel-arrow left ${!canScrollLeft ? 'disabled' : ''}`}
+                onClick={() => scrollCarousel('left')}
+                aria-label="Прокрутить влево"
+            >
+                <FiChevronLeft />
+            </button>
+
+            <div className="categories-carousel" ref={carouselRef}>
+                <button
+                    className={`category-card ${activeCategory === 'all' ? 'active' : ''}`}
+                    onClick={() => setActiveCategory('all')}
+                >
+                    <div className="category-image">
+                        <div className="category-all-icon">🌸</div>
+                    </div>
+                    <span className="category-name">Все</span>
+                    <span className="category-count">{allItems.length}</span>
+                </button>
+
+                {categories.map((cat) => (
+                    <button
+                        key={cat.id}
+                        className={`category-card ${activeCategory === cat.id ? 'active' : ''}`}
+                        onClick={() => setActiveCategory(cat.id)}
+                    >
+                        <div className="category-image">
+                            <img src={cat.image} alt={cat.name} loading="lazy" />
+                        </div>
+                        <span className="category-name">{cat.name}</span>
+                        <span className="category-count">{cat.count}</span>
+                    </button>
+                ))}
+            </div>
+
+            <button
+                className={`carousel-arrow right ${!canScrollRight ? 'disabled' : ''}`}
+                onClick={() => scrollCarousel('right')}
+                aria-label="Прокрутить вправо"
+            >
+                <FiChevronRight />
+            </button>
+        </div>
+    ), [categories, activeCategory, canScrollLeft, canScrollRight, scrollCarousel]);
 
     // Компонент фильтров
     const FiltersPanel = useCallback(() => (
@@ -297,6 +431,13 @@ export default function CatalogPage() {
                 </div>
             </section>
 
+            {/* Карусель категорий */}
+            <section className="catalog-categories">
+                <div className="container">
+                    <CategoriesCarousel />
+                </div>
+            </section>
+
             {/* Основной контент */}
             <section className="catalog-content">
                 <div className="container">
@@ -344,10 +485,8 @@ export default function CatalogPage() {
 
                     {/* Layout */}
                     <div className="catalog-layout">
-                        {/* Фильтры */}
                         {(showFilters || !isMobile) && <FiltersPanel />}
 
-                        {/* Товары */}
                         <div className="catalog-products">
                             {sortedProducts.length === 0 ? (
                                 <div className="no-products">
